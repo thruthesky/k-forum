@@ -41,7 +41,7 @@ class library
     }
 
     public function segment($n) {
-        return segments($n);
+        return $this->segments($n);
     }
 
 

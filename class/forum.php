@@ -18,6 +18,38 @@ class forum
     {
         $this->addAdminMenu();
         $this->addRoutes();
+        return $this;
+    }
+
+    public function activate() {
+        $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        if ( $category ) return;
+
+        if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+        $catarr = array(
+            'cat_name' => __('K-Forum', 'k-forum'),
+            'category_description' => __("This is K forum.", 'k-forum'),
+            'category_nicename' => 'forum',
+        );
+        $ID = wp_insert_category( $catarr, true );
+        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+
+        $catarr = array(
+            'cat_name' => __('Welcome', 'k-forum'),
+            'category_description' => __("This is Welcome forum", 'k-forum'),
+            'category_nicename' => 'welcome',
+            'category_parent' => $ID,
+        );
+        $ID = wp_insert_category( $catarr, true );
+        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+
+        forum()->post_create([
+                'post_title'    => __('Welcome to K forum.', 'k-forum'),
+                'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
+                'post_status'   => 'publish',
+                'post_author'   => wp_get_current_user()->ID,
+                'post_category' => array( $ID )
+        ]);
     }
 
     public function enqueue()
@@ -30,6 +62,7 @@ class forum
             wp_enqueue_style( 'basic', FORUM_URL . 'css/basic.css' );
             wp_enqueue_script( 'basic', FORUM_URL . 'js/basic.js' );
         });
+        return $this;
     }
 
     private function loadTemplate($file)
@@ -48,16 +81,19 @@ class forum
         $this->$_REQUEST['do']();
         exit;
     }
-    private function post_create() {
-        $my_post = array(
-            'post_title'    => $_REQUEST['title'],
-            'post_content'  => $_REQUEST['content'],
-            'post_status'   => 'publish',
-            'post_author'   => wp_get_current_user()->ID,
-            'post_category' => array( $_REQUEST['category_id'] )
-        );
+    private function post_create( $post_arr = array() ) {
+        if ( empty($post_arr) ) {
+            $post_arr = array(
+                'post_title'    => $_REQUEST['title'],
+                'post_content'  => $_REQUEST['content'],
+                'post_status'   => 'publish',
+                'post_author'   => wp_get_current_user()->ID,
+                'post_category' => array( $_REQUEST['category_id'] )
+            );
+        }
+
         // Insert the post into the database
-        $post_ID = wp_insert_post( $my_post );
+        $post_ID = wp_insert_post( $post_arr );
         if ( is_wp_error( $post_ID ) ) {
             echo $post_ID->get_error_message();
             exit;

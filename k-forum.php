@@ -22,7 +22,6 @@ $forum = forum();
 $forum->init();
 $forum->enqueue();
 
-if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
 
 /*
 $catarr = array(

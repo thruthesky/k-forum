@@ -15,7 +15,7 @@ else $category_id = $categories[0]->term_id;
 
         <h2>Forum List</h2>
         <div class="post-new-button">
-            <a href="<?php echo home_url()?>/forum/qna/edit">POST NEW</a>
+            <a href="<?php echo home_url()?>/forum/<?php echo seg('1')?>/edit">POST NEW</a>
         </div>
 
         <table>

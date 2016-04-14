@@ -163,7 +163,7 @@ class forum
                 'manage_options', // permission
                 'k-forum/template/admin.php', // slug id. what to open
                 '',
-                plugin_dir_url( __FILE__ ) . 'icon/siteapi.png', // @todo change icon.
+                'dashicons-text',
                 '23.45' // 표시 우선 순위.
             );
             add_submenu_page(

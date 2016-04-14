@@ -39,8 +39,11 @@ else {
                 else {
                     $content = '';
                 }
-                $editor_id = 'content';
-                $settings = array( 'media_buttons' => false, 'textarea_rows' => 20,
+                $editor_id = 'new-content';
+                $settings = array(
+                    'textarea_name' => 'content',
+                    'media_buttons' => false,
+                    'textarea_rows' => 20,
                     'quicktags' => false
                 );
                 wp_editor( $content, $editor_id, $settings );

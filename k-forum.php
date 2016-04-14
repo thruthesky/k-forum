@@ -22,3 +22,20 @@ $forum = forum();
 $forum->init();
 $forum->enqueue();
 
+if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+
+/*
+$catarr = array(
+    'cat_name' => '11 번째 테스트 카테고리',
+    'category_description' => "이것은 글 카테고리입니다.",
+    'category_nicename' => 'test_category',
+    'category_parent' => '',
+    'taxonomy' => 'category' // 기본 값 생략가능.
+);
+$ID = wp_insert_category( $catarr, true );
+if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+else {
+    $ID = wp_insert_category( ['cat_ID'=>$ID, 'cat_name'=>'카테고리 11', 'category_nicename'=>'category-11', 'category_description'=>'글 카테고리']);
+    if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+}
+*/

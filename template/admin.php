@@ -6,10 +6,10 @@
 </style>
 <div class="wrap siteapi-index">
 
-    <h2>케이 포럼</h2>
+    <h2><?php _e('K-Forum', 'k-forum')?></h2>
 
     <div>
-        한국 형 게시판 - 케이 포럼 - 에 대한 설명입니다.
+        <?php _e('This is K forum.', 'k-forum')?>
     </div>
 
 </div>

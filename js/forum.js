@@ -1,6 +1,10 @@
 var $ = jQuery;
 $(function() {
     $('body').on('click', '.attach .delete', forum.delete);
+    forum.el.postbox().find('form').submit(function(e){
+        $(this).find('[type="submit"]').prop('disabled', true);
+        return true;
+    });
 });
 var forum = {
     el : {
@@ -15,6 +19,9 @@ var forum = {
         },
         files : function() {
             return forum.el.postbox().find('.files');
+        },
+        fileIDs : function() {
+            return forum.el.postbox().find('[name="file_ids"]');
         }
     },
     showLoader : function () {
@@ -54,10 +61,9 @@ var forum = {
                 }
                 console.log(re);
                 //trace(re);
-                if ( re['success'] == false || re['success'] == 'false' ) {
-                    return alert('upload failed.');
-                }
+                if ( re['success'] == false ) return alert('upload failed.');
                 forum.displayAttachment(re);
+                forum.addFileID(re);
             }
         });
         $do.val('post_create');
@@ -69,13 +75,23 @@ var forum = {
         if ( re['data']['type'] == 'image' ) {
             forum.el.photos().append( forum.markup.upload( data ) );
             m = '<img id="id'+data['attach_id']+'" alt="'+data['file']['name']+'" src="'+data['url']+'"/>';
-            tinymce.activeEditor.insertContent(m);
         }
         else {
             forum.el.files().append( forum.markup.upload( data ) );
             m = '<a id="id'+data['attach_id']+'" href="'+data['url']+'">'+data['file']['name']+'</a>';
-            tinymce.activeEditor.insertContent(m);
         }
+        tinymce.activeEditor.insertContent(m);
+    },
+    addFileID : function (re) {
+        var val = forum.el.fileIDs().val();
+        forum.el.fileIDs().val( val + ',' + re['data']['attach_id']);
+    },
+    removeFileID : function (re) {
+        var id = re['data']['id'];
+        var str = ',' + id;
+        var ids = forum.el.fileIDs().val();
+        var new_ids = ids.replace( str, '' );
+        forum.el.fileIDs().val(new_ids);
     },
     markup : {
         upload :
@@ -119,6 +135,7 @@ var forum = {
                 console.log( html );
                 editor.setContent(html);
                 $attach.remove();
+                forum.removeFileID(re);
             }
         });
 

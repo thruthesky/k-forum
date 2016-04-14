@@ -12,8 +12,18 @@ if ( ! have_posts() ) {
 the_post();
 
 
+//add_post_meta(get_the_ID(), 'attachment', 1);
+//
+//di(get_post_meta( get_the_ID(), 'attachment' ));
+//delete_post_meta(get_the_ID(), 'attachment');
+//di(get_post_meta( get_the_ID(), 'attachment' ));
+
+
+
+
 ?>
 <h2>Forum View in Plugin</h2>
+
 
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">

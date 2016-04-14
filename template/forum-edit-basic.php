@@ -13,6 +13,8 @@ else {
     <h2>Forum EDIT</h2>
 
 
+
+
     <script>
         var url_endpoint = "<?php echo home_url("forum/submit")?>";
         var max_upload_size = <?php echo wp_max_upload_size();?>;
@@ -24,9 +26,10 @@ else {
 
             <input type="hidden" name="do" value="post_create">
             <input type="hidden" name="category_id" value="<?php echo $category_id?>">
+            <input type="hidden" name="file_ids" value="">
             <label for="title">Title</label>
             <div class="text">
-                <input type="text" id="title" name="title">
+                <input type="text" id="title" name="title" value="<?php echo $post ? esc_attr($post->post_title) : ''?>">
             </div>
 
             <label for="content">Content</label>
@@ -61,7 +64,7 @@ else {
                 <input type="file" name="file" onchange="forum.on_change_file_upload(this);" style="opacity: .001;">
             </div>
             <div class="loader">
-                <img src="<?php echo get_stylesheet_directory_uri() ?>/forum/img/loader14.gif">
+                <img src="<?php echo FORUM_URL ?>/img/loader14.gif">
                 File upload is in progress. Please wait.
             </div>
 

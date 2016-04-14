@@ -18,6 +18,38 @@ class forum
     {
         $this->addAdminMenu();
         $this->addRoutes();
+        return $this;
+    }
+
+    public function activate() {
+        $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        if ( $category ) return;
+
+        if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+        $catarr = array(
+            'cat_name' => __('K-Forum', 'k-forum'),
+            'category_description' => __("This is K forum.", 'k-forum'),
+            'category_nicename' => 'forum',
+        );
+        $ID = wp_insert_category( $catarr, true );
+        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+
+        $catarr = array(
+            'cat_name' => __('Welcome', 'k-forum'),
+            'category_description' => __("This is Welcome forum", 'k-forum'),
+            'category_nicename' => 'welcome',
+            'category_parent' => $ID,
+        );
+        $ID = wp_insert_category( $catarr, true );
+        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+
+        forum()->post_create([
+                'post_title'    => __('Welcome to K forum.', 'k-forum'),
+                'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
+                'post_status'   => 'publish',
+                'post_author'   => wp_get_current_user()->ID,
+                'post_category' => array( $ID )
+        ]);
     }
 
     public function enqueue()
@@ -30,6 +62,7 @@ class forum
             wp_enqueue_style( 'basic', FORUM_URL . 'css/basic.css' );
             wp_enqueue_script( 'basic', FORUM_URL . 'js/basic.js' );
         });
+        return $this;
     }
 
     private function loadTemplate($file)
@@ -48,23 +81,59 @@ class forum
         $this->$_REQUEST['do']();
         exit;
     }
-    private function post_create() {
-        $my_post = array(
-            'post_title'    => $_REQUEST['title'],
-            'post_content'  => $_REQUEST['content'],
-            'post_status'   => 'publish',
-            'post_author'   => wp_get_current_user()->ID,
-            'post_category' => array( $_REQUEST['category_id'] )
-        );
+    private function post_create( $post_arr = array() ) {
+        if ( empty($post_arr) ) {
+            $post_arr = array(
+                'post_title'    => $_REQUEST['title'],
+                'post_content'  => $_REQUEST['content'],
+                'post_status'   => 'publish',
+                'post_author'   => wp_get_current_user()->ID,
+                'post_category' => array( $_REQUEST['category_id'] )
+            );
+        }
+
         // Insert the post into the database
-        $post_ID = wp_insert_post( $my_post );
+        $post_ID = wp_insert_post( $post_arr );
         if ( is_wp_error( $post_ID ) ) {
             echo $post_ID->get_error_message();
             exit;
         }
         $url = get_permalink( $post_ID );
+
+
+        $this->updateFileWithPost();
+        $this->deleteFileWithNoPost();
+
         wp_redirect( $url ); // redirect to view the newly created post.
     }
+
+    public function deleteFileWithNoPost()
+    {
+        $args = array(
+            'post_type' => 'attachment',
+            'author' => FORUM_FILE_WITH_NO_POST,
+            'date_query' => array(
+                array(
+                    'column' => 'post_date',
+                    'before' => '1 day ago',
+                )
+            ),
+            'post_status'    => 'inherit',
+            'posts_per_page' => -1,
+        );
+        $files = new WP_Query( $args );
+        if ( $files->have_posts() ) {
+            while ( $files->have_posts() ) {
+                $files->the_post();
+                //di( get_post() );
+                if ( wp_delete_attachment( get_the_ID() ) === false ) {
+                    // error
+                }
+            }
+        }
+        wp_delete_post();
+    }
+
     /**
      *
      *
@@ -104,22 +173,27 @@ class forum
         // Create a post of attachment.
         $attachment = array(
             'guid'           => $url_upload,
+            'post_author'   => FORUM_FILE_WITH_NO_POST,
             'post_mime_type' => $filetype['type'],
             'post_title'     => $filename,
             'post_content'   => '',
-            'post_status'    => 'inherit'
+            'post_status'    => 'inherit',
         );
         /**
          * This does not upload a file but creates a 'attachment' post type in wp_posts.
          *
          */
         $attach_id = wp_insert_attachment( $attachment, $filename );
+        add_post_meta( $attach_id, 'author', wp_get_current_user()->ID );
         dog("attach_id: $attach_id");
+
 
         // Update post_meta for the attachment.
         // You do it and you can use get_attached_file() and get_attachment_url()
         // update_attached_file will update the post meta of '_wp_attached_file' which is the source of "get_attached_file() and get_attachment_url()"
         update_attached_file( $attach_id, $path_upload );
+
+
 
 
         wp_send_json_success([
@@ -141,7 +215,7 @@ class forum
             wp_send_json_error( new WP_Error('failed_on_delete', "File of ID $id does not exists. path: $path") );
         }
         else {
-            wp_send_json_success();
+            wp_send_json_success( array( 'id' => $id ) );
         }
     }
 
@@ -237,6 +311,19 @@ class forum
             }
             return $template;
         } );
+    }
+
+    private function updateFileWithPost()
+    {
+        $ids = $_REQUEST['file_ids'];
+        $arr_ids = explode(',', $ids);
+        if ( empty($arr_ids) ) return;
+        foreach( $arr_ids as $id ) {
+            if ( empty($id) ) continue;
+            $author_id = get_post_meta($id, 'author', true);
+            wp_update_post(['ID'=>$id, 'post_author' => $author_id]);
+            delete_post_meta( $id, 'author', $author_id);
+        }
     }
 }
 function forum() {

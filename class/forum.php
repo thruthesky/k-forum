@@ -21,6 +21,11 @@ class forum
         return $this;
     }
 
+    public function loadText() {
+        load_plugin_textdomain( 'k-forum', FALSE, basename( dirname( FORUM_FILE_PATH ) ) );
+        return $this;
+    }
+
     public function activate() {
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
         if ( $category ) return;
@@ -29,7 +34,7 @@ class forum
         $catarr = array(
             'cat_name' => __('K-Forum', 'k-forum'),
             'category_description' => __("This is K forum.", 'k-forum'),
-            'category_nicename' => 'forum',
+            'category_nicename' => FORUM_CATEGORY_SLUG,
         );
         $ID = wp_insert_category( $catarr, true );
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
@@ -61,6 +66,12 @@ class forum
             wp_enqueue_script( 'forum', FORUM_URL . 'js/forum.js' );
             wp_enqueue_style( 'basic', FORUM_URL . 'css/basic.css' );
             wp_enqueue_script( 'basic', FORUM_URL . 'js/basic.js' );
+
+            wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
+            wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );
+            wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
+            wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js' );
+
         });
         return $this;
     }
@@ -76,6 +87,10 @@ class forum
         }
     }
 
+
+    /**
+     *
+     */
     private function submit()
     {
         $this->$_REQUEST['do']();
@@ -132,6 +147,22 @@ class forum
             }
         }
         wp_delete_post();
+    }
+
+    /**
+     * Returns the URL of forum submit with the $method.
+     *
+     * The returned URL will will call the method.
+     *
+     * @param $method
+     * @return string|void
+     * @code
+     *      <form action="<?php echo forum()->doURL('forum_create')?>" method="post">
+     * @encode
+     */
+    public function doURL($method)
+    {
+        return home_url("/forum/submit?do=$method");
     }
 
     /**
@@ -226,7 +257,7 @@ class forum
             $wp_admin_bar->add_menu( array(
                 'id' => 'forum_toolbar',
                 'title' => __('K-Forum', 'k-forum'),
-                'href' => home_url('wp-admin/admin.php?page=k-forum%2Ftemplate%2Fadmin.php')
+                'href' => forum()->adminURL()
             ) );
         });
 
@@ -283,6 +314,9 @@ class forum
         });
 
 
+        /**
+         *
+         */
         add_filter( 'template_include', function ( $template ) {
             $this->setNone404(); // @todo ??
             // http://abc.com/forum/submit
@@ -303,8 +337,11 @@ class forum
             }
             // Matches if the post is under forum category.
             else if ( is_single() ) {
+                dog("add_filter() : is_single()");
                 $category_id = current( get_the_category( get_the_ID() ) )->term_id;
+                dog("category_id: $category_id");
                 $ex = explode('/', get_category_parents($category_id, false, '/', true));
+                dog("category slug of the category id: $ex[0]");
                 if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
                     return $this->loadTemplate('forum-view-basic.php');
                 }
@@ -325,7 +362,34 @@ class forum
             delete_post_meta( $id, 'author', $author_id);
         }
     }
+
+    public function adminURL()
+    {
+        return home_url('wp-admin/admin.php?page=k-forum%2Ftemplate%2Fadmin.php');
+    }
+
+
+    private function forum_create() {
+
+        if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+
+        $parent = $_REQUEST['parent'];
+        if ( empty($parent) ) $parent = get_category_by_slug( FORUM_CATEGORY_SLUG )->term_id;
+
+
+        $catarr = array(
+            'cat_name' => $_REQUEST['name'],
+            'category_description' => $_REQUEST['desc'],
+            'category_nicename' => $_REQUEST['id'],
+            'category_parent' => $parent,
+        );
+        $ID = wp_insert_category( $catarr, true );
+        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+        wp_redirect( $this->adminURL() );
+    }
+
 }
+
 function forum() {
     return new forum();
 }

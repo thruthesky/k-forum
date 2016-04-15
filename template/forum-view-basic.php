@@ -25,6 +25,9 @@ the_post();
 <h2>Forum View in Plugin</h2>
 
 
+
+
+
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
 

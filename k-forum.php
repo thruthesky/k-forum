@@ -10,6 +10,7 @@
  *
  */
 if ( ! defined('ABSPATH') ) exit;
+define( 'FORUM_FILE_PATH', __FILE__ );
 define( 'FORUM_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FORUM_URL',  plugin_dir_url( __FILE__ ) );
 define( 'FORUM_CATEGORY_SLUG',  'forum' );
@@ -22,8 +23,11 @@ require_once "class/post.php";
 
 forum()
     ->init()
+    ->loadText()
     ->enqueue();
 
 register_activation_hook( __FILE__, function() {
     forum()->activate();
 });
+
+

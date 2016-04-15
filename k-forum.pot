@@ -1,0 +1,129 @@
+# Loco Gettext template
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: K Forum\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: Fri Apr 15 2016 17:44:21 GMT+0800 (PHT)\n"
+"POT-Revision-Date: Fri Apr 15 2016 17:44:28 GMT+0800 (PHT)\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#. Name of the plugin
+msgid "K Forum"
+msgstr ""
+
+#. URI of the plugin
+msgid "http://it.philgo.com"
+msgstr ""
+
+#. Author of the plugin
+msgid "JaeHo Song"
+msgstr ""
+
+#. Description of the plugin
+msgid "This is K Forum."
+msgstr ""
+
+#. page title. ( web browser title )
+#: /class/forum.php:30 /class/forum.php:254 /class/forum.php:261 /class/forum.php:
+#: 262 /template/admin.php:14
+msgid "K-Forum"
+msgstr ""
+
+#: /class/forum.php:31 /template/admin.php:17
+msgid "This is K forum."
+msgstr ""
+
+#: /class/forum.php:38
+msgid "Welcome"
+msgstr ""
+
+#: /class/forum.php:39
+msgid "This is Welcome forum"
+msgstr ""
+
+#: /class/forum.php:47
+msgid "Welcome to K forum."
+msgstr ""
+
+#: /class/forum.php:48
+msgid "This is a test post in welcome K forum."
+msgstr ""
+
+#. parent slug id
+#: /class/forum.php:271 /template/admin-forum-list.php:7 /template/admin.php:69
+msgid "Forum List"
+msgstr ""
+
+#: /class/forum.php:272
+msgid "K-Forum List"
+msgstr ""
+
+#: /template/admin-forum-list.php:10 /template/admin.php:73
+#, php-format
+msgid "View all posts in %s"
+msgstr ""
+
+#: /template/admin.php:20
+msgid "Create a Forum"
+msgstr ""
+
+#: /template/admin.php:25
+msgid "Forum ID"
+msgstr ""
+
+#: /template/admin.php:27
+msgid "Please input forum ID"
+msgstr ""
+
+#: /template/admin.php:28
+msgid "Input forum ID in lowercase letters, numbers and hypens."
+msgstr ""
+
+#: /template/admin.php:34
+msgid "Forum name"
+msgstr ""
+
+#: /template/admin.php:36
+msgid "Please input forum name"
+msgstr ""
+
+#: /template/admin.php:37
+msgid "Input forum name. It should be less than four words."
+msgstr ""
+
+#: /template/admin.php:41
+msgid "Forum description"
+msgstr ""
+
+#: /template/admin.php:43
+msgid "Input forum description. It should be less than 100 words."
+msgstr ""
+
+#: /template/admin.php:48
+msgid "Parent Forum"
+msgstr ""
+
+#: /template/admin.php:50
+msgid "Select Parent Forum"
+msgstr ""
+
+#: /template/admin.php:58
+msgid "You can group or categorize forum by selecting Parent Forum"
+msgstr ""

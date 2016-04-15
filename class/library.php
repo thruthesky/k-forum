@@ -64,7 +64,52 @@ class library
         );
         return $errors[ $code ];
     }
-}
+
+
+    /**
+     *
+     * Returns WP_Term Objects of category in hierarchical tree by doing recursive calls.
+     *
+     * It adds 'depth' attributes on the Object.
+     *
+     * @param $cat_ID
+     * @param int $depth
+     * @return array
+     *
+     * @code
+     *      di( lib()->get_categories_with_depth( get_category_by_slug( 'forum' )->term_id ) );
+     * @endcode
+     *
+     * @code Display in select box.
+     *
+     * $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
+    $categories = lib()->get_categories_with_depth( $cat->term_id );
+    echo '<select>';
+    foreach ( $categories as $category ) {
+    $pads = str_repeat( '&nbsp;&nbsp;', $category->depth );
+    echo "<option value='{$category->term_id}'>$pads{$category->name}</option>";
+    }
+    echo '</select>';
+     * @endcode
+     */
+    public function get_categories_with_depth($cat_ID, $depth = 0 ) {
+        static $output;
+        if ( $depth == 0 ) $output = [];
+        $depth ++;
+        $categories = get_categories( ['parent' => $cat_ID, 'hide_empty'=>false] );
+        if ( count($categories) > 0 ) {
+            foreach ( $categories as $category ) {
+                $category->depth = $depth - 1;
+                $output[] = $category;
+                $this->get_categories_with_depth( $category->term_id, $depth );
+            }
+        }
+        return $output;
+    }
+
+
+
+} // EO Library
 
 /**
  * @return library

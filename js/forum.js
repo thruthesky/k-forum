@@ -72,7 +72,7 @@ var forum = {
     displayAttachment : function ( re ) {
         var m;
         var data = re['data'];
-        if ( re['data']['type'] == 'image' ) {
+        if ( data['file']['type'].indexOf('image') != -1 ) {
             forum.el.photos().append( forum.markup.upload( data ) );
             m = '<img id="id'+data['attach_id']+'" alt="'+data['file']['name']+'" src="'+data['url']+'"/>';
         }
@@ -94,19 +94,25 @@ var forum = {
         forum.el.fileIDs().val(new_ids);
     },
     markup : {
-        upload :
+        upload : /**
+         *
+         *
+         * @Attention This code must have same DOM structure as of forum()->markupAttachments()
+         * @param data
+         * @returns {string}
+         */
             function ( data ) {
                 var m = '<div class="attach" attach_id="'+data['attach_id']+'" type="'+data['type']+'">';
-                if ( data['type'] == 'image' ) {
+                if ( data['file']['type'].indexOf('image') != -1 ) { // image
                     m += '<img src="'+data['url']+'">' +
                         '<div class="delete"><span class="dashicons dashicons-trash"></span> Delete</div>';
                 }
-                else {
+                else { // file
                     m += '<a href="'+data['url']+'">'+data['file']['name']+'</a>' +
                         '<span class="delete"><span class="dashicons dashicons-trash"></span> Delete</span>';
                 }
                 m += "</div>";
-                console.log(m);
+//                console.log(m);
                 return m;
             }
     },
@@ -115,6 +121,8 @@ var forum = {
         var $delete = $(this);
         var $attach = $delete.parent('.attach');
         var id = $attach.attr('attach_id');
+
+        console.log($delete);
 
         var url = url_endpoint + '?do=file_delete&id=' + id;
         console.log(url);
@@ -125,12 +133,14 @@ var forum = {
                 var editor = tinymce.activeEditor;
                 var content = editor.getContent();
                 var ex;
-                if ( $attach.attr('type') == 'image' ) {
+                if ( $attach.attr('type').indexOf('image') != -1 ) {
                     ex = new RegExp('<img[^>]+'+id+'[^>]+>', 'gi'); // patterns, modifiers
                 }
                 else {
                     ex = new RegExp('<a[^>]+'+id+'[^>]+>[^>]*</a>', 'gi'); // patterns, modifiers
                 }
+                console.log(ex);
+                console.log(content);
                 var html = content.replace(ex, '');
                 console.log( html );
                 editor.setContent(html);
@@ -138,7 +148,6 @@ var forum = {
                 forum.removeFileID(re);
             }
         });
-
     }
 };
 

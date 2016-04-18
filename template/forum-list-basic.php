@@ -1,11 +1,9 @@
 <?php
 get_header();
-
 $categories = get_the_category();
 if ( empty($categories) ) {
-    $category = get_category_by_slug( segment(2) );
+    $category = get_category_by_slug( seg(1) );
     $category_id = $category->term_id;
-
 }
 else $category_id = $categories[0]->term_id;
 ?>

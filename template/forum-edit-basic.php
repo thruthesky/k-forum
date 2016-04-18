@@ -25,6 +25,9 @@ else {
         <form action="<?php echo home_url("forum/submit")?>" method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="do" value="post_create">
+            <?php if ( $post ) : ?>
+                <input type="hidden" name="id" value="<?php echo $post->ID?>">
+            <?php endif; ?>
             <input type="hidden" name="category_id" value="<?php echo $category_id?>">
             <input type="hidden" name="file_ids" value="">
             <label for="title">Title</label>
@@ -55,8 +58,12 @@ else {
 
             </div>
 
-            <div class="photos"></div>
-            <div class="files"></div>
+            <?php
+            $attachments = forum()->markupAttachments( get_the_ID() );
+            ?>
+
+            <div class="photos"><?php echo $attachments['images']?></div>
+            <div class="files"><?php echo $attachments['attachments']?></div>
 
             <div class="file-upload">
                 <span class="dashicons dashicons-camera"></span>

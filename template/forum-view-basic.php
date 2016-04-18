@@ -12,21 +12,9 @@ if ( ! have_posts() ) {
 the_post();
 
 
-//add_post_meta(get_the_ID(), 'attachment', 1);
-//
-//di(get_post_meta( get_the_ID(), 'attachment' ));
-//delete_post_meta(get_the_ID(), 'attachment');
-//di(get_post_meta( get_the_ID(), 'attachment' ));
-
-
-
+$category = current(get_the_category());
 
 ?>
-<h2>Forum View in Plugin</h2>
-
-
-
-
 
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
@@ -36,10 +24,16 @@ the_post();
                 <?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
             </div>
 
+            <a href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">
+                <?php echo $category->name?>
+                </a>
+
             <div class="info">
                 No. : <?php the_ID()?>,
                 Count of Viewers : <?php  echo post()->increaseNoOfView( get_the_ID() )?>
                 <a href="<?php echo home_url()?>/forum/<?php the_ID()?>/edit">글 수정</a>
+                <a href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">글 목록</a>
+                <a href="<?php echo forum()->doURL('post_delete&id=' . get_the_ID() )?>">글 삭제</a>
             </div>
 
 

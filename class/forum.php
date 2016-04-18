@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * Class forum
+ * @file forum.php
+ * @desc K forum.
+ *
+ *
+ * @todo security issue. (1) check admin permission on admin action like post_create().
+ */
 class forum
 {
     public function __construct()
     {
+
     }
+
 
     public function setNone404() {
         global $wp_query;
@@ -90,10 +100,28 @@ class forum
 
     /**
      *
+     * This method is called by 'http://abc.com/forum/submit' with $_REQUEST['do']
+     *
+     * Use this function to do action like below that does not display data to web browser.
+     *
+     *  - ajax call
+     *  - submission without display data and redirect to another page.
+     *
+     *
+     * @Note This method can only call a method in 'forum' class.
+     *
+     *
      */
     private function submit()
     {
-        $this->$_REQUEST['do']();
+
+        $do_list = [
+            'post_create', 'file_upload', 'file_delete', 'forum_create',
+            'post_delete',
+        ];
+
+        if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
+        else echo 'You cannot call the method.';
         exit;
     }
     private function post_create( $post_arr = array() ) {
@@ -105,7 +133,11 @@ class forum
                 'post_author'   => wp_get_current_user()->ID,
                 'post_category' => array( $_REQUEST['category_id'] )
             );
+
+            // @todo if it is update, then check the updator's ID.
+            if ( $_REQUEST['id'] ) $post_arr['ID'] = $_REQUEST['id'];
         }
+
 
         // Insert the post into the database
         $post_ID = wp_insert_post( $post_arr );
@@ -116,7 +148,7 @@ class forum
         $url = get_permalink( $post_ID );
 
 
-        $this->updateFileWithPost();
+        $this->updateFileWithPost($post_ID);
         $this->deleteFileWithNoPost();
 
         wp_redirect( $url ); // redirect to view the newly created post.
@@ -146,7 +178,7 @@ class forum
                 }
             }
         }
-        wp_delete_post();
+        // wp_delete_post(); // why this code is here?
     }
 
     /**
@@ -230,7 +262,7 @@ class forum
         wp_send_json_success([
             'attach_id' => $attach_id,
             'url' => $url_upload,
-            'type' => current(explode('/',$filetype['type'])),
+            'type' => $filetype['type'],
             'file' => $file,
         ]);
     }
@@ -269,7 +301,7 @@ class forum
                 'k-forum/template/admin.php', // slug id. what to open
                 '',
                 'dashicons-text',
-                '23.45' // 표시 우선 순위.
+                '23.45' // list priority.
             );
             add_submenu_page(
                 'k-forum/template/admin.php', // parent slug id
@@ -316,10 +348,24 @@ class forum
 
         /**
          *
+         * Add routes for friendly URL.
+         *
+         * @Attention Do 'friendly URL routing ONLY IF it is necessary'.
+         *
+         *      - Don't do friendly URL routing on file upload submit, delete submit, vote submit, report submit.
+         *      - Do friendly URL routing only if it is visiable to user and search engine robot.
+         *
          */
         add_filter( 'template_include', function ( $template ) {
             $this->setNone404(); // @todo ??
-            // http://abc.com/forum/submit
+            // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
+            //
+            // http://abc.com/forum/submit?do=file_upload
+            // http://abc.com/forum/submit?do=file_delete
+            // http://abc.com/forum/submit?do=post_delete
+            // http://abc.com/forum/submit?do=post_vote
+            // http://abc.com/forum/submit?do=post_report
+            // etc...
             if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
                 forum()->submit();
                 exit;
@@ -350,7 +396,7 @@ class forum
         } );
     }
 
-    private function updateFileWithPost()
+    private function updateFileWithPost($post_ID)
     {
         $ids = $_REQUEST['file_ids'];
         $arr_ids = explode(',', $ids);
@@ -358,8 +404,9 @@ class forum
         foreach( $arr_ids as $id ) {
             if ( empty($id) ) continue;
             $author_id = get_post_meta($id, 'author', true);
-            wp_update_post(['ID'=>$id, 'post_author' => $author_id]);
+            wp_update_post(['ID'=>$id, 'post_author' => $author_id, 'post_parent'=>$post_ID]);
             delete_post_meta( $id, 'author', $author_id);
+
         }
     }
 
@@ -386,6 +433,78 @@ class forum
         $ID = wp_insert_category( $catarr, true );
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
         wp_redirect( $this->adminURL() );
+    }
+
+    /**
+     * @todo permission check
+     */
+    private function post_delete() {
+
+        $id = $_REQUEST['id'];
+        $categories = get_the_category($id);
+
+
+        // delete files
+        $attachments = get_children( ['post_parent' => $id, 'post_type' => 'attachment'] );
+        foreach ( $attachments  as $attachment ) {
+            wp_delete_attachment( $attachment->ID, true );
+        }
+        wp_delete_post($id, true);
+
+
+        // move to forum list.
+        if ( ! $categories || is_wp_error( $categories ) ) {
+            wp_redirect( home_url() );
+        }
+        else {
+            $category = current($categories);
+            wp_redirect( forum()->listURL($category->slug));
+        }
+
+
+
+    }
+
+    /**
+     * Returns HTML markup for display images and attachments.
+     *
+     * Use this method to display images and attachments.
+     *
+     * @param $post_ID
+     *
+     * @return string
+     */
+    public function markupAttachments( $post_ID ) {
+
+        if ( empty( $post_ID ) ) return null;
+
+        $files = get_children( ['post_parent' => $post_ID, 'post_type' => 'attachment'] );
+        if ( ! $files || is_wp_error($files) ) return null;
+
+
+        $images = $attachments = null;
+        foreach ( $files as $file ) {
+            $m = "<div class='attach' attach_id='{$file->ID}' type='{$file->post_mime_type}'>";
+            if ( strpos( $file->post_mime_type, 'image' ) !== false ) { // image
+                $m .= "<img src='{$file->guid}'>";
+                $m .= "<div class='delete'><span class='dashicons dashicons-trash'></span> Delete</div>";
+                $m .= '</div>';
+                $images .= $m;
+            }
+            else { // attachment
+                $m .= "<a href='{$file->guid}'>{$file->post_title}</a>";
+                $m .= "<span class='delete'><span class='dashicons dashicons-trash'></span> Delete</span>";
+                $m .= '</div>';
+                $attachments .= $m;
+            }
+
+
+        }
+        return [ 'images' => $images, 'attachments' => $attachments ];
+    }
+
+    public function listURL( $slug ) {
+        return home_url() . "/forum/$slug";
     }
 
 }

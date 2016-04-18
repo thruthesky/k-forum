@@ -116,12 +116,13 @@ class forum
     {
 
         $do_list = [
-            'post_create', 'file_upload', 'file_delete', 'forum_create',
+            'post_create', 'file_upload', 'file_delete',
+            'forum_create', 'forum_delete',
             'post_delete',
         ];
 
         if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
-        else echo 'You cannot call the method.';
+        else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
         exit;
     }
     private function post_create( $post_arr = array() ) {
@@ -430,8 +431,24 @@ class forum
             'category_nicename' => $_REQUEST['id'],
             'category_parent' => $parent,
         );
+
+        $catarr['cat_ID'] = $_REQUEST['category_id'];
+
         $ID = wp_insert_category( $catarr, true );
+
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+        wp_redirect( $this->adminURL() );
+    }
+
+    private function forum_delete() {
+        if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+        //wp_delete_category();
+        $category = get_category( $_REQUEST['category_id']);
+        wp_insert_category([
+            'cat_ID' => $category->term_id,
+            'cat_name' => "Deleted : " . $category->name,
+            'category_parent' => 0,
+        ]);
         wp_redirect( $this->adminURL() );
     }
 

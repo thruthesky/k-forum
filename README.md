@@ -1,5 +1,22 @@
-# k-forum
-Korean Style Forum WordPress Plugin
+# K-Forum
+
+K-Forum is short for "Knowledge Forum".
+
+# Features
+
+* K-Forum uses the same idea of managing posts and comments exactly as how WordPress does. Which means even if you uninstall K-Forum plugin, you can still use the contents that were written by K-Forum.
+* K-Forum lets theme developers to use k-forum template files.  
+
+
+## K Forum Delete
+
+When a k-forum category is deleted, it renames the category as "Deleted-[Original Forum Name]" and puts it out of the k-forum category.
+
+We do it just because the user may delete a category mistakenly. If the user wants to delete the categor, he can delete it from the "Post" ==> "Category Menu".
+
+
+
+ 
 
 # todo
 

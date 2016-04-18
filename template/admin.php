@@ -6,13 +6,16 @@ wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0
 
 $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
 $categories = lib()->get_categories_with_depth( $cat->term_id );
-if ( isset($_REQUEST['category_id']) ) {
+
+if ( isset($_REQUEST['category_id']) ) { // editing
     $category = get_category( $_REQUEST['category_id'] );
+    $category_id = $category->term_id;
 }
 else {
     $category = null;
 }
 ?>
+
 <style>
     <?php if ( isset($_REQUEST['category_id']) ) : ?>
     .forum-list {
@@ -38,6 +41,9 @@ else {
             $('.forum-create').hide();
             $('.forum-list').show();
         });
+        <?php if ( $category ) : ?>
+        $('.forum-create [name="parent"]').val("<?php echo $category->parent?>");
+        <?php endif; ?>
     });
 </script>
 
@@ -50,7 +56,13 @@ else {
     </div>
 
     <div class="forum-create">
-        <h2><?php _e('Create a Forum', 'k-forum')?></h2>
+        <h2>
+            <?php if ( $category ) : ?>
+                <?php _e('Update a Forum', 'k-forum')?>
+            <?php else : ?>
+                <?php _e('Create a Forum', 'k-forum')?>
+            <?php endif; ?>
+        </h2>
 
         <form action="<?php echo forum()->doURL('forum_create')?>" method="post">
             <?php if ( $category ) { ?>
@@ -69,13 +81,13 @@ else {
                 <label for="ForumName">
                     <?php _e('Forum name', 'k-forum')?>
                 </label>
-                <input id='ForumName' class='form-control' type="text" name="name" placeholder="<?php _e('Please input forum name', 'k-forum')?>">
+                <input id='ForumName' class='form-control' type="text" name="name" placeholder="<?php _e('Please input forum name', 'k-forum')?>" value="<?php if ( $category ) echo $category->name ?>">
                 <small class="text-muted"><?php _e('Input forum name. It should be less than four words.', 'k-forum')?></small>
             </fieldset>
 
             <fieldset class="form-group">
                 <label for="ForumDesc"><?php _e('Forum description', 'k-forum')?></label>
-                <textarea name="desc" class="form-control" id="ForumDesc" rows="3"></textarea>
+                <textarea name="desc" class="form-control" id="ForumDesc" rows="3"><?php if ( $category ) echo $category->description ?></textarea>
                 <small class="text-muted"><?php _e('Input forum description. It should be less than 100 words.', 'k-forum')?></small>
             </fieldset>
 
@@ -83,7 +95,7 @@ else {
             <fieldset class="form-group">
                 <label for="ForumParent"><?php _e('Parent Forum', 'k-forum')?></label>
                 <select name="parent" class="form-control" id="ForumParent">
-                    <option value=""><?php _e('Select Parent Forum', 'k-forum')?></option>
+                    <option value="<?php echo get_category($category->parent)->term_id?>"><?php _e('Select Parent Forum', 'k-forum')?></option>
                     <?php
                     foreach ( $categories as $category ) {
                         $pads = str_repeat( '&nbsp;&nbsp;', $category->depth );
@@ -93,13 +105,14 @@ else {
                 </select>
                 <small class="text-muted"><?php _e('You can group or categorize forum by selecting Parent Forum', 'k-forum')?></small>
             </fieldset>
-
-
             <br>
 
-            <input type="submit" class="btn btn-primary" value="SUBMIT FORUM">
-
-            <button type="button" class="btn btn-secondary forum-create-cancel-button">Cancel</button>
+            <?php if ( $category ) : ?>
+                <input type="submit" class="btn btn-primary" value="<?php _e('Update Forum', 'k-forum')?>">
+            <?php else : ?>
+                <input type="submit" class="btn btn-primary" value="<?php _e('Create Forum', 'k-forum')?>">
+            <?php endif; ?>
+            <button type="button" class="btn btn-secondary forum-create-cancel-button"><?php _e('Cancel', 'k-forum')?></button>
 
         </form>
     </div>
@@ -113,21 +126,29 @@ else {
 
         <div class="forum-list container">
             <div class="row">
-                <div class="col-xs-6 col-sm-3">Category</div>
-                <div class="col-xs-3 col-sm-1">Edit</div>
-                <div class="col-xs-3 col-sm-1">Posts</div>
-                <div class="col-xs-12 col-sm-7">Description</div>
+                <div class="col-xs-6 col-sm-4">Category</div>
+                <div class="col-xs-2 col-sm-1">Edit</div>
+                <div class="col-xs-2 col-sm-1">Delete</div>
+                <div class="col-xs-2 col-sm-1">Posts</div>
+                <div class="col-xs-12 col-sm-5">Description</div>
             </div>
             <?php
             foreach($categories as $category) {
                 ?>
                 <div class="row">
-                    <div class="col-xs-6 col-sm-3">
-                        <a href="<?php echo forum()->listURL($category->slug)?>" target="_blank"><?php echo $category->name?></a>
+                    <div class="col-xs-6 col-sm-4">
+                        <a href="<?php echo forum()->listURL($category->slug)?>" target="_blank">
+                            <?php
+                            $pads = str_repeat( '&nbsp;&nbsp;', $category->depth );
+                            echo $pads;
+                            ?>
+                            <?php echo $category->name?>
+                        </a>
                     </div>
-                    <div class="col-xs-3 col-sm-1"><a href="<?php echo forum()->adminURL()?>&category_id=<?php echo $category->term_id?>">Edit</a></div>
-                    <div class="col-xs-3 col-sm-1"><?php echo $category->count?></div>
-                    <div class="col-xs-12 col-sm-7"><?php echo $category->description?></div>
+                    <div class="col-xs-2 col-sm-1"><a href="<?php echo forum()->adminURL()?>&category_id=<?php echo $category->term_id?>">Edit</a></div>
+                    <div class="col-xs-2 col-sm-1"><a href="<?php echo forum()->doURL('forum_delete')?>&category_id=<?php echo $category->term_id?>">Delete</a></div>
+                    <div class="col-xs-2 col-sm-1"><?php echo $category->count?></div>
+                    <div class="col-xs-12 col-sm-5"><?php echo $category->description?></div>
                 </div>
             <?php } ?>
 

@@ -2,11 +2,42 @@
 
 K-Forum is short for "Knowledge Forum".
 
+
+# todo
+
+
+* SEO
+	* keywords, images, alt, slug, length of tile/comment, H1/H2, keyword in title/H1/H2, links in content, etc.
+
+* Comment work
+	* Comment list. ( need to create a whole comment function to display buttons )
+	* Comment Create with file upload. ( need to create a whole comment function ) 
+	* Comment Update with file upload. 
+
+* File Uploading.
+
+    - show images in media page properly.
+
+* Post/Comment Voting.
+
+* Forum management
+	* forum category statistics
+	* forum options
+		* how many post will be listed in list view page.
+		* templating for each forum category.
+		* and other options.
+        
+
+
+
 # Features
 
 * K-Forum uses the same idea of managing posts and comments exactly as how WordPress does. Which means even if you uninstall K-Forum plugin, you can still use the contents that were written by K-Forum.
 * K-Forum lets theme developers to use k-forum template files.  
 
+
+
+ 
 
 ## K Forum Delete
 
@@ -15,40 +46,11 @@ When a k-forum category is deleted, it renames the category as "Deleted-[Origina
 We do it just because the user may delete a category mistakenly. If the user wants to delete the categor, he can delete it from the "Post" ==> "Category Menu".
 
 
+## K Forum URL
 
- 
-
-# todo
-
-
-* File Uploading
-
-    - update. update and delete file.
-
-    - show images in media page properly.
-
-    - upload/edit files on comments.
-
-
-* Forum management
-
-    - forum category CRUD
-    - forum category statistics
-    - forum options
-        -- how many post will be listed in list view page.
-        -- templating for each forum category.
-        -- and other options.
-        
-
-* Forum ID Routing
-
-    - http://abc.com/qna will turn into "http://abc.com/category/forum/qna"
-
-        -- when forum configuration has edited, option 'forum-routing' will be updated with all k-forum ID.
-
-        -- k forum ID will be saved and matched on every acess.
-
-            -- if matched, then rewrite it into the category.
+* /fourm/qna ==> qna forum.
+* /forum/qna/edit ==> new post form page under qna forum
+* /qna ==> qna fourm. This will be redirected to /forum/qna. If bbPress has same slug, bbPress will take priority. So, bbPress qna forum will be display.
 
 
 * 만약 글을 k forum 에서 작성했는데, Post 메뉴에서 글을 수정 할 때, 카테고리를 여러개 선택한다면,

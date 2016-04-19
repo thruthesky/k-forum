@@ -25,7 +25,7 @@ class library
             $u = strtolower(site_url());
             $u = str_replace("http://", '', $u);
             $u = str_replace("https://", '', $u);
-            $r = strtolower($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            $r = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $uri = str_replace( "$u/", '', $r);
             $arr = explode('?', $uri);
             if ( $arr ) {

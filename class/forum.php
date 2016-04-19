@@ -26,8 +26,11 @@ class forum
 
     public function init()
     {
+
+        $this->manageRoles();
         $this->addAdminMenu();
         $this->addRoutes();
+        $this->addFilters();
         return $this;
     }
 
@@ -116,15 +119,24 @@ class forum
     {
 
         $do_list = [
-            'post_create', 'file_upload', 'file_delete',
             'forum_create', 'forum_delete',
-            'post_delete',
+            'post_create', 'post_delete',
+            'comment_create', 'comment_delete',
+            'file_upload', 'file_delete',
         ];
 
         if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
         else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
         exit;
     }
+
+
+    /**
+     * Creates / Updates a post.
+     *
+     * @param array $post_arr
+     * @todo permission check. if it is update, then check the updator's ID.
+     */
     private function post_create( $post_arr = array() ) {
         if ( empty($post_arr) ) {
             $post_arr = array(
@@ -134,20 +146,23 @@ class forum
                 'post_author'   => wp_get_current_user()->ID,
                 'post_category' => array( $_REQUEST['category_id'] )
             );
-
-            // @todo if it is update, then check the updator's ID.
-            if ( $_REQUEST['id'] ) $post_arr['ID'] = $_REQUEST['id'];
         }
 
+        if ( $_REQUEST['id'] ) {
+            $post_arr['ID'] = $_REQUEST['id'];
+            $post_ID = wp_update_post($post_arr);
+        }
+        else {
 
-        // Insert the post into the database
-        $post_ID = wp_insert_post( $post_arr );
+            // Insert the post into the database
+            $post_ID = wp_insert_post( $post_arr );
+        }
+
         if ( is_wp_error( $post_ID ) ) {
             echo $post_ID->get_error_message();
             exit;
         }
         $url = get_permalink( $post_ID );
-
 
         $this->updateFileWithPost($post_ID);
         $this->deleteFileWithNoPost();
@@ -330,6 +345,7 @@ class forum
          *
          * ReWrite 하는 목적은 Main Loop 를 사용 할 수 있도록 하기 위한 것이다.
          *
+         * @todo flush routes only on activation.
          */
         add_action('init', function() {
             add_rewrite_rule(
@@ -343,6 +359,7 @@ class forum
                 'top'
             );
             //add_rewrite_tag('%val%','([^/]*)');
+            // @todo flush routes only on activation.
             flush_rewrite_rules();
         });
 
@@ -354,11 +371,20 @@ class forum
          * @Attention Do 'friendly URL routing ONLY IF it is necessary'.
          *
          *      - Don't do friendly URL routing on file upload submit, delete submit, vote submit, report submit.
-         *      - Do friendly URL routing only if it is visiable to user and search engine robot.
+         *      - Do friendly URL routing only if it is visible to user and search engine robot.
          *
          */
         add_filter( 'template_include', function ( $template ) {
             $this->setNone404(); // @todo ??
+
+
+            /**
+             * @note
+             */
+            $slugs = get_option('forum-slugs');
+            if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
+                wp_redirect( home_url("forum/" . seg(0) . '/' ) );
+            }
             // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
             //
             // http://abc.com/forum/submit?do=file_upload
@@ -367,7 +393,7 @@ class forum
             // http://abc.com/forum/submit?do=post_vote
             // http://abc.com/forum/submit?do=post_report
             // etc...
-            if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
+            else if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
                 forum()->submit();
                 exit;
             }
@@ -378,6 +404,11 @@ class forum
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
                 return $this->loadTemplate('forum-edit-basic.php');
             }
+            // http://abc.com/forum/xxxx/commentEdit
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'commentEdit'  ) {
+
+                return $this->loadTemplate('forum-commentEdit-basic.php');
+            }
             // https://abc.com/forum/xxxx/[0-9]+
             else if ( seg(0) == 'forum' && seg(1) != null && is_numeric(seg(2))  ) {
                 return $this->loadTemplate('forum-view-basic.php');
@@ -385,16 +416,22 @@ class forum
             // Matches if the post is under forum category.
             else if ( is_single() ) {
                 dog("add_filter() : is_single()");
-                $category_id = current( get_the_category( get_the_ID() ) )->term_id;
-                dog("category_id: $category_id");
-                $ex = explode('/', get_category_parents($category_id, false, '/', true));
-                dog("category slug of the category id: $ex[0]");
-                if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
-                    return $this->loadTemplate('forum-view-basic.php');
+                $id = get_the_ID();
+                if ( $id ) {
+                    $category = get_the_category( $id );
+                    if ( $category ) {
+                        $category_id = current( $category )->term_id;
+                        dog("category_id: $category_id");
+                        $ex = explode('/', get_category_parents($category_id, false, '/', true));
+                        dog("category slug of the category id: $ex[0]");
+                        if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
+                            return $this->loadTemplate('forum-view-basic.php');
+                        }
+                    }
                 }
             }
             return $template;
-        } );
+        }, 0.01 );
     }
 
     private function updateFileWithPost($post_ID)
@@ -417,12 +454,17 @@ class forum
     }
 
 
+    /**
+     * Creates / Updates a forum.
+     */
     private function forum_create() {
 
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
 
-        $parent = $_REQUEST['parent'];
-        if ( empty($parent) ) $parent = get_category_by_slug( FORUM_CATEGORY_SLUG )->term_id;
+        if ( isset( $_REQUEST['parent'] ) ) {
+            $parent = $_REQUEST['parent'];
+        }
+        else $parent = get_category_by_slug( FORUM_CATEGORY_SLUG )->term_id;
 
 
         $catarr = array(
@@ -437,6 +479,33 @@ class forum
         $ID = wp_insert_category( $catarr, true );
 
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+
+
+
+        /**
+         * @note Remember ( Stores ) slugs of k-forum into option.
+         *
+         */
+        $category = get_category_by_slug( FORUM_CATEGORY_SLUG );
+        $args = array(
+            'child_of'                 => $category->term_id,
+            'hide_empty'               => FALSE,
+        );
+        $child_categories = get_categories($args );
+        $slugs = [];
+        foreach ( $child_categories as $child ) {
+            $slugs[] = $child->slug;
+            $slug = '^' . $child->slug . '$';
+            di($slug);
+            add_rewrite_rule(
+                $slug,
+                'index.php?category_name='.$child->slug,
+                'top'
+            );
+            flush_rewrite_rules();
+        }
+        update_option('forum-slugs', $slugs);
+
         wp_redirect( $this->adminURL() );
     }
 
@@ -514,14 +583,127 @@ class forum
                 $m .= '</div>';
                 $attachments .= $m;
             }
-
-
         }
+
         return [ 'images' => $images, 'attachments' => $attachments ];
     }
 
     public function listURL( $slug ) {
         return home_url() . "/forum/$slug";
+    }
+
+    private function addFilters()
+    {
+        /**
+         *
+        add_filter('comment_form_submit_field', function($submit_field, $args) {
+            $m = '';
+            $m .= "<div>파일업로드</div>";
+            return $m . $submit_field;
+        }, 10, 2);
+
+         */
+
+
+        add_filter('comment_reply_link', function($link, $args, $comment, $post) {
+
+            $url = $this->commentEditURL( $comment->comment_ID );
+
+            $m = <<<EOM
+<div class="post-edit" commend-id="{$comment->comment_ID}"><a href="$url">Edit</a></div>
+EOM;
+
+            return $m . $link;
+        }, 10, 4);
+
+    }
+
+    /**
+     * @param $the_ID
+     * @return string
+     *
+     * @code <a href="<?php echo post()->editURL( get_the_ID() ) ?>">글 수정</a>
+     * @code <a href="<?php echo post()->editURL( get_the_ID() ) ?>">코멘트 수정</a>
+     */
+    public function editURL($the_ID)
+    {
+        return home_url() . "/forum/$the_ID/edit";
+    }
+    /**
+     * @param $the_ID
+     * @return string
+     *
+     * @code <a href="<?php echo post()->editURL( get_the_ID() ) ?>">글 수정</a>
+     * @code <a href="<?php echo post()->editURL( get_the_ID() ) ?>">코멘트 수정</a>
+     */
+    public function commentEditURL($the_ID)
+    {
+        return home_url() . "/forum/$the_ID/commentEdit";
+    }
+
+
+    private function manageRoles()
+    {
+
+    }
+
+    /**
+     * Creates / Updates a post.
+     *
+     *
+     * @todo permission check. if it is update, then check the updator's ID.
+     */
+    private function comment_create( ) {
+
+        $comment_ID = $_REQUEST['id'];
+        $comment = get_comment( $comment_ID );
+        $post_ID = $comment->comment_post_ID;
+
+        $re = wp_update_comment([
+            'comment_ID' => $comment_ID,
+            'comment_content' => $_REQUEST['comment_content']
+        ]);
+        if ( ! $re ) {
+            wp_die("Comment was not updated");
+        }
+
+
+
+        /*
+        if ( empty($post_arr) ) {
+            $post_arr = array(
+                'post_title'    => $_REQUEST['title'],
+                'post_content'  => $_REQUEST['content'],
+                'post_status'   => 'publish',
+                'post_author'   => wp_get_current_user()->ID,
+                'post_category' => array( $_REQUEST['category_id'] )
+            );
+        }
+
+        if ( $_REQUEST['id'] ) {
+            $post_arr['ID'] = $_REQUEST['id'];
+            $post_ID = wp_update_post($post_arr);
+        }
+        else {
+
+            // Insert the post into the database
+            $post_ID = wp_insert_post( $post_arr );
+        }
+
+        if ( is_wp_error( $post_ID ) ) {
+            echo $post_ID->get_error_message();
+            exit;
+        }
+        $url = get_permalink( $post_ID );
+
+        $this->updateFileWithPost($post_ID);
+        $this->deleteFileWithNoPost();
+
+        */
+
+
+        $url = get_permalink( $post_ID ) . '#comment-' . $comment_ID ;
+        wp_redirect( $url ); // redirect to view the newly created post.
     }
 
 }

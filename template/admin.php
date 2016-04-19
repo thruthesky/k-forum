@@ -14,6 +14,7 @@ if ( isset($_REQUEST['category_id']) ) { // editing
 else {
     $category = null;
 }
+
 ?>
 
 <style>
@@ -64,6 +65,8 @@ else {
             <?php endif; ?>
         </h2>
 
+
+
         <form action="<?php echo forum()->doURL('forum_create')?>" method="post">
             <?php if ( $category ) { ?>
                 <input type="hidden" name="category_id"  value="<?php if ( $category ) echo $category->term_id ?>">
@@ -73,7 +76,7 @@ else {
                     <?php _e('Forum ID', 'k-forum')?>
                 </label>
                 <input id='ForumID' class='form-control' type="text" name="id" placeholder="<?php _e('Please input forum ID', 'k-forum')?>" value="<?php if ( $category ) echo $category->slug ?>">
-                <small class="text-muted"><?php _e('Input forum ID in lowercase letters, numbers and hypens.', 'k-forum')?></small>
+                <small class="text-muted"><?php _e('Input forum ID in lowercase letters, numbers and hypens. It is a slug.', 'k-forum')?></small>
             </fieldset>
 
 
@@ -82,7 +85,7 @@ else {
                     <?php _e('Forum name', 'k-forum')?>
                 </label>
                 <input id='ForumName' class='form-control' type="text" name="name" placeholder="<?php _e('Please input forum name', 'k-forum')?>" value="<?php if ( $category ) echo $category->name ?>">
-                <small class="text-muted"><?php _e('Input forum name. It should be less than four words.', 'k-forum')?></small>
+                <small class="text-muted"><?php _e('Input forum name. It should be less than four words. It is a category name.', 'k-forum')?></small>
             </fieldset>
 
             <fieldset class="form-group">

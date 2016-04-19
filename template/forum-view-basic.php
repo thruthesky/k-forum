@@ -31,7 +31,7 @@ $category = current(get_the_category());
             <div class="info">
                 No. : <?php the_ID()?>,
                 Count of Viewers : <?php  echo post()->increaseNoOfView( get_the_ID() )?>
-                <a href="<?php echo home_url()?>/forum/<?php the_ID()?>/edit">글 수정</a>
+                <a href="<?php echo forum()->editURL( get_the_ID() ) ?>">글 수정</a>
                 <a href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">글 목록</a>
                 <a href="<?php echo forum()->doURL('post_delete&id=' . get_the_ID() )?>">글 삭제</a>
             </div>

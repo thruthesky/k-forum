@@ -69,6 +69,7 @@ class Post {
         return preg_match_all('/<img[^>]+>/i', $content);
     }
 
+
 } // eo class
 
 

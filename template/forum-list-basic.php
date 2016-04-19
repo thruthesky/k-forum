@@ -16,19 +16,18 @@ else $category_id = $categories[0]->term_id;
             <a href="<?php echo home_url()?>/forum/<?php echo seg('1')?>/edit">POST NEW</a>
         </div>
 
-        <table>
-            <thead>
-            <th class="title">Title</th>
-            <th class="author">Author</th>
-            <th class="date">Date</th>
-            <th class="no-of-view" title="No. of Views">View</th>
-            </thead>
-            <tbody>
+        <div class="container post-list">
+            <div class="row header">
+                <div class="col-xs-12 col-sm-6 col-md-8 title">Title</div>
+                <div class="col-xs-4 col-sm-2 col-md-2 author">Author</div>
+                <div class="col-xs-4 col-sm-2 col-md-1 date">Date</div>
+                <div class="col-xs-4 col-sm-2 col-md-1 no-of-view" title="No. of Views">View</div>
+            </div>
             <?php
             if ( have_posts() ) : while( have_posts() ) : the_post();
                 ?>
-                <tr data-post-id="<?php the_ID()?>">
-                    <td class="title">
+                <div class="row post" data-post-id="<?php the_ID()?>">
+                    <div class="col-xs-12 col-sm-6 col-md-8  title">
                         <h2>
                             <a href="<?php echo esc_url( get_permalink() )?>">
                                 <?php
@@ -48,18 +47,16 @@ else $category_id = $categories[0]->term_id;
                                 }
                                 ?>
                             </a>
-
                         </h2>
-                    </td>
-                    <td class="author"><div><?php the_author()?></div></td>
-                    <td class="date"><div title="<?php echo get_the_date()?>"><?php post()->the_date()?></div></td>
-                    <td class="no-of-view"><div><?php echo number_format(post()->getNoOfView( get_the_ID() ) )?></div></td>
-                </tr>
+                    </div>
+                    <div class="col-xs-4 col-sm-2 col-md-2 author"><?php the_author()?></div>
+                    <div class="col-xs-4 col-sm-2 col-md-1 date" title="<?php echo get_the_date()?>"><?php post()->the_date()?></div>
+                    <div class="col-xs-4 col-sm-2 col-md-1 no-of-view"><?php echo number_format(post()->getNoOfView( get_the_ID() ) )?></div>
+                </div>
                 <?php
             endwhile; endif;
             ?>
-            </tbody>
-        </table>
+        </div>
 
 
         <?php

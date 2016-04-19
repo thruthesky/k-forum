@@ -381,7 +381,7 @@ class forum
             /**
              * @note
              */
-            $slugs = get_option('forum-slugs');
+            $slugs = forum()->slugs();
             if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
                 wp_redirect( home_url("forum/" . seg(0) . '/' ) );
             }
@@ -605,6 +605,10 @@ class forum
          */
 
 
+        /**
+         * Adds edit button on comment.
+         */
+        /*
         add_filter('comment_reply_link', function($link, $args, $comment, $post) {
 
             $url = $this->commentEditURL( $comment->comment_ID );
@@ -615,7 +619,38 @@ EOM;
 
             return $m . $link;
         }, 10, 4);
+        */
 
+
+
+        /**
+         * Filters on comments list arguments.
+         */
+/*
+        add_filter( 'wp_list_comments_args', function( $r ) {
+            $r['type'] = 'comment';
+            $r['callback'] = function($comment, $args, $depth) {
+                include FORUM_PATH . '/template/comment.php';
+            };
+            return $r;
+        });
+*/
+
+
+        add_filter( 'comments_template', function( $comment_template ) {
+            global $post;
+            $categories = get_the_category( $post->ID );
+            if ( $categories ) {
+                $slug = current( $categories )->slug;
+                if ( in_array( $slug, forum()->slugs() ) ) {
+                    $comment_template = locate_template('comments-basic.php');
+                    if ( empty($comment_template) ) {
+                        $comment_template = FORUM_PATH . "template/comments-basic.php";
+                    }
+                }
+            }
+            return $comment_template;
+        });
     }
 
     /**
@@ -655,55 +690,52 @@ EOM;
      */
     private function comment_create( ) {
 
-        $comment_ID = $_REQUEST['id'];
-        $comment = get_comment( $comment_ID );
-        $post_ID = $comment->comment_post_ID;
 
-        $re = wp_update_comment([
-            'comment_ID' => $comment_ID,
-            'comment_content' => $_REQUEST['comment_content']
-        ]);
-        if ( ! $re ) {
-            wp_die("Comment was not updated");
-        }
-
-
-
-        /*
-        if ( empty($post_arr) ) {
-            $post_arr = array(
-                'post_title'    => $_REQUEST['title'],
-                'post_content'  => $_REQUEST['content'],
-                'post_status'   => 'publish',
-                'post_author'   => wp_get_current_user()->ID,
-                'post_category' => array( $_REQUEST['category_id'] )
-            );
-        }
-
-        if ( $_REQUEST['id'] ) {
-            $post_arr['ID'] = $_REQUEST['id'];
-            $post_ID = wp_update_post($post_arr);
+        if ( isset( $_REQUEST['id'] ) ) {
+            $comment_ID = $_REQUEST['id'];
+            $comment = get_comment( $comment_ID );
+            $post_ID = $comment->comment_post_ID;
+            $re = wp_update_comment([
+                'comment_ID' => $comment_ID,
+                'comment_content' => $_REQUEST['comment_content']
+            ]);
+            if ( ! $re ) {
+                wp_die("Comment was not updated");
+            }
         }
         else {
-
-            // Insert the post into the database
-            $post_ID = wp_insert_post( $post_arr );
+            $post_ID = $_REQUEST['post_ID'];
+            $comment_ID = wp_insert_comment([
+                'comment_post_ID' => $post_ID,
+                'comment_content' => $_REQUEST['comment_content'],
+                'comment_approved' => 1,
+            ]);
+            if ( ! $comment_ID ) {
+                wp_die("Comment was not created");
+            }
         }
-
-        if ( is_wp_error( $post_ID ) ) {
-            echo $post_ID->get_error_message();
-            exit;
-        }
-        $url = get_permalink( $post_ID );
-
-        $this->updateFileWithPost($post_ID);
-        $this->deleteFileWithNoPost();
-
-        */
-
-
         $url = get_permalink( $post_ID ) . '#comment-' . $comment_ID ;
         wp_redirect( $url ); // redirect to view the newly created post.
+    }
+
+    /**
+     * Returns array of forum slugs
+     * @return array
+     * @code Return code sample.
+     * Array
+        (
+        [0] => discussion
+        [1] => manila
+        [2] => korea
+        [3] => new-category
+        [4] => abc
+        [5] => qna
+        )
+     * @endcode
+     */
+    public function slugs()
+    {
+        return get_option('forum-slugs');
     }
 
 }

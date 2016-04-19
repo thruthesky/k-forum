@@ -1,78 +1,57 @@
-#posts,
-#posts td,
-#posts h2 {
-    font-size: 1.2rem;
+/* Post list */
+#posts {
     font-family: "Malgun Gothic", "AppleGothic", "Gulim", "Dotum", serif;
 }
-
-#posts table {
-    width: 100%;
+#posts h2 {
+    font-size:1em;
 }
-
-#posts table tr,
-#posts table td {
-    margin: 0;
-    padding: 0;
-}
-
-
-#posts thead th {
-    font-weight: normal;
-    font-size: 1rem;
-    text-align:center;
-}
-
-#posts .title {
-    margin: 0;
-    padding: 0;
-    font-size: 1.2rem;
-}
-#posts .title h2 {
-    margin: 0;
-    padding: 0;
-}
-#posts .title a {
-    display: block;
-}
-
-#posts tbody tr:nth-child(even) {
-    background-color: #a9a9a9;
-}
-
-
-#posts .author,
-#posts .date,
-#posts .no-of-view {
+.post-list .author,
+.post-list .date,
+.post-list .no-of-view {
     display:none;
+    font-size: 1.2em;
 }
 
-#posts .author {
-    min-width: 5em;
-    text-align:left;
-}
-#posts .date {
-    min-width: 5em;
-    text-align: center;
-}
-#posts .no-of-view {
-    min-width: 4em;
-    text-align: right;
-    padding-right: 1em;
-    box-sizing: border-box;
+.post-list .header {
+    padding: 1em;
+    background-color: #e2e8ef;
+    font-size: 1.2em;
 }
 
-@media all and ( min-width: 33.9em ) {
-    #posts .author {
-        display: table-cell;
+
+.post-list .post:nth-child(even) {
+    background-color: #fbfbfb;
+}
+
+
+.post-list .post .title {
+    font-size: 1.1em;
+}
+
+.post-list .post a {
+    display: block;
+    padding: .7em 0 .7em 1em;
+    font-weight: normal;
+}
+
+@media all and ( min-width: 34em ) {
+    .post-list .author,
+    .post-list .date,
+    .post-list .no-of-view {
+        display: block;
     }
 }
-@media all and ( min-width: 47.9em ) {
-    #posts .date,
-    #posts .no-of-view {
-        display: table-cell;
-    }
-}
 
+
+/* eo Post List */
+
+
+/* Post View */
+article .content {
+    padding: 1em;
+    background-color: #dfdfdf;
+}
+/* eo Post View */
 
 /** post new */
 

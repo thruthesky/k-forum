@@ -59,3 +59,10 @@ We do it just because the user may delete a category mistakenly. If the user wan
     - 하지만 K forum 은 글 하나에 하나의 k forum 카테고리만 가지는 것으로 가정하기 때문에 올바르지 않은 결과가 나타날 수 있다.
     - 따라서 글 수정은 Post 메뉴에서 하지 않는다.
 
+
+
+# K-Forum Internals
+
+## Much the same as WordPress
+
+For instance, if a k-forum comment is deleted, it saves into trash just like WordPress comment does.

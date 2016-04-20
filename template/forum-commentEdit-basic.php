@@ -10,19 +10,18 @@ else {
 ?>
     <h2>Comment EDIT</h2>
 
-
     <script>
         var url_endpoint = "<?php echo home_url("forum/submit")?>";
         var max_upload_size = <?php echo wp_max_upload_size();?>;
     </script>
 
 
-    <section id="post-new">
+    <section class="comment-new">
         <form action="<?php echo home_url("forum/submit")?>" method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="do" value="comment_create">
             <?php if ( $comment ) : ?>
-                <input type="hidden" name="id" value="<?php echo $comment->comment_ID?>">
+                <input type="hidden" name="comment_ID" value="<?php echo $comment->comment_ID?>">
             <?php endif; ?>
             <input type="hidden" name="file_ids" value="">
             <label for="title">Title</label>
@@ -32,11 +31,11 @@ else {
                 <textarea name="comment_content"><?php echo $comment->comment_content?></textarea>
             </div>
 
+
             <?php
-            //$attachments = forum()->markupAttachments( get_the_ID() );
+            $attachments = forum()->markupEditAttachments( FORUM_COMMENT_POST_NUMBER + $comment->comment_ID );
             ?>
-<?php
-/*
+
             <div class="photos"><?php echo $attachments['images']?></div>
             <div class="files"><?php echo $attachments['attachments']?></div>
 
@@ -49,7 +48,9 @@ else {
                 <img src="<?php echo FORUM_URL ?>/img/loader14.gif">
                 File upload is in progress. Please wait.
             </div>
-*/?>
+
+
+
             <label for="post-submit-button"><input id="post-submit-button" type="submit"></label>
             <label for="post-cancel-button"><div id="post-cancel-button">Cancel</div></label>
 

@@ -91,17 +91,20 @@ article .content {
 }
 
 
-#post-new .loader {
+#post-new .loader,
+.comment-new .loader {
     display: none;
 }
 
 
-#post-new .photos {
+#post-new .photos,
+.comment-new .photos {
     overflow: auto;
     overflow-x: hidden;
     overflow-y: hidden;
 }
-.photos .attach {
+.comment-list .comment form .photos .attach,
+form .photos .attach {
     position: relative;
     float: left;
     width: 100px;
@@ -109,7 +112,7 @@ article .content {
 }
 
 .photos .attach img {
-    width: 100%;
+    width: auto;
     height: auto;
 }
 .photos .attach .delete {
@@ -128,11 +131,6 @@ article .content {
     background-color: #7ba8bf;
 }
 
-
-
-#post-new .files {
-
-}
 
 .files .attach .delete {
     padding-left: 2em;

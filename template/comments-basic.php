@@ -16,132 +16,204 @@
 if ( post_password_required() ) {
     return;
 }
+
 ?>
+<!--suppress ALL -->
+<script>
+    var url_endpoint = "<?php echo home_url("forum/submit")?>";
+    var max_upload_size = <?php echo wp_max_upload_size();?>;
+</script>
 
 <style>
-    .buttons {
+    /** comments_basic function style */
+    .comment-buttons {
         overflow: auto;
     }
-    .buttons > div {
+    .comment-buttons > div {
         float: left;
         color: #3b3a36;
         padding: .1em .6em .1em 0;
     }
+
+    /** Attachment display on comment view */
+    .comment-list .comment .photos,
+    .comment-list .comment .files {
+        overflow: auto;
+        overflow-y: hidden;
+    }
+    .comment-list .comment .photos .attach {
+        width: auto;
+        height: auto;
+    }
+    .comment-list .comment .photos .attach img {
+        max-width: 100%;
+    }
 </style>
+<script>
+    jQuery( function( $ ) {
+        $('.comment-list .reply').click(function(){
+
+            var $this = $(this);
+            var $comment_form = $('.comment-new');
+            var $comment_form_template = $('#comment-form-template');
+            $comment_form.remove();
+
+            var $buttons = $this.parent();
+            var $comment_body = $buttons.parent();
+            var $comment = $comment_body.parent();
+            var comment_id = $comment.attr('comment-id');
+            console.log(comment_id);
+            var t = _.template( $comment_form_template.html() );
+            $comment_body.append(t({ parent : comment_id }));
+        });
+    });
+</script>
 <?php
-
 function comments_basic($comment, $args, $depth) {
-
-    $tag       = 'li';
-
-    ?>
-    <<?php echo $tag ?> <?php comment_class( empty( $args['has_children'] ) ? '' : 'parent' ) ?> id="comment-<?php comment_ID() ?>">
-
-    <div id="div-comment-<?php comment_ID() ?>" class="comment-body">
-
+?>
+<li <?php comment_class( empty( $args['has_children'] ) ? '' : 'parent' ) ?> id="comment-<?php comment_ID() ?>" comment-id="<?php comment_ID() ?>">
+    <div class="comment-body">
         <div class="comment-author vcard">
             <?php echo get_avatar( $comment, $args['avatar_size'] ); ?>
             <?php echo get_comment_author(); ?>
         </div>
 
-        <div class="comment-meta commentmetadata"><?php printf( __('%1$s at %2$s'), get_comment_date(),  get_comment_time() ); ?></div>
-
-        <?php comment_text(); ?>
-
-        <div class="buttons">
-            <div class="edit">
-                Edit
-            </div>
-            <div class="delete">
-                Delete
-            </div>
-            <div class="report">
-                Report
-            </div>
-            <div class="like">
-                Like
-            </div>
-            <div class="reply">
-                Reply
-            </div>
+        <div class="comment-meta commentmetadata">
+            <?php _e('No.:', 'k-forum')?> <?php echo $comment->comment_ID?>
+            <?php printf( __('%1$s at %2$s'), get_comment_date(),  get_comment_time() ); ?>
         </div>
 
+
+        <?php
+        $attachments = forum()->markupCommentAttachments( FORUM_COMMENT_POST_NUMBER + $comment->comment_ID );
+        ?>
+
+        <div class="photos"><?php echo $attachments['images']?></div>
+        <div class="files"><?php echo $attachments['attachments']?></div>
+
+
+        <?php comment_text(); ?>
+        <div class="comment-buttons">
+            <div class="reply">Reply</div>
+            <div class="edit">
+                <a href="<?php echo forum()->commentEditURL( $comment->comment_ID )?>">Edit</a>
+            </div>
+            <div class="delete">
+                <a href="<?php echo forum()->commentDeleteURL( $comment->comment_ID )?>">Delete</a>
+            </div>
+            <div class="report">Report</div>
+            <div class="like">Like</div>
+        </div>
     </div>
-
     <?php
-}
-?>
+    }
+    ?>
 
-<div id="comments" class="comments-area">
+    <div id="comments" class="comments-area">
 
-    <?php if ( have_comments() ) : ?>
-        <h2 class="comments-title">
-            <?php
-            $comments_number = get_comments_number();
-            _e("No. of Comments: ", 'k-fourm');
-            echo $comments_number;
-            ?>
-        </h2>
+
 
 
         <style scoped>
-            .reply {
+            .comment-new {
+                margin-bottom: 1em;
                 overflow: auto;
             }
-            .reply form {
 
-            }
-            .reply .line {
 
-            }
-            .reply .line.comment-content {
-
-            }
-            .reply .line.comment-content textarea {
+            .comment-new .comment-content textarea {
                 margin: 0;
                 height: 4em;
                 width: 100%;
             }
-            .reply .buttons input {
+
+            .comment-new .buttons,
+            .comment-new .photos,
+            .comment-new .files {
+                overflow: auto;
+                overflow-y: hidden;
+            }
+            .comment-new .buttons .file-upload {
+                height: 2em;
+                float: left;
+            }
+
+            .comment-new .buttons .submit {
                 height: 2em;
                 float: right;
             }
-            .reply .buttons .fa-camera {
+            .comment-new .buttons .fa-camera {
                 font-size: 1.8em;
             }
-
+            .comment-new .loader {
+                display: none;
+            }
         </style>
-        <div class="reply">
-            <form action="<?php echo home_url("forum/submit")?>" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="do" value="comment_create">
-                <input type="hidden" name="post_ID" value="<?php the_ID()?>">
-                <div class="line comment-content">
-                    <label for="comment-content" style="display:none;">
-                        <?php _e('Comment Content', 'k-fourm')?>
-                    </label>
-                    <textarea id="comment-content" name="comment_content"></textarea>
-                </div>
-                <div class="line buttons">
-                    <i class="fa fa-camera"></i> Choose File
-                    <input type="submit">
-                </div>
-            </form>
-        </div>
+        <script type="text/template" id="comment-form-template">
+            <section class="reply comment-new">
+                <form action="<?php echo home_url("forum/submit")?>" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="do" value="comment_create">
+                    <input type="hidden" name="comment_post_ID" value="<?php the_ID()?>">
+                    <input type="hidden" name="comment_parent" value="<%=parent%>">
+                    <input type="hidden" name="file_ids" value="">
+                    <div class="line comment-content">
+                        <label for="comment-content" style="display:none;">
+                            <?php _e('Comment Content', 'k-fourm')?>
+                        </label>
+                        <textarea id="comment-content" name="comment_content"></textarea>
+                    </div>
+                    <div class="photos"></div>
+                    <div class="files"></div>
+                    <div class="line buttons">
+                        <div class="file-upload">
+                            <i class="fa fa-camera"></i>
+                            <span class="text"><?php _e('Choose File', 'k-forum')?></span>
+                            <input type="file" name="file" onchange="forum.on_change_file_upload(this);" style="opacity: .001;">
+                        </div>
+                        <div class="submit">
+                            <label for="post-submit-button"><input id="post-submit-button" type="submit"></label>
+                        </div>
+                    </div>
+                    <div class="loader">
+                        <img src="<?php echo FORUM_URL ?>/img/loader14.gif">
+                        <?php _e('File upload is in progress. Please wait.', 'k-forum')?>
+                    </div>
+                </form>
+            </section>
+        </script>
+        <div class="reply-placeholder"></div>
+        <script>
+            jQuery( function( $ ) {
+                var t = _.template($('#comment-form-template').html());
+                $('.reply-placeholder').html(t({ parent : 0 }));
+            });
+        </script>
 
-        <?php the_comments_navigation(); ?>
 
-        <ol class="comment-list">
-            <?php
-            wp_list_comments( array(
-                'short_ping'  => true,
-                'avatar_size' => 42,
-                'callback' => 'comments_basic'
-            ) );
-            ?>
-        </ol><!-- .comment-list -->
 
-        <?php the_comments_navigation(); ?>
+        <?php if ( have_comments() ) : ?>
 
-    <?php endif; // Check for have_comments(). ?>
+            <h2 class="comments-title">
+                <?php
+                $comments_number = get_comments_number();
+                _e("No. of Comments: ", 'k-fourm');
+                echo $comments_number;
+                ?>
+            </h2>
 
-</div><!-- .comments-area -->
+            <?php the_comments_navigation(); ?>
+
+            <ol class="comment-list">
+                <?php
+                wp_list_comments( array(
+                    'avatar_size' => 42,
+                    'callback' => 'comments_basic'
+                ) );
+                ?>
+            </ol><!-- .comment-list -->
+
+            <?php the_comments_navigation(); ?>
+
+        <?php endif; // Check for have_comments(). ?>
+
+    </div><!-- .comments-area -->

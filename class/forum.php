@@ -30,6 +30,7 @@ class forum
         $this->manageRoles();
         $this->addAdminMenu();
         $this->addRoutes();
+        $this->addHooks();
         $this->addFilters();
         return $this;
     }
@@ -212,6 +213,7 @@ class forum
     {
         return home_url("/forum/submit?do=$method");
     }
+
 
     /**
      *
@@ -434,7 +436,17 @@ class forum
         }, 0.01 );
     }
 
-    private function updateFileWithPost($post_ID)
+    /**
+     *
+     * @param $parent_ID - is the parent post ID or parent comment ID.
+     *
+     * @WARNING since wp_posts table does not support for attachment for comment, it uses a trick.
+     *
+     * wp_posts.post_parent can hold numeric value from 0 to 18,446,744,073,709,551,615.
+     * It considers if any number that is over 1,000,000,000 then it is a comment number.
+     *
+     */
+    private function updateFileWithPost($parent_ID)
     {
         $ids = $_REQUEST['file_ids'];
         $arr_ids = explode(',', $ids);
@@ -442,9 +454,8 @@ class forum
         foreach( $arr_ids as $id ) {
             if ( empty($id) ) continue;
             $author_id = get_post_meta($id, 'author', true);
-            wp_update_post(['ID'=>$id, 'post_author' => $author_id, 'post_parent'=>$post_ID]);
+            wp_update_post(['ID'=>$id, 'post_author' => $author_id, 'post_parent'=>$parent_ID]);
             delete_post_meta( $id, 'author', $author_id);
-
         }
     }
 
@@ -525,18 +536,14 @@ class forum
      * @todo permission check
      */
     private function post_delete() {
-
         $id = $_REQUEST['id'];
         $categories = get_the_category($id);
-
-
         // delete files
         $attachments = get_children( ['post_parent' => $id, 'post_type' => 'attachment'] );
         foreach ( $attachments  as $attachment ) {
             wp_delete_attachment( $attachment->ID, true );
         }
         wp_delete_post($id, true);
-
 
         // move to forum list.
         if ( ! $categories || is_wp_error( $categories ) ) {
@@ -546,10 +553,29 @@ class forum
             $category = current($categories);
             wp_redirect( forum()->listURL($category->slug));
         }
+    }
 
+    /**
+     * @todo permission check
+     */
+    private function comment_delete() {
+        $comment_ID = $_REQUEST['comment_ID'];
+        $comment = get_comment( $comment_ID );
+        $post = get_post( $comment->comment_post_ID );
 
+        // delete files
+        $attachments = get_children( ['post_parent' => FORUM_COMMENT_POST_NUMBER + $comment_ID, 'post_type' => 'attachment'] );
+
+        foreach ( $attachments  as $attachment ) {
+            wp_delete_attachment( $attachment->ID, true );
+        }
+
+        wp_delete_comment( $comment_ID );
+
+        wp_redirect( get_permalink( $post ) );
 
     }
+
 
     /**
      * Returns HTML markup for display images and attachments.
@@ -560,13 +586,12 @@ class forum
      *
      * @return string
      */
-    public function markupAttachments( $post_ID ) {
+    public function markupEditAttachments( $post_ID ) {
 
         if ( empty( $post_ID ) ) return null;
 
         $files = get_children( ['post_parent' => $post_ID, 'post_type' => 'attachment'] );
         if ( ! $files || is_wp_error($files) ) return null;
-
 
         $images = $attachments = null;
         foreach ( $files as $file ) {
@@ -585,6 +610,28 @@ class forum
             }
         }
 
+        return [ 'images' => $images, 'attachments' => $attachments ];
+    }
+    public function markupCommentAttachments( $comment_parent_ID ) {
+        if ( empty( $comment_parent_ID ) ) return null;
+
+        $files = get_children( ['post_parent' => $comment_parent_ID, 'post_type' => 'attachment'] );
+        if ( ! $files || is_wp_error($files) ) return null;
+
+        $images = $attachments = null;
+        foreach ( $files as $file ) {
+            $m = "<div class='attach' attach_id='{$file->ID}' type='{$file->post_mime_type}'>";
+            if ( strpos( $file->post_mime_type, 'image' ) !== false ) { // image
+                $m .= "<img src='{$file->guid}'>";
+                $m .= '</div>';
+                $images .= $m;
+            }
+            else { // attachment
+                $m .= "<a href='{$file->guid}'>{$file->post_title}</a>";
+                $m .= '</div>';
+                $attachments .= $m;
+            }
+        }
         return [ 'images' => $images, 'attachments' => $attachments ];
     }
 
@@ -664,18 +711,23 @@ EOM;
     {
         return home_url() . "/forum/$the_ID/edit";
     }
+
     /**
-     * @param $the_ID
+     * @param $comment_ID
      * @return string
-     *
      * @code <a href="<?php echo post()->editURL( get_the_ID() ) ?>">글 수정</a>
      * @code <a href="<?php echo post()->editURL( get_the_ID() ) ?>">코멘트 수정</a>
      */
-    public function commentEditURL($the_ID)
+    public function commentEditURL($comment_ID)
     {
-        return home_url() . "/forum/$the_ID/commentEdit";
+        return home_url() . "/forum/$comment_ID/commentEdit";
     }
 
+
+    public function commentDeleteURL($comment_ID)
+    {
+        return forum()->doURL('comment_delete&comment_ID=' . $comment_ID );
+    }
 
     private function manageRoles()
     {
@@ -691,22 +743,25 @@ EOM;
     private function comment_create( ) {
 
 
-        if ( isset( $_REQUEST['id'] ) ) {
-            $comment_ID = $_REQUEST['id'];
+        if ( isset( $_REQUEST['comment_ID'] ) ) {
+            $comment_ID = $_REQUEST['comment_ID'];
             $comment = get_comment( $comment_ID );
             $post_ID = $comment->comment_post_ID;
             $re = wp_update_comment([
                 'comment_ID' => $comment_ID,
                 'comment_content' => $_REQUEST['comment_content']
             ]);
+
+
             if ( ! $re ) {
-                wp_die("Comment was not updated");
+                // error or content has not changed.
             }
         }
         else {
-            $post_ID = $_REQUEST['post_ID'];
+            $post_ID = $_REQUEST['comment_post_ID'];
             $comment_ID = wp_insert_comment([
                 'comment_post_ID' => $post_ID,
+                'comment_parent' => $_REQUEST['comment_parent'],
                 'comment_content' => $_REQUEST['comment_content'],
                 'comment_approved' => 1,
             ]);
@@ -714,7 +769,11 @@ EOM;
                 wp_die("Comment was not created");
             }
         }
+
+        $this->updateFileWithPost( FORUM_COMMENT_POST_NUMBER  + $comment_ID );
+
         $url = get_permalink( $post_ID ) . '#comment-' . $comment_ID ;
+
         wp_redirect( $url ); // redirect to view the newly created post.
     }
 
@@ -736,6 +795,11 @@ EOM;
     public function slugs()
     {
         return get_option('forum-slugs');
+    }
+
+    private function addHooks()
+    {
+
     }
 
 }

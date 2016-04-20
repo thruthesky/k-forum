@@ -13,8 +13,6 @@ else {
     <h2>Forum EDIT</h2>
 
 
-
-
     <script>
         var url_endpoint = "<?php echo home_url("forum/submit")?>";
         var max_upload_size = <?php echo wp_max_upload_size();?>;
@@ -59,7 +57,7 @@ else {
             </div>
 
             <?php
-            $attachments = forum()->markupAttachments( get_the_ID() );
+            $attachments = forum()->markupEditAttachments( get_the_ID() );
             ?>
 
             <div class="photos"><?php echo $attachments['images']?></div>

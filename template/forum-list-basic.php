@@ -1,6 +1,6 @@
 <?php
 get_header();
-wp_enqueue_style( 'basic', FORUM_URL . 'css/forum-list-basic.css' );
+wp_enqueue_style( 'forum-list-basic', FORUM_URL . 'css/forum-list-basic.css' );
 $categories = get_the_category();
 if ( empty($categories) ) {
     $category = get_category_by_slug( seg(1) );

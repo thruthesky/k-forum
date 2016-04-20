@@ -6,6 +6,7 @@
  */
 
 get_header();
+wp_enqueue_style( 'forum-view-basic', FORUM_URL . 'css/forum-view-basic.css' );
 if ( ! have_posts() ) {
     // If it comes here, it is an error.
 }

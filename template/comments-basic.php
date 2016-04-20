@@ -16,7 +16,7 @@
 if ( post_password_required() ) {
     return;
 }
-
+wp_enqueue_style( 'forum-comments-basic', FORUM_URL . 'css/forum-comments-basic.css' );
 ?>
 <!--suppress ALL -->
 <script>
@@ -24,31 +24,7 @@ if ( post_password_required() ) {
     var max_upload_size = <?php echo wp_max_upload_size();?>;
 </script>
 
-<style>
-    /** comments_basic function style */
-    .comment-buttons {
-        overflow: auto;
-    }
-    .comment-buttons > div {
-        float: left;
-        color: #3b3a36;
-        padding: .1em .6em .1em 0;
-    }
 
-    /** Attachment display on comment view */
-    .comment-list .comment .photos,
-    .comment-list .comment .files {
-        overflow: auto;
-        overflow-y: hidden;
-    }
-    .comment-list .comment .photos .attach {
-        width: auto;
-        height: auto;
-    }
-    .comment-list .comment .photos .attach img {
-        max-width: 100%;
-    }
-</style>
 <script>
     jQuery( function( $ ) {
         $('.comment-list .reply').click(function(){
@@ -92,6 +68,7 @@ function comments_basic($comment, $args, $depth) {
         <div class="files"><?php echo $attachments['attachments']?></div>
 
 
+        @익명 님에게 ...
         <?php comment_text(); ?>
         <div class="comment-buttons">
             <div class="reply">Reply</div>
@@ -114,41 +91,7 @@ function comments_basic($comment, $args, $depth) {
 
 
 
-        <style scoped>
-            .comment-new {
-                margin-bottom: 1em;
-                overflow: auto;
-            }
 
-
-            .comment-new .comment-content textarea {
-                margin: 0;
-                height: 4em;
-                width: 100%;
-            }
-
-            .comment-new .buttons,
-            .comment-new .photos,
-            .comment-new .files {
-                overflow: auto;
-                overflow-y: hidden;
-            }
-            .comment-new .buttons .file-upload {
-                height: 2em;
-                float: left;
-            }
-
-            .comment-new .buttons .submit {
-                height: 2em;
-                float: right;
-            }
-            .comment-new .buttons .fa-camera {
-                font-size: 1.8em;
-            }
-            .comment-new .loader {
-                display: none;
-            }
-        </style>
         <script type="text/template" id="comment-form-template">
             <section class="reply comment-new">
                 <form action="<?php echo home_url("forum/submit")?>" method="post" enctype="multipart/form-data">
@@ -160,7 +103,7 @@ function comments_basic($comment, $args, $depth) {
                         <label for="comment-content" style="display:none;">
                             <?php _e('Comment Content', 'k-fourm')?>
                         </label>
-                        <textarea id="comment-content" name="comment_content"></textarea>
+                        <textarea id="comment-content" name="comment_content" placeholder="<?php _e('Please input comment', 'k-forum')?>"></textarea>
                     </div>
                     <div class="photos"></div>
                     <div class="files"></div>

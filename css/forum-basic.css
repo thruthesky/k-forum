@@ -1,0 +1,76 @@
+
+/** file upload */
+form .loader {
+    display: none;
+}
+
+.file-upload {
+    position: relative;
+    width: 200px;
+    height: 32px;
+    overflow: hidden;
+    background-color: #e9e9e9;
+}
+.file-upload .dashicons-camera:before {
+    font-size: 2em;
+}
+.file-upload .text {
+    padding: 1em;
+    font-size: 1.2em;
+}
+.file-upload input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    height: 32px;
+    font-size: 2em;
+}
+
+
+
+
+#post-new .photos,
+.comment-new .photos {
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+form .photos .attach {
+    position: relative;
+    float: left;
+    width: 100px;
+    height: 100px;
+}
+
+form .photos .attach img {
+    width: 100%;
+    height: auto;
+}
+form .photos .attach .delete {
+    position: absolute;
+    z-index: 3;
+    padding: 6px;
+    box-sizing: border-box;
+    left: 0;
+    bottom: 0;
+    width: inherit;
+    background-color: aliceblue;
+    cursor: pointer;
+}
+
+form .photos .attach:nth-child(even) .delete {
+    background-color: #7ba8bf;
+}
+
+
+form .files .attach .delete {
+    padding-left: 2em;
+}
+form .attach .delete .dashicons-trash {
+    font-size: 1.5em;
+}
+

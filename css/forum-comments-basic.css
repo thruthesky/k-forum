@@ -1,0 +1,59 @@
+.comment-new {
+    margin: 1em 0;
+    overflow: auto;
+}
+
+
+.comment-new .comment-content textarea {
+    margin: 0;
+    height: 4em;
+    width: 100%;
+}
+
+.comment-new .buttons,
+.comment-new .photos,
+.comment-new .files {
+    overflow: auto;
+    overflow-y: hidden;
+}
+.comment-new .buttons .file-upload {
+    height: 2em;
+    float: left;
+}
+
+.comment-new .buttons .submit {
+    height: 2em;
+    float: right;
+}
+.comment-new .buttons .fa-camera {
+    font-size: 1.8em;
+}
+.comment-new .loader {
+    display: none;
+}
+
+
+
+/** comments_basic function style */
+.comment-buttons {
+    overflow: auto;
+}
+.comment-buttons > div {
+    float: left;
+    color: #3b3a36;
+    padding: .1em .6em .1em 0;
+}
+
+/** Attachment display on comment view */
+.comment-list .comment .photos,
+.comment-list .comment .files {
+    overflow: auto;
+    overflow-y: hidden;
+}
+.comment-list .comment .photos .attach {
+    width: auto;
+    height: auto;
+}
+.comment-list .comment .photos .attach img {
+    max-width: 100%;
+}

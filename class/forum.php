@@ -77,6 +77,7 @@ class forum
             //wp_enqueue_style( 'dashicons' );
             wp_enqueue_script( 'wp-util' );
             wp_enqueue_script( 'jquery-form' );
+            wp_enqueue_style( 'forum-basic', FORUM_URL . 'css/forum-basic.css' );
             wp_enqueue_script( 'forum', FORUM_URL . 'js/forum.js' );
             wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
             wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );

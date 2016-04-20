@@ -1,10 +1,12 @@
 <?php
 get_header();
-wp_enqueue_style( 'basic', FORUM_URL . 'css/forum-edit-basic.css' );
+wp_enqueue_style( 'forum-edit-basic', FORUM_URL . 'css/forum-edit-basic.css' );
+$cat_desc = null;
 if ( is_numeric(seg(1) ) ) {
     $post = get_post(seg(1));
-    $category = get_the_category( $post->ID );
-    $category_id = current( $category )->term_id;
+    $category = current(get_the_category( $post->ID ));
+    $category_id = $category->term_id;
+    $cat_desc = $category->description;
 }
 else {
     $post = null;
@@ -26,7 +28,7 @@ else {
         <div class="post-edit-meta">
             <div class="top">
                 <h1 class="forum-title"><?php echo $category->name?></h1>
-                <div class="forum-description"><?php echo $category->description?></div>
+                <div class="forum-description"><?php echo $cat_desc?></div>
             </div>
         </div>
 
@@ -73,18 +75,22 @@ else {
             <div class="photos"><?php echo $attachments['images']?></div>
             <div class="files"><?php echo $attachments['attachments']?></div>
 
-            <div class="file-upload">
-                <span class="dashicons dashicons-camera"></span>
-                <span class="text"><?php _e('Choose File', 'k-forum')?></span>
-                <input type="file" name="file" onchange="forum.on_change_file_upload(this);" style="opacity: .001;">
+            <div class="buttons">
+                <div class="file-upload">
+                    <span class="dashicons dashicons-camera"></span>
+                    <span class="text"><?php _e('Choose File', 'k-forum')?></span>
+                    <input type="file" name="file" onchange="forum.on_change_file_upload(this);" style="opacity: .001;">
+                </div>
+                <div class="right">
+                    <label for="post-submit-button"><input id="post-submit-button" type="submit"></label>
+                    <label for="post-cancel-button"><a href="<?php echo forum()->listURL(seg(1))?>" id="post-cancel-button">Cancel</a></label>
+                </div>
             </div>
+
             <div class="loader">
                 <img src="<?php echo FORUM_URL ?>/img/loader14.gif">
                 File upload is in progress. Please wait.
             </div>
-
-            <label for="post-submit-button"><input id="post-submit-button" type="submit"></label>
-            <label for="post-cancel-button"><div id="post-cancel-button">Cancel</div></label>
 
         </form>
     </section>

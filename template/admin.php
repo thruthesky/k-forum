@@ -10,9 +10,11 @@ $categories = lib()->get_categories_with_depth( $cat->term_id );
 if ( isset($_REQUEST['category_id']) ) { // editing
     $category = get_category( $_REQUEST['category_id'] );
     $category_id = $category->term_id;
+    $parent_category = get_category($category->parent);
 }
 else {
     $category = null;
+    $parent_category = get_category_by_slug(FORUM_CATEGORY_SLUG);
 }
 
 ?>
@@ -98,7 +100,7 @@ else {
             <fieldset class="form-group">
                 <label for="ForumParent"><?php _e('Parent Forum', 'k-forum')?></label>
                 <select name="parent" class="form-control" id="ForumParent">
-                    <option value="<?php echo get_category($category->parent)->term_id?>"><?php _e('Select Parent Forum', 'k-forum')?></option>
+                    <option value="<?php echo $parent_category->term_id?>"><?php _e('Select Parent Forum', 'k-forum')?></option>
                     <?php
                     foreach ( $categories as $category ) {
                         $pads = str_repeat( '&nbsp;&nbsp;', $category->depth );

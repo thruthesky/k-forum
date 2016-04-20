@@ -78,9 +78,6 @@ class forum
             wp_enqueue_script( 'wp-util' );
             wp_enqueue_script( 'jquery-form' );
             wp_enqueue_script( 'forum', FORUM_URL . 'js/forum.js' );
-            wp_enqueue_style( 'basic', FORUM_URL . 'css/basic.css' );
-            wp_enqueue_script( 'basic', FORUM_URL . 'js/basic.js' );
-
             wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
             wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );
             wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
@@ -356,6 +353,11 @@ class forum
                 'top'
             );
             add_rewrite_rule(
+                '^forum/([a-zA-Z0-9\-]+)/page/([0-9]+)/?$',
+                'index.php?category_name=$matches[1]&paged=$matches[2]',
+                'top'
+            );
+            add_rewrite_rule(
                 '^forum/([a-zA-Z0-9\-]+)/([0-9]+)?$',
                 'index.php?category_name=$matches[1]&p=$matches[2]',
                 'top'
@@ -384,6 +386,10 @@ class forum
              * @note
              */
             $slugs = forum()->slugs();
+
+            // forum list.
+            // http://abc.com/qna
+            //
             if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
                 wp_redirect( home_url("forum/" . seg(0) . '/' ) );
             }
@@ -399,7 +405,12 @@ class forum
                 forum()->submit();
                 exit;
             }
+            // forum list.
+            // http://abc.com/forum/qna
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
+                return $this->loadTemplate('forum-list-basic.php');
+            }
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
                 return $this->loadTemplate('forum-list-basic.php');
             }
             // http://abc.com/forum/xxxx/edit

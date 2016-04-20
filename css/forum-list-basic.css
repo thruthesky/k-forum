@@ -1,0 +1,160 @@
+/* Post list */
+#post-list {
+    font-family: "Malgun Gothic", "AppleGothic", "Gulim", "Dotum", serif;
+}
+
+#post-list h1,
+#post-list h2 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    font-size:1em;
+}
+
+
+/* post meta */
+
+.post-list-meta {
+    padding: .8em;
+}
+.post-list-meta .top {
+    color: #06000a;
+}
+
+#post-list h1.forum-title {
+    font-size: 1.4em;
+}
+.forum-description {
+    margin-top: .4em;
+    padding: 0 0 .4em;
+    border-bottom: 1px solid #dfdfdf;
+    font-size: .9em;
+    color: #494949;
+}
+
+.post-list-meta .bottom {
+    margin-top: .4em;
+    overflow: auto;
+}
+.post-list-meta .bottom .post-count {
+    float: left;
+}
+
+.post-new-button {
+    float: right;
+    right: .2em;
+    margin: .2em 0;
+    padding: .2em .4em;
+    background-color: #dfdfdf;
+    cursor: pointer;
+}
+.post-new-button i {
+    font-size: 1.2em;
+}
+
+
+/* eo post list meta */
+#post-list .container {
+    padding: 0;
+    width: 100%!important;
+    max-width: 100%!important;
+}
+#post-list .container .row {
+    margin: 0;
+    padding: 0;
+}
+#post-list .container .row.post .title {
+    margin: 0;
+    padding: 0;
+}
+
+.post-list-container .author,
+.post-list-container .date,
+.post-list-container .no-of-view {
+    display:none;
+    padding: 1em;
+    font-size: 1em;
+}
+
+.post-list-container .header > div {
+    padding: 1em;
+    background-color: #e2e8ef;
+    font-size: 1em;
+}
+
+
+#post-list .post {
+    width: 100%;
+}
+
+.post-list-container .post:nth-child(even) {
+    background-color: #fbfbfb;
+}
+
+
+.post-list-container .post .title {
+    font-size: 1.1em;
+}
+
+.post-list-container .post a {
+    display: block;
+    padding: 1em;
+    font-weight: normal;
+    text-decoration: none;
+    color: #292929;
+}
+
+@media all and ( min-width: 34em ) {
+    .post-list-container .author,
+    .post-list-container .date,
+    .post-list-container .no-of-view {
+        display: block;
+    }
+}
+
+
+/* eo Post List */
+
+
+
+
+/** Pagination */
+.pagination {
+    display: block!important;
+    padding-top: .5em;
+    text-align: center;
+}
+
+.pagination ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.pagination ul li {
+    display: inline;
+}
+.pagination .page-numbers {
+    display: inline-block;
+    margin: .5em 0;
+    padding-top:8px;
+    width: 37px;
+    height: 37px;
+    border-radius: 50%;
+    background-color: #e1e8f0;
+    font-family: arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal!important;
+}
+.pagination .page-numbers.current,
+.pagination .page-numbers.prev,
+.pagination .page-numbers.next,
+.pagination .page-numbers.dots {
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    color: black;
+}
+.pagination .page-numbers.prev,
+.pagination .page-numbers.next {
+    width: 3em;
+}

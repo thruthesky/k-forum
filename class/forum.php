@@ -518,7 +518,7 @@ class forum
         foreach ( $child_categories as $child ) {
             $slugs[] = $child->slug;
             $slug = '^' . $child->slug . '$';
-            di($slug);
+            //di($slug);
             add_rewrite_rule(
                 $slug,
                 'index.php?category_name='.$child->slug,

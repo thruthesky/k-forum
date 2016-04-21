@@ -108,6 +108,14 @@ class library
     }
 
 
+    public function di($o) {
+        $re = print_r($o, true);
+        $re = str_replace(" ", "&nbsp;", $re);
+        $re = explode("\n", $re);
+        echo implode("<br>", $re);
+    }
+
+
 
 } // EO Library
 
@@ -121,6 +129,11 @@ function seg($n) {
     return lib()->segment($n);
 }
 
+if ( ! function_exists( 'di' ) ) {
+    function di($o) {
+        lib()->di($o);
+    }
+}
 
 if ( ! function_exists( 'dog' ) ) {
 

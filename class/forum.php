@@ -42,11 +42,15 @@ class forum
      * @return $this
      */
     public function doDefaults() {
+
+
         forum()->addRoutes(); // @note
+
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
         if ( $category ) return $this;
 
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+
         $catarr = array(
             'cat_name' => __('K-Forum', 'k-forum'),
             'category_description' => __("This is K forum.", 'k-forum'),
@@ -58,14 +62,19 @@ class forum
         $catarr = array(
             'cat_name' => __('Welcome', 'k-forum'),
             'category_description' => __("This is Welcome forum", 'k-forum'),
-            'category_nicename' => 'welcome',
+            'category_nicename' => 'welcome-'.date('his'), // @note When or for some reason, when k-forum and its category was deleted, it must create a new slug. ( guess this is because the permalink or route is already registered. )
             'category_parent' => $ID,
         );
         $ID = wp_insert_category( $catarr, true );
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
-        $this->update_forum_slugs();
 
+        /**
+         *
+         *
+         * @note since wp_insert_post prints out header, this will cause 'Header sent' error message.
+         *
+         *
         forum()->post_create([
             'post_title'    => __('Welcome to K forum - name', 'k-forum'),
             'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
@@ -73,6 +82,11 @@ class forum
             'post_author'   => wp_get_current_user()->ID,
             'post_category' => array( $ID )
         ]);
+         *
+         */
+
+        $this->update_forum_slugs();
+
         return $this;
     }
 
@@ -229,6 +243,8 @@ class forum
         }
         return $cat;
     }
+
+
 
 
     /**
@@ -441,7 +457,7 @@ class forum
             'category_parent' => $parent,
         );
 
-        $catarr['cat_ID'] = $_REQUEST['category_id'];
+        if ( isset($_REQUEST['category_id']) ) $catarr['cat_ID'] = $_REQUEST['category_id'];
 
         $ID = wp_insert_category( $catarr, true );
 
@@ -844,18 +860,11 @@ EOM;
      *
      * Insert forum data defaults when the admin enters in admin area.
      *
-     * @note Somehow it produces 'Header already sent' cookie error message
-     * when it tries to insert default forum data in k-forum admin menu.
-     * so, it does here to avoid that error message.
      *
      * @return $this
      */
     public function addHooks()
     {
-        add_action('admin_init', function(){
-            forum()
-                ->doDefaults();
-        });
 
         add_action('init', function(){
 

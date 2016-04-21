@@ -67,3 +67,10 @@ We do it just because the user may delete a category mistakenly. If the user wan
 ## Much the same as WordPress
 
 For instance, if a k-forum comment is deleted, it saves into trash just like WordPress comment does.
+
+
+
+
+# ETC
+
+* 글 카테고리 메뉴에서 K-forum 을 삭제해도 다시 생성된다.

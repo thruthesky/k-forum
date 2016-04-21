@@ -8,7 +8,10 @@ wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0
 
 
 $cat = forum()->getForumCategory();
-$categories = lib()->get_categories_with_depth( $cat->term_id );
+$categories = [];
+if ( $cat ) {
+    $categories = lib()->get_categories_with_depth( $cat->term_id );
+}
 
 if ( isset($_REQUEST['category_id']) ) { // editing
     $category = get_category( $_REQUEST['category_id'] );
@@ -141,6 +144,7 @@ else {
                 <div class="col-xs-12 col-sm-5">Description</div>
             </div>
             <?php
+            if ( $categories ) {
             foreach($categories as $category) {
                 ?>
                 <div class="row">
@@ -158,7 +162,7 @@ else {
                     <div class="col-xs-2 col-sm-1"><?php echo $category->count?></div>
                     <div class="col-xs-12 col-sm-5"><?php echo $category->description?></div>
                 </div>
-            <?php } ?>
+            <?php } } ?>
 
         </div>
     </div>

@@ -67,11 +67,11 @@ class forum
         $this->update_forum_slugs();
 
         forum()->post_create([
-                'post_title'    => __('Welcome to K forum - name', 'k-forum'),
-                'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
-                'post_status'   => 'publish',
-                'post_author'   => wp_get_current_user()->ID,
-                'post_category' => array( $ID )
+            'post_title'    => __('Welcome to K forum - name', 'k-forum'),
+            'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
+            'post_status'   => 'publish',
+            'post_author'   => wp_get_current_user()->ID,
+            'post_category' => array( $ID )
         ]);
         return $this;
     }
@@ -643,18 +643,7 @@ class forum
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
                 return $this->loadTemplate('forum-list-basic.php');
             }
-            // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
             //
-            // http://abc.com/forum/submit?do=file_upload
-            // http://abc.com/forum/submit?do=file_delete
-            // http://abc.com/forum/submit?do=post_delete
-            // http://abc.com/forum/submit?do=post_vote
-            // http://abc.com/forum/submit?do=post_report
-            // etc...
-            else if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
-                forum()->submit();
-                exit;
-            }
             // http://abc.com/forum/xxxx/edit
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
                 return $this->loadTemplate('forum-edit-basic.php');
@@ -691,9 +680,9 @@ class forum
         /**
          *
         add_filter('comment_form_submit_field', function($submit_field, $args) {
-            $m = '';
-            $m .= "<div>파일업로드</div>";
-            return $m . $submit_field;
+        $m = '';
+        $m .= "<div>파일업로드</div>";
+        return $m . $submit_field;
         }, 10, 2);
 
          */
@@ -720,15 +709,15 @@ EOM;
         /**
          * Filters on comments list arguments.
          */
-/*
-        add_filter( 'wp_list_comments_args', function( $r ) {
-            $r['type'] = 'comment';
-            $r['callback'] = function($comment, $args, $depth) {
-                include FORUM_PATH . '/template/comment.php';
-            };
-            return $r;
-        });
-*/
+        /*
+                add_filter( 'wp_list_comments_args', function( $r ) {
+                    $r['type'] = 'comment';
+                    $r['callback'] = function($comment, $args, $depth) {
+                        include FORUM_PATH . '/template/comment.php';
+                    };
+                    return $r;
+                });
+        */
 
 
         /**
@@ -836,14 +825,14 @@ EOM;
      * @return array
      * @code Return code sample.
      * Array
-        (
-        [0] => discussion
-        [1] => manila
-        [2] => korea
-        [3] => new-category
-        [4] => abc
-        [5] => qna
-        )
+    (
+    [0] => discussion
+    [1] => manila
+    [2] => korea
+    [3] => new-category
+    [4] => abc
+    [5] => qna
+    )
      * @endcode
      */
     public function slugs()
@@ -866,6 +855,30 @@ EOM;
         add_action('admin_init', function(){
             forum()
                 ->doDefaults();
+        });
+
+        add_action('init', function(){
+
+
+            /**
+             *
+             *
+             * http://abc.com/forum/submit must be hooked here or it will not work on 4.5
+             *
+            // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
+            //
+            // http://abc.com/forum/submit?do=file_upload
+            // http://abc.com/forum/submit?do=file_delete
+            // http://abc.com/forum/submit?do=post_delete
+            // http://abc.com/forum/submit?do=post_vote
+            // http://abc.com/forum/submit?do=post_report
+            // etc...
+             */
+            if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
+                forum()->submit();
+                exit;
+            }
+
         });
 
         return $this;

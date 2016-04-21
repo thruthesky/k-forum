@@ -13,7 +13,6 @@ $(function() {
             });
         }
     }
-
     forum.el.body().on('click', '.comment-new form', click_on_comment_form);
     forum.el.commentReply().click(move_comment_form);
 });
@@ -86,6 +85,7 @@ var forum = {
 
         $form.ajaxSubmit({
             error : function (xhr) {
+                console.log('ajaxSubmit.error: ' + xhr.responseText);
                 $do.val( forum.getDo() );
                 forum.hideLoader();
                 return alert(xhr.responseText);
@@ -98,6 +98,7 @@ var forum = {
                     re = JSON.parse(xhr.responseText);
                 }
                 catch (e) {
+                    console.log('ajaxSubmit.complete : JSON.parse error : ' + xhr.responseText)
                     return alert(xhr.responseText);
                 }
                 console.log(re);

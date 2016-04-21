@@ -2,9 +2,10 @@
 
 K-Forum is short for "Knowledge Forum".
 
-
 # todo
 
+* Version compatibility from 4.3.3 to 4.5
+    * Make it from 3.0 to 4.5
 
 * SEO
 	* keywords, images, alt, slug, length of tile/comment, H1/H2, keyword in title/H1/H2, links in content, etc.

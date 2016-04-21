@@ -10,7 +10,7 @@ if ( is_numeric(seg(1) ) ) {
 }
 else {
     $post = null;
-    $category = get_category_by_slug( segment(1) );
+    $category = get_category_by_slug( seg(1) );
     $category_id = $category->term_id;
 }
 ?>

@@ -119,7 +119,7 @@ if ( $comment->comment_parent ) $parent_comment = get_comment($comment->comment_
 
             <div class="comments-title"><?php printf('No. of Comments: %d', get_comments_number()); ?></div>
 
-            <?php the_comments_navigation(); ?>
+            <?php /** @todo Version compatibility */if ( function_exists('the_comments_navigation') ) the_comments_navigation(); ?>
 
             <ol class="comment-list">
                 <?php
@@ -130,7 +130,7 @@ if ( $comment->comment_parent ) $parent_comment = get_comment($comment->comment_
                 ?>
             </ol><!-- .comment-list -->
 
-            <?php the_comments_navigation(); ?>
+            <?php /** @todo Version compatibility */if ( function_exists('the_comments_navigation') ) the_comments_navigation(); ?>
 
         <?php endif; // Check for have_comments(). ?>
 

@@ -31,11 +31,9 @@ forum()
         ->addFilters()
     ->loadText()
     ->enqueue();
-
 register_activation_hook( __FILE__, function() {
     forum()
-        ->insertDefaults()
-        ->addRoutes();
+        ->doDefaults();
 });
 
 

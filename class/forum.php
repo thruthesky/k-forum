@@ -33,7 +33,16 @@ class forum
         return $this;
     }
 
-    public function insertDefaults() {
+    /**
+     *
+     * Does the default things for the forum activation.
+     *
+     * @note it adds routes here. This registers the 'routes' for multisite.
+     *
+     * @return $this
+     */
+    public function doDefaults() {
+        forum()->addRoutes(); // @note
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
         if ( $category ) return $this;
 
@@ -55,8 +64,10 @@ class forum
         $ID = wp_insert_category( $catarr, true );
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
+        $this->update_forum_slugs();
+
         forum()->post_create([
-                'post_title'    => __('Welcome to K forum.', 'k-forum'),
+                'post_title'    => __('Welcome to K forum - name', 'k-forum'),
                 'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
                 'post_status'   => 'publish',
                 'post_author'   => wp_get_current_user()->ID,
@@ -213,7 +224,7 @@ class forum
     {
         $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
         if ( empty($cat) ) {
-            forum()->insertDefaults();
+            forum()->doDefaults();
             $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
         }
         return $cat;
@@ -437,6 +448,14 @@ class forum
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
 
+        $this->update_forum_slugs();
+
+
+        wp_redirect( $this->adminURL() );
+    }
+
+    private function update_forum_slugs() {
+
 
         /**
          * @note Remember ( Stores ) slugs of k-forum into option.
@@ -461,9 +480,8 @@ class forum
             flush_rewrite_rules();
         }
         update_option('forum-slugs', $slugs);
-
-        wp_redirect( $this->adminURL() );
     }
+
 
     private function forum_delete() {
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
@@ -602,16 +620,28 @@ class forum
             $this->setNone404(); // @todo ??
 
 
+
             /**
              * @note
              */
             $slugs = forum()->slugs();
+
+
+
 
             // forum list.
             // http://abc.com/qna
             //
             if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
                 wp_redirect( home_url("forum/" . seg(0) . '/' ) );
+            }
+            // forum list.
+            // http://abc.com/forum/qna
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
+                return $this->loadTemplate('forum-list-basic.php');
+            }
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
+                return $this->loadTemplate('forum-list-basic.php');
             }
             // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
             //
@@ -624,14 +654,6 @@ class forum
             else if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
                 forum()->submit();
                 exit;
-            }
-            // forum list.
-            // http://abc.com/forum/qna
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
-                return $this->loadTemplate('forum-list-basic.php');
-            }
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
-                return $this->loadTemplate('forum-list-basic.php');
             }
             // http://abc.com/forum/xxxx/edit
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
@@ -709,15 +731,18 @@ EOM;
 */
 
 
+        /**
+         *
+         */
         add_filter( 'comments_template', function( $comment_template ) {
             global $post;
             $categories = get_the_category( $post->ID );
             if ( $categories ) {
                 $slug = current( $categories )->slug;
                 if ( in_array( $slug, forum()->slugs() ) ) {
-                    $comment_template = locate_template('comments-basic.php');
+                    $comment_template = locate_template('forum-comments-basic.php');
                     if ( empty($comment_template) ) {
-                        $comment_template = FORUM_PATH . "template/comments-basic.php";
+                        $comment_template = FORUM_PATH . "template/forum-comments-basic.php";
                     }
                 }
             }
@@ -840,7 +865,7 @@ EOM;
     {
         add_action('admin_init', function(){
             forum()
-                ->insertDefaults();
+                ->doDefaults();
         });
 
         return $this;

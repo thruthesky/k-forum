@@ -21,6 +21,8 @@ require_once "class/library.php";
 require_once "class/forum.php";
 require_once "class/post.php";
 
+
+
 forum()
     ->init()
         ->addHooks()

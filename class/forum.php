@@ -141,7 +141,7 @@ class forum
             );
         }
 
-        if ( $_REQUEST['id'] ) {
+        if ( isset($_REQUEST['id']) ) {
             $post_arr['ID'] = $_REQUEST['id'];
             $post_ID = wp_update_post($post_arr);
         }
@@ -392,6 +392,7 @@ class forum
      */
     private function updateFileWithPost($parent_ID)
     {
+        if ( ! isset($_REQUEST['file_ids']) ) return;
         $ids = $_REQUEST['file_ids'];
         $arr_ids = explode(',', $ids);
         if ( empty($arr_ids) ) return;
@@ -825,8 +826,23 @@ EOM;
         return get_option('forum-slugs');
     }
 
+    /**
+     *
+     * Insert forum data defaults when the admin enters in admin area.
+     *
+     * @note Somehow it produces 'Header already sent' cookie error message
+     * when it tries to insert default forum data in k-forum admin menu.
+     * so, it does here to avoid that error message.
+     *
+     * @return $this
+     */
     public function addHooks()
     {
+        add_action('admin_init', function(){
+            forum()
+                ->insertDefaults();
+        });
+
         return $this;
     }
 

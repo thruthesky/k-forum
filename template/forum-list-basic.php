@@ -66,9 +66,13 @@ $paged = isset($GLOBALS['wp_query']->query['paged']) ? $GLOBALS['wp_query']->que
                     <div class="col-xs-4 col-sm-2 col-lg-1 date" title="<?php echo get_the_date()?>"><?php post()->the_date()?></div>
                     <div class="col-xs-4 col-sm-2 col-lg-1 no-of-view"><?php echo number_format(post()->getNoOfView( get_the_ID() ) )?></div>
                 </div>
-                <?php
-            endwhile; endif;
-            ?>
+            <?php endwhile; else : ?>
+
+                <div class="no-post">
+                    <?php _e('There is no post under this forum.', 'k-forum')?>
+                </div>
+
+            <?php endif; ?>
         </div>
 
 

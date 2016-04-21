@@ -39,6 +39,10 @@ class forum
         return $this;
     }
 
+
+    /**
+     *
+     */
     public function activate() {
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
         if ( $category ) return;
@@ -60,6 +64,8 @@ class forum
         );
         $ID = wp_insert_category( $catarr, true );
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+
+        $this->update_forum_slugs();
 
         forum()->post_create([
                 'post_title'    => __('Welcome to K forum.', 'k-forum'),
@@ -503,6 +509,14 @@ class forum
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
 
+        $this->update_forum_slugs();
+
+
+        wp_redirect( $this->adminURL() );
+    }
+
+    private function update_forum_slugs() {
+
 
         /**
          * @note Remember ( Stores ) slugs of k-forum into option.
@@ -527,9 +541,8 @@ class forum
             flush_rewrite_rules();
         }
         update_option('forum-slugs', $slugs);
-
-        wp_redirect( $this->adminURL() );
     }
+
 
     private function forum_delete() {
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
@@ -695,15 +708,18 @@ EOM;
 */
 
 
+        /**
+         *
+         */
         add_filter( 'comments_template', function( $comment_template ) {
             global $post;
             $categories = get_the_category( $post->ID );
             if ( $categories ) {
                 $slug = current( $categories )->slug;
                 if ( in_array( $slug, forum()->slugs() ) ) {
-                    $comment_template = locate_template('comments-basic.php');
+                    $comment_template = locate_template('forum-comments-basic.php');
                     if ( empty($comment_template) ) {
-                        $comment_template = FORUM_PATH . "template/comments-basic.php";
+                        $comment_template = FORUM_PATH . "template/forum-comments-basic.php";
                     }
                 }
             }

@@ -4,7 +4,10 @@ wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-
 wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
 wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js' );
 
-$cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
+
+
+
+$cat = forum()->getForumCategory();
 $categories = lib()->get_categories_with_depth( $cat->term_id );
 
 if ( isset($_REQUEST['category_id']) ) { // editing

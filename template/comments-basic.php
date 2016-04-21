@@ -115,8 +115,6 @@ if ( $comment->comment_parent ) $parent_comment = get_comment($comment->comment_
             });
         </script>
 
-
-
         <?php if ( have_comments() ) : ?>
 
             <div class="comments-title"><?php printf('No. of Comments: %d', get_comments_number()); ?></div>

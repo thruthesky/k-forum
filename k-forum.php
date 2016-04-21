@@ -23,11 +23,18 @@ require_once "class/post.php";
 
 forum()
     ->init()
+        ->addHooks()
+        ->addAdminMenu()
+        ->manageRoles()
+        ->addFilters()
     ->loadText()
     ->enqueue();
 
 register_activation_hook( __FILE__, function() {
-    forum()->activate();
+    forum()
+        ->insertDefaults()
+        ->addRoutes();
 });
+
 
 

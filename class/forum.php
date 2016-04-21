@@ -25,12 +25,6 @@ class forum
 
     public function init()
     {
-
-        $this->manageRoles();
-        $this->addAdminMenu();
-        $this->addRoutes();
-        $this->addHooks();
-        $this->addFilters();
         return $this;
     }
 
@@ -39,9 +33,9 @@ class forum
         return $this;
     }
 
-    public function activate() {
+    public function insertDefaults() {
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
-        if ( $category ) return;
+        if ( $category ) return $this;
 
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
         $catarr = array(
@@ -68,6 +62,7 @@ class forum
                 'post_author'   => wp_get_current_user()->ID,
                 'post_category' => array( $ID )
         ]);
+        return $this;
     }
 
     public function enqueue()
@@ -211,6 +206,19 @@ class forum
         return home_url("/forum/submit?do=$method");
     }
 
+    /**
+     * Returns forum category.
+     */
+    public function getForumCategory()
+    {
+        $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        if ( empty($cat) ) {
+            forum()->insertDefaults();
+            $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        }
+        return $cat;
+    }
+
 
     /**
      *
@@ -297,7 +305,7 @@ class forum
         }
     }
 
-    private function addAdminMenu()
+    public function addAdminMenu()
     {
         add_action( 'wp_before_admin_bar_render', function () {
             global $wp_admin_bar;
@@ -328,12 +336,17 @@ class forum
             );
         } );
 
+        return $this;
     }
 
 
-    private function addRoutes()
+    /**
+     * Add rewrite rules.
+     *
+     *
+     */
+    public function addRoutes()
     {
-
 
         /**
          *
@@ -344,7 +357,6 @@ class forum
          *
          * ReWrite 하는 목적은 Main Loop 를 사용 할 수 있도록 하기 위한 것이다.
          *
-         * @todo flush routes only on activation.
          */
         add_action('init', function() {
             add_rewrite_rule(
@@ -363,88 +375,9 @@ class forum
                 'top'
             );
             //add_rewrite_tag('%val%','([^/]*)');
-            // @todo flush routes only on activation.
             flush_rewrite_rules();
         });
 
-
-        /**
-         *
-         * Add routes for friendly URL.
-         *
-         * @Attention Do 'friendly URL routing ONLY IF it is necessary'.
-         *
-         *      - Don't do friendly URL routing on file upload submit, delete submit, vote submit, report submit.
-         *      - Do friendly URL routing only if it is visible to user and search engine robot.
-         *
-         */
-        add_filter( 'template_include', function ( $template ) {
-            $this->setNone404(); // @todo ??
-
-
-            /**
-             * @note
-             */
-            $slugs = forum()->slugs();
-
-            // forum list.
-            // http://abc.com/qna
-            //
-            if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
-                wp_redirect( home_url("forum/" . seg(0) . '/' ) );
-            }
-            // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
-            //
-            // http://abc.com/forum/submit?do=file_upload
-            // http://abc.com/forum/submit?do=file_delete
-            // http://abc.com/forum/submit?do=post_delete
-            // http://abc.com/forum/submit?do=post_vote
-            // http://abc.com/forum/submit?do=post_report
-            // etc...
-            else if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
-                forum()->submit();
-                exit;
-            }
-            // forum list.
-            // http://abc.com/forum/qna
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
-                return $this->loadTemplate('forum-list-basic.php');
-            }
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
-                return $this->loadTemplate('forum-list-basic.php');
-            }
-            // http://abc.com/forum/xxxx/edit
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
-                return $this->loadTemplate('forum-edit-basic.php');
-            }
-            // http://abc.com/forum/xxxx/commentEdit
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'commentEdit'  ) {
-
-                return $this->loadTemplate('forum-commentEdit-basic.php');
-            }
-            // https://abc.com/forum/xxxx/[0-9]+
-            else if ( seg(0) == 'forum' && seg(1) != null && is_numeric(seg(2))  ) {
-                return $this->loadTemplate('forum-view-basic.php');
-            }
-            // Matches if the post is under forum category.
-            else if ( is_single() ) {
-                dog("add_filter() : is_single()");
-                $id = get_the_ID();
-                if ( $id ) {
-                    $category = get_the_category( $id );
-                    if ( $category ) {
-                        $category_id = current( $category )->term_id;
-                        dog("category_id: $category_id");
-                        $ex = explode('/', get_category_parents($category_id, false, '/', true));
-                        dog("category slug of the category id: $ex[0]");
-                        if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
-                            return $this->loadTemplate('forum-view-basic.php');
-                        }
-                    }
-                }
-            }
-            return $template;
-        }, 0.01 );
     }
 
     /**
@@ -650,8 +583,88 @@ class forum
         return home_url() . "/forum/$slug";
     }
 
-    private function addFilters()
+    public function addFilters()
     {
+
+
+        /**
+         *
+         * Add routes for friendly URL.
+         *
+         * @Attention Do 'friendly URL routing ONLY IF it is necessary'.
+         *
+         *      - Don't do friendly URL routing on file upload submit, delete submit, vote submit, report submit.
+         *      - Do friendly URL routing only if it is visible to user and search engine robot.
+         *
+         */
+        add_filter( 'template_include', function ( $template ) {
+            $this->setNone404(); // @todo ??
+
+
+            /**
+             * @note
+             */
+            $slugs = forum()->slugs();
+
+            // forum list.
+            // http://abc.com/qna
+            //
+            if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
+                wp_redirect( home_url("forum/" . seg(0) . '/' ) );
+            }
+            // http://abc.com/forum/submit will take all action that does not need to display HTML to web browser.
+            //
+            // http://abc.com/forum/submit?do=file_upload
+            // http://abc.com/forum/submit?do=file_delete
+            // http://abc.com/forum/submit?do=post_delete
+            // http://abc.com/forum/submit?do=post_vote
+            // http://abc.com/forum/submit?do=post_report
+            // etc...
+            else if ( seg(0) == 'forum' && seg(1) == 'submit' ) {
+                forum()->submit();
+                exit;
+            }
+            // forum list.
+            // http://abc.com/forum/qna
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
+                return $this->loadTemplate('forum-list-basic.php');
+            }
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
+                return $this->loadTemplate('forum-list-basic.php');
+            }
+            // http://abc.com/forum/xxxx/edit
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
+                return $this->loadTemplate('forum-edit-basic.php');
+            }
+            // http://abc.com/forum/xxxx/commentEdit
+            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'commentEdit'  ) {
+
+                return $this->loadTemplate('forum-commentEdit-basic.php');
+            }
+            // https://abc.com/forum/xxxx/[0-9]+
+            else if ( seg(0) == 'forum' && seg(1) != null && is_numeric(seg(2))  ) {
+                return $this->loadTemplate('forum-view-basic.php');
+            }
+            // Matches if the post is under forum category.
+            else if ( is_single() ) {
+                dog("add_filter() : is_single()");
+                $id = get_the_ID();
+                if ( $id ) {
+                    $category = get_the_category( $id );
+                    if ( $category ) {
+                        $category_id = current( $category )->term_id;
+                        dog("category_id: $category_id");
+                        $ex = explode('/', get_category_parents($category_id, false, '/', true));
+                        dog("category slug of the category id: $ex[0]");
+                        if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
+                            return $this->loadTemplate('forum-view-basic.php');
+                        }
+                    }
+                }
+            }
+            return $template;
+        }, 0.01 );
+
         /**
          *
         add_filter('comment_form_submit_field', function($submit_field, $args) {
@@ -709,6 +722,9 @@ EOM;
             }
             return $comment_template;
         });
+
+
+        return $this;
     }
 
     /**
@@ -740,9 +756,9 @@ EOM;
         return forum()->doURL('comment_delete&comment_ID=' . $comment_ID );
     }
 
-    private function manageRoles()
+    public function manageRoles()
     {
-
+        return $this;
     }
 
     /**
@@ -809,9 +825,9 @@ EOM;
         return get_option('forum-slugs');
     }
 
-    private function addHooks()
+    public function addHooks()
     {
-
+        return $this;
     }
 
 }

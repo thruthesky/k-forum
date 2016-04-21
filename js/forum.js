@@ -1,13 +1,45 @@
 var $ = jQuery;
 $(function() {
-    $('body').on('click', '.attach .delete', forum.delete);
-    forum.el.postbox().find('form').submit(function(){
-        $(this).find('[type="submit"]').prop('disabled', true);
-        return true;
-    });
+    forum.el.body().on('click', '.attach .delete', forum.delete);
+    forum.el.postbox().find('form').submit( disable_double_submit );
+    forum.el.body().on('submit', '.comment-new form', disable_double_submit);
+    function click_on_comment_form() {
+        var $this = $(this);
+        var h = $this.find('textarea').css('height');
+        h = h.replace('px', '');
+        if ( h < 190 ) {
+            $this.find('textarea').css({
+                height: '200px'
+            });
+        }
+    }
+
+    forum.el.body().on('click', '.comment-new form', click_on_comment_form);
+    forum.el.commentReply().click(move_comment_form);
 });
+function move_comment_form() {
+    var $this = $(this);
+    var $comment_form = $('.comment-new');
+    var $comment_form_template = $('#comment-form-template');
+    $comment_form.remove();
+
+    var $buttons = $this.parent();
+    var $comment_body = $buttons.parent();
+    var $comment = $comment_body.parent();
+    var comment_id = $comment.attr('comment-id');
+    console.log(comment_id);
+    var t = _.template( $comment_form_template.html() );
+    $comment_body.append(t({ parent : comment_id }));
+}
+function disable_double_submit() {
+    $(this).find('[type="submit"]').prop('disabled', true);
+    return true;
+}
 var forum = {
     el : {
+        body : function() {
+            return $('body');
+        },
         postbox : function () {
             var $comment_new = $('.comment-new');
             if ( $comment_new.length ) return $comment_new;
@@ -24,6 +56,9 @@ var forum = {
         },
         fileIDs : function() {
             return forum.el.postbox().find('[name="file_ids"]');
+        },
+        commentReply : function () {
+            return $('.comment-list .reply');
         }
     },
     getDo : function () {

@@ -1,3 +1,8 @@
+.comments-title {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #c2d4d8;
+}
 .comment-new {
     margin: 1em 0;
     overflow: auto;
@@ -10,27 +15,6 @@
     width: 100%;
 }
 
-.comment-new .buttons,
-.comment-new .photos,
-.comment-new .files {
-    overflow: auto;
-    overflow-y: hidden;
-}
-.comment-new .buttons .file-upload {
-    height: 2em;
-    float: left;
-}
-
-.comment-new .buttons .submit {
-    height: 2em;
-    float: right;
-}
-.comment-new .buttons .fa-camera {
-    font-size: 1.8em;
-}
-.comment-new .loader {
-    display: none;
-}
 
 
 
@@ -40,8 +24,21 @@
 }
 .comment-buttons > div {
     float: left;
+    padding: .1em .6em .1em .1em;
     color: #3b3a36;
-    padding: .1em .6em .1em 0;
+    font-size: .9em;
+    cursor: pointer;
+}
+.comment-buttons > div a:hover {
+    text-decoration: none;
+}
+.comment-buttons > div:before {
+    padding-right: .4em;
+    content: '·';
+}
+
+.comment-buttons > div:first-child:before {
+    content: '';
 }
 
 /** Attachment display on comment view */
@@ -50,10 +47,57 @@
     overflow: auto;
     overflow-y: hidden;
 }
-.comment-list .comment .photos .attach {
-    width: auto;
-    height: auto;
-}
+
 .comment-list .comment .photos .attach img {
     max-width: 100%;
+}
+
+
+
+
+ol.comment-list,
+ul.children {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+.depth-1 {
+}
+.depth-2 {
+    margin-left: 1em;
+}
+.depth-3 {
+    margin-left: .8em;
+}
+.depth-4 {
+    margin-left: .6em;
+}
+.depth-5 {
+    margin-left: .5em;
+}
+.depth-6 {
+    margin-left: .4em;
+}
+.depth-7 {
+    margin-left: .3em;
+}
+.depth-8 {
+    margin-left: .2em;
+}
+.depth-9, .depth-10,
+.depth-10,.depth-12,.depth-13,.depth-14,.depth-15
+{
+    margin-left: .1em;
+}
+
+
+.comment-text {
+    margin-top: .6em;
+    padding: .8em;
+    background-color: #f6f1ed;
+}
+.comment-text > p:last-child {
+    margin-bottom: 0;
 }

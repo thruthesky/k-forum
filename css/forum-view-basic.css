@@ -1,7 +1,46 @@
+article .title h1 {
+    margin: .5em 0;
+    font-size: 2em;
+    font-weight: 400;
+}
 
-/* Post View */
+article .forum-title {
+    padding-right: .4em;
+    text-align: right;
+}
+article .forum-title a {
+    color: #9fa8a3;
+}
+
+article .meta {
+    margin-bottom: 0.4em;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    line-height: 2.2em;
+}
+article .meta.container,
+article .meta.container .row,
+article .meta.container .row > div {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+article .meta.container {
+    width: 100%;
+    max-width: 100%;
+}
+article .meta .buttons {
+    text-align: right;
+}
 article .content {
     padding: 1em;
-    background-color: #dfdfdf;
+    background-color: #f4f4f4;
 }
-/* eo Post View */
+
+
+
+.comment-body .photos .img-thumbnail {
+    margin-top: .2em;
+}

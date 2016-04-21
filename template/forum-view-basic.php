@@ -25,18 +25,27 @@ $category = current(get_the_category());
                 <?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
             </div>
 
-            <a href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">
-                <?php echo $category->name?>
+            <div class="forum-title">
+                <a href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">
+                    <?php echo $category->name?>
                 </a>
-
-            <div class="info">
-                No. : <?php the_ID()?>,
-                Count of Viewers : <?php  echo post()->increaseNoOfView( get_the_ID() )?>
-                <a href="<?php echo forum()->editURL( get_the_ID() ) ?>">글 수정</a>
-                <a href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">글 목록</a>
-                <a href="<?php echo forum()->doURL('post_delete&id=' . get_the_ID() )?>">글 삭제</a>
             </div>
 
+            <div class="meta container">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                    <?php printf(__('By %s', 'k-forum'), get_the_author())?>
+                    /
+                        <?php printf( __('No. : %s', 'k-forum'), get_the_ID()); ?>
+                    Count of Viewers : <?php  echo post()->increaseNoOfView( get_the_ID() )?>
+                    </div>
+                    <div class="buttons col-xs-12 col-sm-6">
+                        <a class="btn btn-secondary btn-sm" href="<?php echo forum()->editURL( get_the_ID() ) ?>">글 수정</a>
+                        <a class="btn btn-secondary btn-sm"href="<?php echo home_url()?>/forum/<?php echo $category->slug?>">글 목록</a>
+                        <a class="btn btn-secondary btn-sm"href="<?php echo forum()->doURL('post_delete&id=' . get_the_ID() )?>">글 삭제</a>
+                    </div>
+                </div>
+            </div>
 
             <div class="content">
                 <?php

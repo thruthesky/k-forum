@@ -15,7 +15,7 @@
 /* post meta */
 
 .post-list-meta {
-    padding: .8em;
+    padding: .8em 0;
 }
 .post-list-meta .top {
     color: #06000a;
@@ -99,6 +99,7 @@
 .post-list-container .post a {
     display: block;
     padding: 1em;
+    line-height: 1.6em;
     font-weight: normal;
     text-decoration: none;
     color: #292929;
@@ -158,3 +159,4 @@
 .pagination .page-numbers.next {
     width: 3em;
 }
+

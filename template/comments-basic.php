@@ -25,38 +25,23 @@ wp_enqueue_style( 'forum-comments-basic', FORUM_URL . 'css/forum-comments-basic.
 </script>
 
 
-<script>
-    jQuery( function( $ ) {
-        $('.comment-list .reply').click(function(){
-
-            var $this = $(this);
-            var $comment_form = $('.comment-new');
-            var $comment_form_template = $('#comment-form-template');
-            $comment_form.remove();
-
-            var $buttons = $this.parent();
-            var $comment_body = $buttons.parent();
-            var $comment = $comment_body.parent();
-            var comment_id = $comment.attr('comment-id');
-            console.log(comment_id);
-            var t = _.template( $comment_form_template.html() );
-            $comment_body.append(t({ parent : comment_id }));
-        });
-    });
-</script>
 <?php
 function comments_basic($comment, $args, $depth) {
+$parent_comment = null;
+if ( $comment->comment_parent ) $parent_comment = get_comment($comment->comment_parent);
 ?>
 <li <?php comment_class( empty( $args['has_children'] ) ? '' : 'parent' ) ?> id="comment-<?php comment_ID() ?>" comment-id="<?php comment_ID() ?>">
     <div class="comment-body">
-        <div class="comment-author vcard">
-            <?php echo get_avatar( $comment, $args['avatar_size'] ); ?>
-            <?php echo get_comment_author(); ?>
-        </div>
-
-        <div class="comment-meta commentmetadata">
-            <?php _e('No.:', 'k-forum')?> <?php echo $comment->comment_ID?>
+        <div class="comment-meta">
+            <?php if ( $parent_comment ) : ?>
+                <?php echo get_comment_author(); ?> commented on <?php echo get_comment_author($parent_comment)?> at
+            <?php else : ?>
+                <?php echo get_comment_author(); ?> wrote at
+            <?php endif; ?>
             <?php printf( __('%1$s at %2$s'), get_comment_date(),  get_comment_time() ); ?>
+            <div>
+                <?php _e('No.:', 'k-forum')?> <?php echo $comment->comment_ID?>
+            </div>
         </div>
 
 
@@ -64,12 +49,15 @@ function comments_basic($comment, $args, $depth) {
         $attachments = forum()->markupCommentAttachments( FORUM_COMMENT_POST_NUMBER + $comment->comment_ID );
         ?>
 
+
         <div class="photos"><?php echo $attachments['images']?></div>
         <div class="files"><?php echo $attachments['attachments']?></div>
 
 
-        @익명 님에게 ...
+        <div class="comment-text">
         <?php comment_text(); ?>
+        </div>
+
         <div class="comment-buttons">
             <div class="reply">Reply</div>
             <div class="edit">
@@ -78,20 +66,15 @@ function comments_basic($comment, $args, $depth) {
             <div class="delete">
                 <a href="<?php echo forum()->commentDeleteURL( $comment->comment_ID )?>">Delete</a>
             </div>
-            <div class="report">Report</div>
-            <div class="like">Like</div>
+            <div class="report" title="This function is not working, yet.">Report</div>
+            <div class="like" title="This function is not working, yet.">Like</div>
         </div>
     </div>
+    <hr>
     <?php
-    }
+    } /** EO comments_basic callback */
     ?>
-
     <div id="comments" class="comments-area">
-
-
-
-
-
         <script type="text/template" id="comment-form-template">
             <section class="reply comment-new">
                 <form action="<?php echo home_url("forum/submit")?>" method="post" enctype="multipart/form-data">
@@ -114,7 +97,7 @@ function comments_basic($comment, $args, $depth) {
                             <input type="file" name="file" onchange="forum.on_change_file_upload(this);" style="opacity: .001;">
                         </div>
                         <div class="submit">
-                            <label for="post-submit-button"><input id="post-submit-button" type="submit"></label>
+                            <label for="post-submit-button"><input id="post-submit-button" type="submit" value="<?php _e('Comment Submit', 'k-forum')?>"></label>
                         </div>
                     </div>
                     <div class="loader">
@@ -136,13 +119,7 @@ function comments_basic($comment, $args, $depth) {
 
         <?php if ( have_comments() ) : ?>
 
-            <h2 class="comments-title">
-                <?php
-                $comments_number = get_comments_number();
-                _e("No. of Comments: ", 'k-fourm');
-                echo $comments_number;
-                ?>
-            </h2>
+            <div class="comments-title"><?php printf('No. of Comments: %d', get_comments_number()); ?></div>
 
             <?php the_comments_navigation(); ?>
 

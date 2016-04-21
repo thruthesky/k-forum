@@ -77,13 +77,13 @@ else {
 
             <div class="buttons">
                 <div class="file-upload">
-                    <span class="dashicons dashicons-camera"></span>
+                    <i class="fa fa-camera"></i>
                     <span class="text"><?php _e('Choose File', 'k-forum')?></span>
                     <input type="file" name="file" onchange="forum.on_change_file_upload(this);" style="opacity: .001;">
                 </div>
                 <div class="right">
-                    <label for="post-submit-button"><input id="post-submit-button" type="submit"></label>
-                    <label for="post-cancel-button"><a href="<?php echo forum()->listURL(seg(1))?>" id="post-cancel-button">Cancel</a></label>
+                    <label for="post-submit-button"><input id="post-submit-button" class="btn btn-primary btn-sm" type="submit" value="<?php _e('POST SUBMIT', 'k-forum')?>"></label>
+                    <label for="post-cancel-button"><a href="<?php echo forum()->listURL(seg(1))?>" id="post-cancel-button" class="btn btn-secondary-outline btn-sm"><?php _e('Cancel', 'k-forum')?></a></label>
                 </div>
             </div>
 

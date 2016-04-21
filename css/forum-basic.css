@@ -10,14 +10,19 @@ form .loader {
     height: 32px;
     overflow: hidden;
     background-color: #e9e9e9;
+    border-radius: 2px;
 }
-.file-upload .dashicons-camera:before {
-    font-size: 2em;
+
+form .file-upload .fa-camera {
+    padding: .3em 0 0 .4em;
+    font-size: 1.4em;
+    vertical-align: bottom;
 }
+
 .file-upload .text {
-    padding: 1em;
-    font-size: 1.2em;
+    font-size: 1em;
 }
+
 .file-upload input {
     position: absolute;
     top: 0;
@@ -30,13 +35,24 @@ form .loader {
 }
 
 
-
-
-#post-new .photos,
-.comment-new .photos {
+form .buttons,
+form .photos,
+form .files {
     overflow: auto;
-    overflow-x: hidden;
     overflow-y: hidden;
+}
+
+form .buttons {
+    margin-top: .3em;
+}
+
+form .buttons .file-upload {
+    height: 2em;
+    float: left;
+}
+form .buttons .submit {
+    height: 2em;
+    float: right;
 }
 
 form .photos .attach {

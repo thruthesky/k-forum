@@ -15,7 +15,6 @@ class forum
 
     }
 
-
     public function setNone404() {
         global $wp_query;
         if ( $wp_query->is_404 ) {
@@ -634,12 +633,12 @@ class forum
         foreach ( $files as $file ) {
             $m = "<div class='attach' attach_id='{$file->ID}' type='{$file->post_mime_type}'>";
             if ( strpos( $file->post_mime_type, 'image' ) !== false ) { // image
-                $m .= "<img src='{$file->guid}'>";
+                $m .= "<img src='{$file->guid}' class='img-thumbnail'>";
                 $m .= '</div>';
                 $images .= $m;
             }
             else { // attachment
-                $m .= "<a href='{$file->guid}'>{$file->post_title}</a>";
+                $m .= "<a href='{$file->guid}'>". sprintf( __('Download:', 'k-forum')) ." {$file->post_title}</a>";
                 $m .= '</div>';
                 $attachments .= $m;
             }
@@ -774,6 +773,7 @@ EOM;
             $comment_ID = wp_insert_comment([
                 'comment_post_ID' => $post_ID,
                 'comment_parent' => $_REQUEST['comment_parent'],
+                'user_id' => wp_get_current_user()->ID,
                 'comment_content' => $_REQUEST['comment_content'],
                 'comment_approved' => 1,
             ]);

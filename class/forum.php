@@ -44,10 +44,12 @@ class forum
     public function doDefaults() {
 
 
-        forum()->addRoutes(); // @note
 
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
         if ( $category ) return $this;
+
+
+        forum()->addRoutes(); // work
 
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
 
@@ -86,6 +88,8 @@ class forum
          */
 
         $this->update_forum_slugs();
+
+
 
         return $this;
     }
@@ -371,39 +375,38 @@ class forum
      * Add rewrite rules.
      *
      *
+     * 아래의 rewrite_rule 를 사용하지 않고도 template_include 를 통해서 template 을 포함 할 수 있다.
+     *
+     * 하지만 Main Loop 를 사용 할 수 없다.
+     *
+     * ReWrite 하는 목적은 Main Loop 를 사용 할 수 있도록 하기 위한 것이다.
      */
     public function addRoutes()
     {
 
+        echo "<p>Adding rewrite rules for k-forum.</p>";
         /**
-         *
-         *
-         * 아래의 rewrite_rule 를 사용하지 않고도 template_include 를 통해서 template 을 포함 할 수 있다.
-         *
-         * 하지만 Main Loop 를 사용 할 수 없다.
-         *
-         * ReWrite 하는 목적은 Main Loop 를 사용 할 수 있도록 하기 위한 것이다.
-         *
+         * @note Do not add this code in hook since,
+         * @Warning This code is very expensive. So, must run only when it is necessary.
          */
-        add_action('init', function() {
             add_rewrite_rule(
-                '^forum/([a-zA-Z0-9\-]+)/?$',
+                '^forum/([^\/]+)/?$',
                 'index.php?category_name=$matches[1]',
                 'top'
             );
             add_rewrite_rule(
-                '^forum/([a-zA-Z0-9\-]+)/page/([0-9]+)/?$',
+                '^forum/([^\/]+)/page/([0-9]+)/?$',
                 'index.php?category_name=$matches[1]&paged=$matches[2]',
                 'top'
             );
             add_rewrite_rule(
-                '^forum/([a-zA-Z0-9\-]+)/([0-9]+)?$',
+                '^forum/([^\/]+)/([0-9]+)?$',
                 'index.php?category_name=$matches[1]&p=$matches[2]',
                 'top'
             );
             //add_rewrite_tag('%val%','([^/]*)');
             flush_rewrite_rules();
-        });
+
 
     }
 
@@ -865,6 +868,9 @@ EOM;
      */
     public function addHooks()
     {
+        add_action('admin_init', function(){
+
+        });
 
         add_action('init', function(){
 

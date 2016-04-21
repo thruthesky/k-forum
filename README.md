@@ -74,3 +74,9 @@ For instance, if a k-forum comment is deleted, it saves into trash just like Wor
 # ETC
 
 * 글 카테고리 메뉴에서 K-forum 을 삭제해도 다시 생성된다.
+
+* 워드프레스의 글과 카테고리를 그대로 활용하므로
+
+    * 글 및 카테고리 관리를 글 메뉴와 카테고리 메뉴에서 하면 된다.
+    
+        * 예를 들면, 카테고리 별 글 이동 같은 것이 있다.

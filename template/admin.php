@@ -7,6 +7,8 @@ wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0
 
 
 
+
+
 $cat = forum()->getForumCategory();
 $categories = [];
 if ( $cat ) {

@@ -22,6 +22,7 @@ require_once "class/forum.php";
 require_once "class/post.php";
 
 
+// forum()->addRoutes(); // work
 
 forum()
     ->init()
@@ -31,7 +32,10 @@ forum()
         ->addFilters()
     ->loadText()
     ->enqueue();
+
+
 register_activation_hook( __FILE__, function() {
+
     forum()
         ->doDefaults();
 });

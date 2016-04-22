@@ -169,12 +169,18 @@ jQuery( function($) {
         if ( p.test(contentOriginal) === false ) {
             pro('input-image').show();
         }
-
-
-        $(contentOriginal).find('img').each(function(){
-            var alt = $(this).prop('alt');
-            console.log(alt);
-        });
+        else {
+            var countGoodAlt = 0;
+            $(contentOriginal).find('img').each(function(){
+                var alt = $(this).prop('alt');
+                if ( s.count( alt, keyword ) ) countGoodAlt ++;
+                //console.log(alt);
+            });
+            console.log('goodAlt: ' + countGoodAlt);
+            if ( countGoodAlt == 0 ) {
+                pro('input-keyword-on-image-alt').show();
+            }
+        }
 
     }
 });

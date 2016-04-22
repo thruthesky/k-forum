@@ -142,7 +142,7 @@ else {
                 , 현재 회 수 : <span class="count-keyword-on-content"></span>
             </li>
             <li class="input-image">이미지를 등록합십시오.</li>
-            <li class="input-image">이미지 설명(ALT)에 키워드를 포함하십시오.</li>
+            <li class="input-keyword-on-image-alt">이미지 설명(ALT)에 키워드를 포함하십시오.</li>
 
 
         </ul>

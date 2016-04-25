@@ -12,6 +12,15 @@ $category_id = $category->term_id;
 $paged = isset($GLOBALS['wp_query']->query['paged']) ? $GLOBALS['wp_query']->query['paged'] : 1;
 
 
+
+
+
+
+
+
+
+
+
 ?>
 
 

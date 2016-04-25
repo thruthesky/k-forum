@@ -14,11 +14,27 @@ jQuery( function($) {
         title : $box.find('[name="title"]'),
         keyword : $pro.find('[name="keyword"]'),
         pro : {
-            check_list : $pro.find('.check-list')
+            check_list : $pro.find('.check-list'),
+            status : $pro.find('.status')
         },
         p : function( cls ) {
             return $pro.find( '.' + cls );
         }
+    };
+    var seo = {};
+    seo.rates = {};
+    seo.rate = function ( lv ) {
+        if ( typeof seo.rates[lv] == 'undefined' ) seo.rates[lv] = 1;
+        else seo.rates[lv] ++;
+
+        console.log( seo.rates );
+    };
+    seo.getRate = function () {
+
+    };
+    seo.showRateResult = function () {
+        el.pro.status.find('li').hide();
+        el.pro.status.find('.' + seo.getRate()).show();
     };
     function pro( cls ) {
         return el.p( cls );
@@ -39,7 +55,13 @@ jQuery( function($) {
     function runPro() {
         //console.log( 'run' );
 
+        seo.rates = {};
+
         checkSEOList();
+
+
+        seo.showRateResult();
+
         runAgain();
     }
 
@@ -48,6 +70,8 @@ jQuery( function($) {
     }
 
     function checkText() {
+
+
 
         el.pro.check_list.find('li').css('display', 'none');
 
@@ -59,19 +83,22 @@ jQuery( function($) {
         pro('count-title-words').text( titleWords.length );
 
         // title
-        if ( titleLength < 1 ) {
+        if ( titleLength < 1 ) { // input title. No title provided.
             pro('input-title').show();
+            seo.rate('worst');
         }
         else {
             pro('input-title').hide();
-            if ( titleWords.length < 8 ) {
+            if ( titleWords.length < 8 ) { // Only few words are provided.
                 pro('input-more-words-on-title').show();
+                seo.rate('worse');
             }
             else {
                 //
             }
-            if ( titleWords.length > 20 ) {
+            if ( titleWords.length > 20 ) { // Too much words are provided.
                 pro('input-less-words-on-title').show();
+                seo.rate('worse');
             }
             else {
                 //
@@ -97,6 +124,7 @@ jQuery( function($) {
             pro('count-content-words').text( contentWords.length );
             if ( content.length < 1 ) {
                 pro('input-content').show();
+                seo.rate('worst');
             }
             else {
                 pro('input-content').hide();

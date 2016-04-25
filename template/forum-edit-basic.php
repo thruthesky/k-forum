@@ -61,7 +61,7 @@ else {
                 $settings = array(
                     'textarea_name' => 'content',
                     'media_buttons' => false,
-                    'textarea_rows' => 20,
+                    'textarea_rows' => 4,
                     'quicktags' => false
                 );
                 wp_editor( $content, $editor_id, $settings );
@@ -105,6 +105,18 @@ else {
 
     </section>
     <section id="pro">
+        <style scoped>
+            .good { color: #3a8c45; font-weight: bold; }
+            .worse { color: orangered; font-weight: bold; }
+            .worst { color: red; font-weight: bold; }
+        </style>
+        <div class="status">
+            <ul>
+                <li class="good"><?php _e('Good', 'k-forum')?></li>
+                <li class="worse"><?php _e('Worse', 'k-forum')?></li>
+                <li class="worst"><?php _e('Worst', 'k-forum')?></li>
+            </ul>
+        </div>
         <div>
         제목 단어 수 : <span class="count-title-words">0</span>
             제목의 키워드 수 : <span class="count-keyword-on-title">0</span>
@@ -116,7 +128,7 @@ else {
         <input type="text" name="keyword" value="" placeholder="Input keyword">
 
         <ul class="check-list">
-            <li class="input-title">제목을 입력하십시오.</li>
+            <li class="input-title"><?php _e('Input title', 'k-forum')?></li>
             <li class="input-more-words-on-title">제목을 8 단어 이상으로 입력하십시오.</li>
             <li class="input-less-words-on-title">제목을 20 단어 이하로 입력하십시오.</li>
             <li class="input-content">내용을 입력하십시오.</li>

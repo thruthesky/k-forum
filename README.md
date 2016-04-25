@@ -97,4 +97,21 @@ For instance, if a k-forum comment is deleted, it saves into trash just like Wor
 따라서 글 내용이 한글인 경우, 글 내용 비례하여 키워드 밀집도를 다지는 경우, 키워드를 단어별로 분리하지 않고 그냥 단어 속에 키워드가 포함되면 같이 카운트를 해야 한다.
  * 따라서 키워드는 최소한 한글 두자 이상이 되어야 한다.
  * 참고로 자바스크립트에서 한글 한 글자의 길이는  1 이다.
- 
+
+
+
+# XMLRPC
+
+It is amazing that xmlrpc for php is still working and maintained actively.
+
+https://github.com/gggeek/phpxmlrpc
+http://gggeek.github.io/phpxmlrpc/
+https://github.com/gggeek/phpxmlrpc/blob/master/doc/manual/phpxmlrpc_manual.adoc
+
+github.com/thruthesky/x 의 etc/service/push_to_blog.php 를 열어서 기존의 코드를 네이버로 집어 넣는다.
+
+완전한 별도의 플러그인으로 하나 더 만든다.
+
+
+https://docs.google.com/document/d/1qjb7JBeGBh-VWFFRJxeJwGTSGo1SvtuvXSUJ75Hzl3g/edit#heading=h.cjwku3clyqxh
+

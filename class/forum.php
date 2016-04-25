@@ -49,7 +49,7 @@ class forum
         if ( $category ) return $this;
 
 
-        forum()->addRoutes(); // work
+        forum()->addRoutes(); // addRoutes on it does the default data insert ( on activation )
 
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
 
@@ -383,7 +383,7 @@ class forum
     public function addRoutes()
     {
 
-        echo "<p>Adding rewrite rules for k-forum.</p>";
+        // echo "<p>Adding rewrite rules for k-forum.</p>";
         /**
          * @note Do not add this code in hook since,
          * @Warning This code is very expensive. So, must run only when it is necessary.
@@ -467,6 +467,7 @@ class forum
 
 
         $this->update_forum_slugs();
+
 
 
         wp_redirect( $this->adminURL() );
@@ -855,7 +856,14 @@ EOM;
      */
     public function slugs()
     {
-        return get_option('forum-slugs');
+        $slugs = get_option('forum-slugs');
+        if ( empty($slugs) ) {
+            // This is an error.
+            // This may happen when forum exists, but it was not updated on 'forum-slugs' like old version has no function on updating 'forum-slugs'.
+            $this->update_forum_slugs();
+            $slugs = get_option('forum-slugs');
+        }
+        return $slugs;
     }
 
     /**

@@ -21,21 +21,7 @@ jQuery( function($) {
             return $pro.find( '.' + cls );
         }
     };
-    var seo = {};
-    seo.rates = {};
-    seo.rate = function ( lv ) {
-        if ( typeof seo.rates[lv] == 'undefined' ) seo.rates[lv] = 1;
-        else seo.rates[lv] ++;
 
-        console.log( seo.rates );
-    };
-    seo.getRate = function () {
-
-    };
-    seo.showRateResult = function () {
-        el.pro.status.find('li').hide();
-        el.pro.status.find('.' + seo.getRate()).show();
-    };
     function pro( cls ) {
         return el.p( cls );
     }
@@ -55,12 +41,7 @@ jQuery( function($) {
     function runPro() {
         //console.log( 'run' );
 
-        seo.rates = {};
-
         checkSEOList();
-
-
-        seo.showRateResult();
 
         runAgain();
     }
@@ -75,30 +56,41 @@ jQuery( function($) {
 
         el.pro.check_list.find('li').css('display', 'none');
 
+        // title variable
         var title = s.trim(el.title.val());
         var titleWords = s.words(title);
         var titleLength = title.length;
         var titleOK = true;
+
+
+
+        // keyword variables
+        var keyword = s.trim(el.keyword.val());
+        var keywordWords = s.words( keyword );
+
+
+
+
+        // code begin
 
         pro('count-title-words').text( titleWords.length );
 
         // title
         if ( titleLength < 1 ) { // input title. No title provided.
             pro('input-title').show();
-            seo.rate('worst');
         }
         else {
             pro('input-title').hide();
             if ( titleWords.length < 8 ) { // Only few words are provided.
                 pro('input-more-words-on-title').show();
-                seo.rate('worse');
+
             }
             else {
                 //
             }
             if ( titleWords.length > 20 ) { // Too much words are provided.
                 pro('input-less-words-on-title').show();
-                seo.rate('worse');
+
             }
             else {
                 //
@@ -112,37 +104,67 @@ jQuery( function($) {
         // content
         var editor;
         var content;
+        var $content;
         var contentWords;
         var contentWordsLength;
         if ( typeof tinymce != 'undefined' ) {
             editor = tinymce.activeEditor;
             contentOriginal = editor.getContent();
+            content = contentOriginal;
+
+            $content = $("<div>" + contentOriginal + "</div>");
             content = s.stripTags( content );
+            //console.log('contnet: ' + content)
             content = s.trim( content );
             contentWords = s.words( content );
             contentWordsLength = contentWords.length;
             pro('count-content-words').text( contentWords.length );
+            //console.log('content.length: ' + content.length );
             if ( content.length < 1 ) {
                 pro('input-content').show();
-                seo.rate('worst');
+
             }
             else {
                 pro('input-content').hide();
                 // console.log(' content word count : ' + contentWords.length );
-                if ( contentWordsLength < 300 ) {
+                if ( contentWordsLength < 150 ) {
+                    pro('input-minimum-words-on-content').show();
+                }
+                else if ( contentWordsLength < 300 ) {
                     pro('input-more-words-on-content').show();
                 }
+
+
+                // h1 tag in content.
+
+                var $h1 = $content.find('h1');
+                var count_h1 = $h1.length;
+                var count_h1_keyword = 0;
+                if ( count_h1 == 0 ) {
+                    pro('input-h1').show();
+                }
                 else {
-                    //
+                    $h1.each( function (index) {
+                            var h1 = $(this).text();
+                            if ( s.count( h1, keyword ) ) count_h1_keyword ++;
+                        })
+                        .promise()
+                        .done( function() {
+                            if ( count_h1_keyword == 0 ) {
+                                pro('input-keyword-on-h1').show();
+                            }
+                        });
                 }
             }
         }
 
 
-        // keyword
-        var keyword = s.trim(el.keyword.val());
-        var keywordWords = s.words( keyword );
 
+
+
+        // keyword check begins
+
+        // keyword length.
         if ( keyword.length < 2 ) {
             pro('input-more-words-on-keyword').show();
             //
@@ -178,18 +200,33 @@ jQuery( function($) {
         if ( content && keyword ) {
             var count_keyword_on_content = s.count( content, keyword );
             pro('count-keyword-on-content').text( count_keyword_on_content );
-            if ( count_keyword_on_content < 2 ) pro('input-minimum-two-keyword-on-content');
-            var min = Math.round(contentWordsLength * 0.015);
-            var max = Math.round(contentWordsLength * 0.025);
-            console.log(min);
-            if ( count_keyword_on_content < min ) {
-                pro('input-more-keyword-on-content').show();
+            if ( count_keyword_on_content < 2 ) pro('input-minimum-two-keyword-on-content').show();
+            else {
+                // 내용에 비례해서 키워드 출현의 많고 적음.
+                if ( contentWordsLength > 50 ) {
+                    var min = Math.round(contentWordsLength * 0.015);
+                    var max = Math.round(contentWordsLength * 0.025);
+                    // console.log(min);
+                    if ( count_keyword_on_content < min ) {
+                        pro('input-more-keyword-on-content').show();
+                    }
+                    if ( count_keyword_on_content > max ) {
+                        pro('input-less-keyword-on-content').show();
+                    }
+                }
             }
-            if ( count_keyword_on_content > max ) {
-                pro('input-less-keyword-on-content').show();
-            }
+
             pro('min-count-keyword-on-content').show().text( min );
             pro('max-count-keyword-on-content').show().text( max );
+
+            var j = contentWords.length;
+            var count_keyword_on_content_begin = 0;
+            if ( j > 5 ) j = 5;
+            for ( var i = 0; i < j; i ++ ) {
+                if ( s.count( contentWords[i], keyword ) ) count_keyword_on_content_begin ++;
+            }
+            if ( count_keyword_on_content_begin == 0 ) pro('input-keyword-on-content-begin').show();
+            // console.log(count_keyword_on_content_begin);
         }
 
         // image
@@ -199,12 +236,12 @@ jQuery( function($) {
         }
         else {
             var countGoodAlt = 0;
-            $(contentOriginal).find('img').each(function(){
+            $content.find('img').each(function(){
                 var alt = $(this).prop('alt');
                 if ( s.count( alt, keyword ) ) countGoodAlt ++;
                 //console.log(alt);
             });
-            console.log('goodAlt: ' + countGoodAlt);
+            // console.log('goodAlt: ' + countGoodAlt);
             if ( countGoodAlt == 0 ) {
                 pro('input-keyword-on-image-alt').show();
             }

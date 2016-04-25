@@ -100,104 +100,111 @@ else {
                 File upload is in progress. Please wait.
             </div>
 
+
+            <section id="pro">
+                <div>
+                    제목 단어 수 : <span class="count-title-words">0</span>
+                    제목의 키워드 수 : <span class="count-keyword-on-title">0</span>
+                    내용 단어 수 : <span class="count-content-words">0</span>
+                    내용의 키워드 수 : <span class="count-keyword-on-content">0</span>
+                </div>
+
+
+                <input type="text" name="keyword" value="<?php echo get_post_meta(get_the_ID(), 'keyword', true)?>" placeholder="Input keyword">
+
+                <style scoped>
+                    .check-list li {
+                        display:none;
+                    }
+                    .check-list .tip {
+                        color: #2eb453;
+                    }
+                    .check-list .warning {
+                        color:red;
+                    }
+                </style>
+
+                <ul class="check-list">
+                    <li class="input-title warning"><?php _e('Input title', 'k-forum')?></li>
+                    <li class="input-more-words-on-title warning">제목을 8 단어 이상으로 입력하십시오.</li>
+                    <li class="input-less-words-on-title tip">제목을 20 단어 이하로 입력하십시오.</li>
+                    <li class="input-content warning">내용을 입력하십시오.</li>
+
+                    <li class="input-minimum-words-on-content warning">내용에 최소 150 단어 이상 입력하십시오.</li>
+                    <li class="input-more-words-on-content tip">내용에 ( 될 수 있으면 ) 300 단어 이상 입력하십시오.</li>
+
+                    <li class="input-more-words-on-keyword warning">키워드를 두 글자 이상 입력하십시오.</li>
+                    <li class="input-less-words-on-keyword warning">키워드를 두 단어 이하로 입력하십시오.</li>
+
+                    <li class="input-keyword-on-title warning">제목에 키워드를 입력하십시오.</li>
+                    <li class="input-less-keyword-on-title tip">제목에 키워드를 2 회 이하로 입력하십시오.</li>
+
+                    <li class="input-minimum-two-keyword-on-content tip">내용에 최소한 2 개의 키워드를 입력하십시오.</li>
+                    <li class="input-more-keyword-on-content warning">내용에 키워드가 너무 적게 입력되었습니다.
+                        적당한 키워드 회 수 :
+                        최소(<span class="min-count-keyword-on-content"></span>)
+                        최대(<span class="max-count-keyword-on-content"></span>)
+                        , 현재 회 수 : <span class="count-keyword-on-content"></span>
+                    </li>
+                    <li class="input-less-keyword-on-content tip">내용에 키워드가 너무 많이 입력되었습니다.
+                        적당한 키워드 회 수 :
+                        최소(<span class="min-count-keyword-on-content"></span>)
+                        최대(<span class="max-count-keyword-on-content"></span>)
+                        , 현재 회 수 : <span class="count-keyword-on-content"></span>
+                    </li>
+                    <li class="input-image warning">이미지를 등록하십시오.</li>
+                    <li class="input-keyword-on-image-alt tip">이미지 설명(ALT)에 키워드를 포함하십시오.</li>
+
+
+                    <li class="input-h1 warning">내용에 제목(H1) 태그를 입력하십시오.</li>
+                    <li class="input-keyword-on-h1 tip">내용의 제목 태그에 키워드를 입력하십시오.</li>
+                    <li class="input-keyword-on-content-begin warning">내용의 첫 부분에 키워드를 입력하십시오.</li>
+
+                </ul>
+
+                <hr>
+                <ul>
+                    <li>네이버에 글 자동 등록.</li>
+                    <li>Google + 에 글 자동 등록.</li>
+                    <li>네이버 웹마스터툴 & 구글 웹 마스터 툴 & 구글 애널리스틱스 링크.</li>
+                    <li>
+                        구글, 네이버, 다음에
+                        도메인으로 검색 결과 수. 얼마나 많이 색인이 되었는지 확인.
+                    </li>
+                    <li>게시판 별 rss feed, 전체 게시판 별 rss feed</li>
+                    <li>카카오톡 로그인</li>
+                    <li>메타 정보 : OG Tag 입력(제목, 내용, URL 등). Featured Image 선택 또는 업로드.</li>
+                    <li>글 제목
+                        10 단어에서 20단어 이하.
+                        키워드 포함.
+                    </li>
+                    <li>내용 300 단어 이상.</li>
+                    <li>키워드 입력.
+                        키워드와 텍스트 용량에 비해서 키워드 표시 회수.
+                        키워드 제목 표시.
+                        키워드 첫줄에 표시.
+                        키워드 첫번째 단락에 표시.
+                        메타 정보 제목, 내용, URL 등에 키워드 표시.
+                        이미지 ALT 에 키워드 표시.
+                    </li>
+                    <li>이미지 1개 이상 등록.</li>
+                    <li>링크 1개 이상 등록.</li>
+                    <li>H1 태그 1개 등록. 키워드 포함.</li>
+                </ul>
+
+                <ul>
+                    팁
+                    <li>내용의 길이가 1천 단어 이상이면 좋음.</li>
+                    <li>내용의 단어 수는 실제 단어와 약간의 차이가 발생 할 수 있습니다. (내부적으로 HTML 로 라인 구분이 되지만, HTML 제거하면 마지막 글자와 다음 라인 글자가 붙어서 한단어가 됨)</li>
+                </ul>
+            </section>
+
         </form>
 
 
     </section>
-    <section id="pro">
-        <style scoped>
-            .good { color: #3a8c45; font-weight: bold; }
-            .worse { color: orangered; font-weight: bold; }
-            .worst { color: red; font-weight: bold; }
-        </style>
-        <div class="status">
-            <ul>
-                <li class="good"><?php _e('Good', 'k-forum')?></li>
-                <li class="worse"><?php _e('Worse', 'k-forum')?></li>
-                <li class="worst"><?php _e('Worst', 'k-forum')?></li>
-            </ul>
-        </div>
-        <div>
-        제목 단어 수 : <span class="count-title-words">0</span>
-            제목의 키워드 수 : <span class="count-keyword-on-title">0</span>
-        내용 단어 수 : <span class="count-content-words">0</span>
-            내용의 키워드 수 : <span class="count-keyword-on-content">0</span>
-        </div>
 
 
-        <input type="text" name="keyword" value="" placeholder="Input keyword">
-
-        <ul class="check-list">
-            <li class="input-title"><?php _e('Input title', 'k-forum')?></li>
-            <li class="input-more-words-on-title">제목을 8 단어 이상으로 입력하십시오.</li>
-            <li class="input-less-words-on-title">제목을 20 단어 이하로 입력하십시오.</li>
-            <li class="input-content">내용을 입력하십시오.</li>
-            <li class="input-more-words-on-content">내용에 300 단어 이상 입력하십시오.</li>
-
-            <li class="input-more-words-on-keyword">키워드를 두 글자 이상 입력하십시오.</li>
-            <li class="input-less-words-on-keyword">키워드를 두 단어 이하로 입력하십시오.</li>
-
-            <li class="input-keyword-on-title">제목에 키워드를 입력하십시오.</li>
-            <li class="input-less-keyword-on-title">제목에 키워드를 2 회 이하로 입력하십시오.</li>
-
-            <li class="input-minimum-two-keyword-on-content">내용에 최소한 2 개의 키워드를 입력하십시오.</li>
-            <li class="input-more-keyword-on-content">내용에 키워드가 너무 적게 입력되었습니다.
-                적당한 키워드 회 수 :
-                    최소(<span class="min-count-keyword-on-content"></span>)
-                    최대(<span class="max-count-keyword-on-content"></span>)
-                , 현재 회 수 : <span class="count-keyword-on-content"></span>
-            </li>
-            <li class="input-less-keyword-on-content">내용에 키워드가 너무 많이 입력되었습니다.
-                적당한 키워드 회 수 :
-                최소(<span class="min-count-keyword-on-content"></span>)
-                최대(<span class="max-count-keyword-on-content"></span>)
-                , 현재 회 수 : <span class="count-keyword-on-content"></span>
-            </li>
-            <li class="input-image">이미지를 등록합십시오.</li>
-            <li class="input-keyword-on-image-alt">이미지 설명(ALT)에 키워드를 포함하십시오.</li>
-
-
-        </ul>
-
-        <hr>
-        <ul>
-            <li>네이버에 글 자동 등록.</li>
-            <li>Google + 에 글 자동 등록.</li>
-            <li>네이버 웹마스터툴 & 구글 웹 마스터 툴 & 구글 애널리스틱스 링크.</li>
-            <li>
-                구글, 네이버, 다음에
-                도메인으로 검색 결과 수. 얼마나 많이 색인이 되었는지 확인.
-            </li>
-            <li>게시판 별 rss feed, 전체 게시판 별 rss feed</li>
-            <li>카카오톡 로그인</li>
-            <li>메타 정보 : OG Tag 입력(제목, 내용, URL 등). Featured Image 선택 또는 업로드.</li>
-            <li>글 제목
-                10 단어에서 20단어 이하.
-                키워드 포함.
-            </li>
-            <li>내용 300 단어 이상.</li>
-            <li>키워드 입력.
-                키워드와 텍스트 용량에 비해서 키워드 표시 회수.
-                키워드 제목 표시.
-                키워드 첫줄에 표시.
-                키워드 첫번째 단락에 표시.
-                메타 정보 제목, 내용, URL 등에 키워드 표시.
-                이미지 ALT 에 키워드 표시.
-            </li>
-            <li>이미지 1개 이상 등록.</li>
-            <li>링크 1개 이상 등록.</li>
-            <li>H1 태그 1개 등록. 키워드 포함.</li>
-        </ul>
-
-        <ul>
-            팁
-            <li>내용의 길이가 1천 단어 이상이면 좋음.</li>
-            <li>내용의 단어 수는 실제 단어와 약간의 차이가 발생 할 수 있습니다. (내부적으로 HTML 로 라인 구분이 되지만, HTML 제거하면 마지막 글자와 다음 라인 글자가 붙어서 한단어가 됨)</li>
-        </ul>
-
-
-
-    </section>
 <?php
 get_footer();
 ?>

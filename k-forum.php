@@ -20,6 +20,7 @@ define( 'FORUM_COMMENT_POST_NUMBER', 100000000 );
 require_once "class/library.php";
 require_once "class/forum.php";
 require_once "class/post.php";
+require_once "class/rpc.php";
 
 
 // forum()->addRoutes(); // work

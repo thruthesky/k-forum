@@ -169,12 +169,13 @@ class forum
             );
         }
 
-        if ( isset($_REQUEST['id']) ) {
+
+
+        if ( isset($_REQUEST['id']) ) {         // update
             $post_arr['ID'] = $_REQUEST['id'];
             $post_ID = wp_update_post($post_arr);
         }
-        else {
-
+        else {                                  // insert
             // Insert the post into the database
             $post_ID = wp_insert_post( $post_arr );
         }
@@ -183,6 +184,11 @@ class forum
             echo $post_ID->get_error_message();
             exit;
         }
+
+        delete_post_meta($post_ID, 'keyword');
+
+        add_post_meta($post_ID, 'keyword', $_REQUEST['keyword']);
+
         $url = get_permalink( $post_ID );
 
         $this->updateFileWithPost($post_ID);

@@ -138,14 +138,13 @@ class forum
      */
     private function submit()
     {
-
         $do_list = [
             'forum_create', 'forum_delete',
             'post_create', 'post_delete',
             'comment_create', 'comment_delete',
             'file_upload', 'file_delete',
+            'blogger_getUsersBlogs',
         ];
-
         if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
         else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
         exit;
@@ -990,6 +989,11 @@ EOM;
         return $info;
     }
 
+    private function blogger_getUsersBlogs() {
+        $re = rpc()->blogger_getUsersBlog( $_REQUEST['endpoint'], $_REQUEST['username'], $_REQUEST['password'] );
+
+        wp_send_json($re);
+    }
 }
 
 function forum() {

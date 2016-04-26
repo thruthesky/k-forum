@@ -23,6 +23,7 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
         <?php $value = get_option( 'k_forum')?>
         <textarea name="k_forum[blog_header]"><?php echo $value['blog_header']?></textarea>
 
+        
         포스팅 명칭, 사용자 아이디, 비밀번호, endpoint, 블로그 아이디
         <style>
             .api-settings .name input {

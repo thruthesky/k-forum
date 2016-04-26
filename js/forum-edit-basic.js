@@ -102,6 +102,7 @@ jQuery( function($) {
 
 
         // content
+	//
         var editor;
         var content;
         var $content;

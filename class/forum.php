@@ -189,6 +189,9 @@ class forum
 
         // blog posting. pos / edit
         $apis = $this->parseBlogSetting();
+
+	// klog("apis:"); klog($apis);
+
         foreach ( $apis as $api ) {
             //
             $post = get_post( $post_ID );
@@ -972,20 +975,15 @@ EOM;
     {
         $info = [];
         $value = get_option('k_forum');
-        $setting = trim( $value['blog_apis'] );
+        $setting = $value['blog_apis'];
         if ( empty( $setting ) ) return $info;
-        $apis = explode("\n", $setting);
-        foreach ( $apis as $api ) {
-            if ($api[0] == '#') continue;
-            $row = [];
-            $line = explode(' ', $api);
-            $row['name'] = $line[0];
-            $row['endpoint'] = $line[1];
-            $row['blogID'] = $line[2];
-            $row['username'] = $line[3];
-            $row['password'] = $line[4];
-            $info[] = $row;
+
+        foreach ( $setting as $api ) {
+		// klog($api);
+		if ( empty($api['name']) || empty($api['endpoint']) || empty($api['username']) ) continue;
+            $info[] = $api;
         }
+	// klog($info);
         return $info;
     }
 

@@ -26,6 +26,7 @@ class rpc {
      */
     public function blogger_getUsersBlog($api_endpoint, $api_id, $api_password)
     {
+	klog('blogger_getUsersBlogs');
         $ret = array();
         $client = new Client( $api_endpoint );
         $client->SetSSLVerifypeer(0);
@@ -68,6 +69,7 @@ class rpc {
     }
 
     public function metaWeblog_getCategories($api_endpoint, $api_id, $api_password) {
+	klog('metaWeblog_getCategories');
         $ret = array();
         $client = new Client( $api_endpoint );
         $client->SetSSLVerifypeer(0);
@@ -107,6 +109,8 @@ class rpc {
     public function metaWeblog_newPost($api_endpoint, $api_id, $api_password, $api_blogid, $post, $publish = true)
     {
 
+	klog("metaWeblog_newPost: $api_endpoint, $api_id, $api_blogid");
+	klog($post);
         $postID = 0;
         $struct = array(
             'title' => new Value($post['title'], "string"),
@@ -130,6 +134,7 @@ class rpc {
             $this->error($response);
         }
         else {
+		klog('response OK');
             $postID = $response->val->me['string'];
         }
 

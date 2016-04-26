@@ -201,13 +201,13 @@ class forum
                 $blog_postID = get_post_meta( $post_ID, $blog_postID_key, true);
                 $re = rpc()->metaWeblog_editPost($api['endpoint'], $api['username'], $api['password'], $blog_postID, $blogPost);
                 if ( ! $re ) {
-                    dog("error on metaWeblog_editPost");
+                    klog("error on metaWeblog_editPost");
                 }
             }
             else {
                 $postID = rpc()->metaWeblog_newPost( $api['endpoint'], $api['username'], $api['password'], $api['blogID'], $blogPost);
                 if ( empty($postID) ) {
-                    dog("error on metaWeblog_newPost");
+                    klog("error on metaWeblog_newPost");
                 }
                 else {
                     delete_post_meta($post_ID, $blog_postID_key);
@@ -300,7 +300,7 @@ class forum
     private function file_upload() {
         $file = $_FILES["file"];
 
-        dog($file);
+        klog($file);
 
         // Sanitize filename.
         $filename = $file["name"];
@@ -334,7 +334,7 @@ class forum
          */
         $attach_id = wp_insert_attachment( $attachment, $filename );
         add_post_meta( $attach_id, 'author', wp_get_current_user()->ID );
-        dog("attach_id: $attach_id");
+        klog("attach_id: $attach_id");
 
 
         // Update post_meta for the attachment.
@@ -571,7 +571,7 @@ class forum
             if ( $blog_postID ) {
                 $re = rpc()->blogger_deletePost($api['endpoint'], $api['username'], $api['password'], $blog_postID);
                 if ( ! $re ) {
-                    dog("error on blogger_delete");
+                    klog("error on blogger_delete");
                 }
             }
         }
@@ -740,15 +740,15 @@ class forum
             }
             // Matches if the post is under forum category.
             else if ( is_single() ) {
-                dog("add_filter() : is_single()");
+                klog("add_filter() : is_single()");
                 $id = get_the_ID();
                 if ( $id ) {
                     $category = get_the_category( $id );
                     if ( $category ) {
                         $category_id = current( $category )->term_id;
-                        dog("category_id: $category_id");
+                        klog("category_id: $category_id");
                         $ex = explode('/', get_category_parents($category_id, false, '/', true));
-                        dog("category slug of the category id: $ex[0]");
+                        klog("category slug of the category id: $ex[0]");
                         if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
                             return $this->loadTemplate('forum-view-basic.php');
                         }

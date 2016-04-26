@@ -64,7 +64,7 @@ class rpc {
         $msg = "Fault\n";
         $msg .= "Code: " . $response->faultCode() . "\n";
         $msg .= "Reason: '" . $response->faultString() . "\n";
-        dog($msg);
+        klog($msg);
     }
 
     public function metaWeblog_getCategories($api_endpoint, $api_id, $api_password) {

@@ -48,7 +48,7 @@ jQuery( function($) {
     }
 
     function runPro() {
-        console.log( 'runPro' );
+        //console.log( 'runPro' );
         checkSEOList();
         runAgain();
     }

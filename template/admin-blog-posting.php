@@ -60,13 +60,13 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                         '&password=' + $tr.find('.password').find('input').val() +
                         '&endpoint=' + encodeURIComponent( $tr.find('.endpoint').find('input').val() ) +
                         '';
-                    console.log(url);
+                    //console.log(url);
 
                     $.get(url, function(re) {
-                        console.log(re.length);
+                        //console.log(re.length);
                         for ( var i in re ) {
                             var blog = re[i];
-                            console.log(blog);
+                            //console.log(blog);
                             var m = '' +
                                 '<div class="select-blog-id" blogid="'+blog['blogid']+'" blogname="'+blog['blogName']+'" url="'+blog['url']+'">' +
                                 '   <span>('+blog['blogid']+')</span>' +
@@ -85,9 +85,9 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                     var blogid = $this.attr('blogid');
                     var blogName = $this.attr('blogname');
                     var url = $this.attr('url');
-                    console.log(blogid);
-                    console.log(blogName);
-                    console.log(url);
+                    //console.log(blogid);
+                    //console.log(blogName);
+                    //console.log(url);
                     $this.parent().find('input:eq(0)').val( blogid );
                     $this.parent().find('input:eq(1)').val( blogName );
                     $this.parent().find('input:eq(2)').val( url );

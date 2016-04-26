@@ -151,8 +151,21 @@ class forum
         exit;
     }
 
+    /**
+     *
+     * Returns true if the log-in user can blog.
+     *
+     *
+     *
+     * @return bool
+     *
+     *      - false if there is no blog info.
+     *      - false if admin permission is set and the login user is not admin.
+     */
     public function user_can_blog()
     {
+        $apis = forum()->parseBlogSetting();
+        if ( empty($apis) ) return false;
 
         $value = get_option('k_forum');
         if ( ! isset( $value['blog_permission'] ) ) return true;
@@ -160,13 +173,12 @@ class forum
         $who = $value['blog_permission'];
 
         if ( $who == 'admin' ) {
-            if (current_user_can('administrator') || is_admin()) {
+            if ( current_user_can('administrator') || is_admin() ) {
                 return true;
             }
         }
 
         return false;
-
     }
 
 
@@ -207,10 +219,8 @@ class forum
         add_post_meta($post_ID, 'keyword', $_REQUEST['keyword']);
 
 
-
         // blog posting. pos / edit
-        $this->blogPosting($post_ID, $is_update);
-
+        $this->blogPosting($post_ID );
 
 
         $url = get_permalink( $post_ID );
@@ -986,11 +996,13 @@ EOM;
         wp_send_json($re);
     }
 
-    private function blogPosting($post_ID, $is_update)
+    private function blogPosting( $post_ID )
     {
-
         $apis = $this->parseBlogSetting();
         // klog("apis:"); klog($apis);
+
+        if ( ! isset($_REQUEST['blogs']) ) return;
+        $blogs = $_REQUEST['blogs'];
 
         $post = get_post( $post_ID );
         $blogPost = [];
@@ -1000,15 +1012,18 @@ EOM;
         if ( ! empty( $blogPost['description'] ) ) {
             foreach ( $apis as $api ) {
                 //
+                if ( ! in_array( $api['name'], $blogs ) ) {
+                    continue;
+                }
                 $blog_postID_key = "blog_postID_$api[name]";
-                if ( $is_update ) {
-                    $blog_postID = get_post_meta( $post_ID, $blog_postID_key, true);
+                $blog_postID = get_post_meta( $post_ID, $blog_postID_key, true);
+                if ( $blog_postID ) { // edit
                     $re = rpc()->metaWeblog_editPost($api['endpoint'], $api['username'], $api['password'], $blog_postID, $blogPost);
                     if ( ! $re ) {
                         klog("error on metaWeblog_editPost");
                     }
                 }
-                else {
+                else { // new post
                     $postID = rpc()->metaWeblog_newPost( $api['endpoint'], $api['username'], $api['password'], $api['blogID'], $blogPost);
                     if ( empty($postID) ) {
                         klog("error on metaWeblog_newPost");

@@ -15,7 +15,7 @@ $paged = isset($GLOBALS['wp_query']->query['paged']) ? $GLOBALS['wp_query']->que
 ?>
 
 
-    <main id="post-list">
+    <main id="post-list" class="forum">
         <div class="post-list-meta">
             <div class="top">
                 <h1 class="forum-title"><?php echo $category->name?></h1>

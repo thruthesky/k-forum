@@ -25,7 +25,7 @@ else {
     </script>
 
 
-    <section id="post-new">
+    <section id="post-new" class="forum">
 
         <div class="post-edit-meta">
             <div class="top">
@@ -160,31 +160,35 @@ else {
                     <li class="input-keyword-on-h1 tip">내용의 제목 태그에 키워드를 입력하십시오.</li>
                     <li class="input-keyword-on-content-begin warning">내용의 첫 부분에 키워드를 입력하십시오.</li>
 
+                    <?php if ( forum()->user_can_blog() ) { ?>
+                        <li class="select-blog warning">블로그를 선택하십시오.</li>
+                    <?php } ?>
+
                 </ul>
 
                 <?php
 
-                forum()->user_can_blog();
-
-                $apis = forum()->parseBlogSetting();
-                $n = 0;
-                if ( $apis ) {
+                if ( forum()->user_can_blog() ) {
+                    $apis = forum()->parseBlogSetting();
+                    $n = 0;
                     ?>
-
                     <hr>
                     <div>블로그에 글 복사</div>
-                <?php
+                    <?php
                     echo "<table class='blogs'>";
-                    foreach ( $apis as $api ) {
-                        $n ++;
-                        if ( isset($api['blogName']) && $api['blogName'] ) $name = $api['blogName'];
+                    foreach ($apis as $api) {
+                        $n++;
+                        if (isset($api['blogName']) && $api['blogName']) $name = $api['blogName'];
                         else $name = $api['name'];
 
+                        $blog_postID_key = "blog_postID_$api[name]";
+                        $blog_postID = get_post_meta( get_the_ID(), $blog_postID_key, true);
+                        $checked = empty($blog_postID) ? '' : 'checked=1';
                         echo "    <tr>";
-                        echo "        <td><input type='checkbox' id='blog-id-$n' name='blogs[]' value='$api[name]'></td>";
+                        echo "        <td><input type='checkbox' id='blog-id-$n' class='blog' name='blogs[]' value='$api[name]' $checked></td>";
                         echo "        <td><label for='blog-id-$n'>$name</label></td>";
                         echo "        <td>";
-                        if ( isset($api['url']) && $api['url'] ) echo "<a href='$api[url]' target='_blank'>Open blog</a>";
+                        if (isset($api['url']) && $api['url']) echo "<a href='$api[url]' target='_blank'>Open blog</a>";
                         echo "        </td>";
                         echo "    </tr>";
                     }

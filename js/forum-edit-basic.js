@@ -55,11 +55,23 @@ jQuery( function($) {
 
     function checkSEOList() {
         checkText();
+
+        checkBlogSelection();
     }
 
+    function checkBlogSelection() {
+        var check = 0;
+        pro('blog').each(function(index) {
+            if ( $(this).prop('checked') ) check ++;
+        })
+            .promise()
+            .done(function(){
+                if ( check == 0 ) {
+                    pro('select-blog').show();
+                }
+            });
+    }
     function checkText() {
-
-
 
         el.pro.check_list.find('li').css('display', 'none');
 
@@ -69,17 +81,12 @@ jQuery( function($) {
         var titleLength = title.length;
         var titleOK = true;
 
-
-
         // keyword variables
         var keyword = s.trim(el.keyword.val());
         var keywordWords = s.words( keyword );
 
 
-
-
         // code begin
-
         pro('count-title-words').text( titleWords.length );
 
         // title

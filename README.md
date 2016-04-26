@@ -125,6 +125,15 @@ github.com/thruthesky/x 의 etc/service/push_to_blog.php 를 열어서 기존의
 
 완전한 별도의 플러그인으로 하나 더 만든다.
 
-
 https://docs.google.com/document/d/1qjb7JBeGBh-VWFFRJxeJwGTSGo1SvtuvXSUJ75Hzl3g/edit#heading=h.cjwku3clyqxh
+
+
+
+## 블로깅 동작 방식
+
+* 관리자 설정에서 '블로그 설정'을 하지 않으면 자동으로 블로그 포스팅 옵션이 나타나지 않는다.
+* 관리자 설정에서 '관리자만 블로그 등록 가능'에 체크하면, 관리자만 블로그 포스팅 할 수 있다.
+* 글 쓰기 및 수정을 할 때, '블로그'를 선택해야 한다.
+    * 처음 글 쓰기 할 때, 블로그를 선택하지 않고, 글 수정 할 때, 블로그를 선택해도 블로그에 글이 생성된다.
+* 글 수정 시, '블로그 선택 옵션'에 글이 이미 등록된 블로그에는 체크가 미리된다.
 

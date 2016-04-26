@@ -43,3 +43,6 @@ register_activation_hook( __FILE__, function() {
 
 
 
+add_action( 'admin_init', function() {
+    register_setting( 'k_forum', 'k_forum' );
+});

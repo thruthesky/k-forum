@@ -12,40 +12,6 @@ $category_id = $category->term_id;
 $paged = isset($GLOBALS['wp_query']->query['paged']) ? $GLOBALS['wp_query']->query['paged'] : 1;
 
 
-
-
-
-
-
-// philgo. 에러가 난다.
-$api_endpoint = "http://philgo.org";
-$api_id = "admin";
-$api_password = "1111";
-
-// naver
-$api_endpoint = "https://api.blog.naver.com/xmlrpc";
-$api_id = "benjaminpam2";
-$api_password = "4ced00ca9c67238d57ede99b52d825ca";
-
-
-// daum
-$api_endpoint = "https://eng4.tistory.com/api";
-$api_id = "thruthesky@hanmail.net";
-$api_password = "asdf99";
-
-
-
-// wordpress
-$api_endpoint = "http://work.org/wordpress/xmlrpc.php";
-$api_id = "admin";
-$api_password = "1111";
-
-di ( rpc()->blogger_getUsersBlog( $api_endpoint, $api_id, $api_password ) );
-
-
-exit;
-
-
 ?>
 
 

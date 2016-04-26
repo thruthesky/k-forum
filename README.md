@@ -8,8 +8,13 @@ K-Forum is short for "Knowledge Forum".
     * Make it from 3.0 to 4.5
 
 * SEO
-	* keywords, images, alt, slug, length of tile/comment, H1/H2, keyword in title/H1/H2, links in content, etc.
-
+    * OG 태그
+	* http://static.googleusercontent.com/media/www.google.co.kr/ko/kr/intl/ko/webmasters/docs/search-engine-optimization-starter-guide-ko.pdf
+	* https://docs.google.com/document/d/1l5nBwK4ztgml0kUXvy73cmMroDfWifooddutvfk_tCU/edit
+	
+	
+	
+	
 * Comment work
 	* Comment list. ( need to create a whole comment function to display buttons )
 	* Comment Create with file upload. ( need to create a whole comment function ) 
@@ -88,6 +93,11 @@ For instance, if a k-forum comment is deleted, it saves into trash just like Wor
 
 
 # SEO
+
+## 동작
+
+SEO 를 했다면, 계속 SEO 를 하도록 쿠키에 저장하고, SEO 버튼을 닫았으면, 엮시 기억해서 SEO 를 펴쳐보이지 않도록 한다. 즉, 마지막 기억을 한다.
+ 
 
 ## 키워드
 

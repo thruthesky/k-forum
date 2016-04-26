@@ -3,11 +3,11 @@ msgstr ""
 "Project-Id-Version: K Forum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: Fri Apr 15 2016 17:44:21 GMT+0800 (PHT)\n"
-"PO-Revision-Date: Tue Apr 26 2016 12:31:38 GMT+0900 (Korea Standard Time)\n"
+"PO-Revision-Date: Tue Apr 26 2016 12:32:12 GMT+0900 (Korea Standard Time)\n"
 "Last-Translator: admin <thruthesky@gmail.com>\n"
 "Language-Team: \n"
-"Language: Korean\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Language: English\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,11 +20,58 @@ msgstr ""
 "esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
 "esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
 "X-Generator: Loco - https://localise.biz/\n"
-"X-Loco-Target-Locale: ko_KR"
+"X-Loco-Target-Locale: en_US"
+
+#. Name of the plugin
+msgid "K Forum"
+msgstr ""
+
+#. URI of the plugin
+msgid "http://it.philgo.com"
+msgstr ""
+
+#. Author of the plugin
+msgid "JaeHo Song"
+msgstr ""
+
+#. Description of the plugin
+msgid "This is K Forum."
+msgstr ""
+
+#. page title. ( web browser title )
+#: class/forum.php:57 /class/forum.php:378 /class/forum.php:385 /class/forum.php:
+#: 386 /template/admin.php:66
+msgid "K-Forum"
+msgstr ""
+
+#: class/forum.php:58
+msgid "This is K forum."
+msgstr ""
+
+#: class/forum.php:65
+msgid "Welcome"
+msgstr ""
+
+#: class/forum.php:66
+msgid "This is Welcome forum"
+msgstr ""
+
+#. parent slug id
+#: class/forum.php:395 /template/admin.php:141
+msgid "Forum List"
+msgstr ""
+
+#: class/forum.php:396
+msgid "K-Forum List"
+msgstr ""
 
 #. parent slug id
 #: class/forum.php:403 /class/forum.php:404
 msgid "Blog Posting"
+msgstr ""
+
+#: class/forum.php:675
+msgid "Download:"
 msgstr ""
 
 #: template/admin-blog-posting.php:16
@@ -34,13 +81,115 @@ msgstr ""
 #: template/admin.php:69
 msgid "K-Forum Description"
 msgstr ""
-"케이 포럼에 오신 것을 환영합니다.\n"
+"Welcome To K Forum\n"
 "\n"
-"자세한 사항은 깃허브 https://github.com/thruthesky/k-forum 를 참고 해 주십시오."
+"Please refer https://github.com/thruthesky/k-forum for more details."
+
+#: template/admin.php:75
+msgid "Update a Forum"
+msgstr ""
+
+#: template/admin.php:77
+msgid "Create a Forum"
+msgstr ""
+
+#: template/admin.php:89
+msgid "Forum ID"
+msgstr ""
+
+#: template/admin.php:91
+msgid "Please input forum ID"
+msgstr ""
+
+#: template/admin.php:92
+msgid "Input forum ID in lowercase letters, numbers and hypens. It is a slug."
+msgstr ""
+
+#: template/admin.php:98
+msgid "Forum name"
+msgstr ""
+
+#: template/admin.php:100
+msgid "Please input forum name"
+msgstr ""
+
+#: template/admin.php:101
+msgid "Input forum name. It should be less than four words. It is a category name."
+msgstr ""
+
+#: template/admin.php:105
+msgid "Forum description"
+msgstr ""
+
+#: template/admin.php:107
+msgid "Input forum description. It should be less than 100 words."
+msgstr ""
+
+#: template/admin.php:112
+msgid "Parent Forum"
+msgstr ""
+
+#: template/admin.php:114
+msgid "Select Parent Forum"
+msgstr ""
+
+#: template/admin.php:122
+msgid "You can group or categorize forum by selecting Parent Forum"
+msgstr ""
+
+#: template/admin.php:127
+msgid "Update Forum"
+msgstr ""
+
+#: template/admin.php:129 /template/admin.php:138
+msgid "Create Forum"
+msgstr ""
+
+#: template/admin.php:131 /template/forum-commentEdit-basic.php:51
+#: template/forum-edit-basic.php:94
+msgid "Cancel"
+msgstr ""
+
+#: template/forum-commentEdit-basic.php:12
+msgid "Comment Edit"
+msgstr ""
+
+#: template/forum-commentEdit-basic.php:46 /template/forum-comments-basic.php:96
+#: template/forum-edit-basic.php:83
+msgid "Choose File"
+msgstr ""
+
+#: template/forum-commentEdit-basic.php:50 /template/forum-edit-basic.php:89
+msgid "POST SUBMIT"
+msgstr ""
 
 #: template/forum-comments-basic.php:41
 #, php-format
 msgid "%1$s at %2$s"
+msgstr ""
+
+#: template/forum-comments-basic.php:43
+msgid "No.:"
+msgstr ""
+
+#: template/forum-comments-basic.php:87
+msgid "Comment Content"
+msgstr ""
+
+#: template/forum-comments-basic.php:89
+msgid "Please input comment"
+msgstr ""
+
+#: template/forum-comments-basic.php:100
+msgid "Comment Submit"
+msgstr ""
+
+#: template/forum-comments-basic.php:105
+msgid "File upload is in progress. Please wait."
+msgstr ""
+
+#: template/forum-edit-basic.php:48
+msgid "Please input title"
 msgstr ""
 
 #: template/forum-edit-basic.php:91
@@ -55,12 +204,45 @@ msgstr ""
 msgid "Input title"
 msgstr ""
 
+#: template/forum-list-basic.php:25
+#, php-format
+msgid "Page: %1$d / No. of Post: %2$d"
+msgstr ""
+
+#: template/forum-list-basic.php:28
+msgid "POST NEW"
+msgstr ""
+
+#: template/forum-list-basic.php:35
+msgid "Title"
+msgstr ""
+
 #: template/forum-list-basic.php:36
 msgid "글쓴이"
 msgstr ""
 
+#: template/forum-list-basic.php:37
+msgid "Date"
+msgstr ""
+
+#: template/forum-list-basic.php:38
+msgid "No. of Views"
+msgstr ""
+
+#: template/forum-list-basic.php:38
+msgid "Views"
+msgstr ""
+
 #: template/forum-list-basic.php:73
 msgid "There is no post under this forum."
+msgstr ""
+
+#: template/forum-list-basic.php:85
+msgid "PREV"
+msgstr ""
+
+#: template/forum-list-basic.php:86
+msgid "NEXT"
 msgstr ""
 
 #: template/forum-view-basic.php:37
@@ -68,189 +250,7 @@ msgstr ""
 msgid "By %s"
 msgstr ""
 
-#. Name of the plugin
-msgid "K Forum"
-msgstr "케이포럼"
-
-#. URI of the plugin
-msgid "http://it.philgo.com"
-msgstr "http://it.philgo.com"
-
-#. Author of the plugin
-msgid "JaeHo Song"
-msgstr "송재호"
-
-#. Description of the plugin
-msgid "This is K Forum."
-msgstr "케이포럼입니다."
-
-#. page title. ( web browser title )
-#: class/forum.php:57 /class/forum.php:378 /class/forum.php:385 /class/forum.php:
-#: 386 /template/admin.php:66
-msgid "K-Forum"
-msgstr "케이포럼"
-
-#: class/forum.php:58
-msgid "This is K forum."
-msgstr "케이포럼입니다."
-
-#: class/forum.php:65
-msgid "Welcome"
-msgstr "환영"
-
-#: class/forum.php:66
-msgid "This is Welcome forum"
-msgstr "환영 게시판입니다."
-
-#. parent slug id
-#: class/forum.php:395 /template/admin.php:141
-msgid "Forum List"
-msgstr "게시판 리스트"
-
-#: class/forum.php:396
-msgid "K-Forum List"
-msgstr "케이 포럼 리스트"
-
-#: class/forum.php:675
-msgid "Download:"
-msgstr "다운로드:"
-
-#: template/admin.php:75
-msgid "Update a Forum"
-msgstr "게시판 업데이트"
-
-#: template/admin.php:77
-msgid "Create a Forum"
-msgstr "게시판 생성"
-
-#: template/admin.php:89
-msgid "Forum ID"
-msgstr "게시판 아이디"
-
-#: template/admin.php:91
-msgid "Please input forum ID"
-msgstr "게시판 아이디를 입력하십시오."
-
-#: template/admin.php:92
-msgid "Input forum ID in lowercase letters, numbers and hypens. It is a slug."
-msgstr "게시판 아이디를 소문자와 숫자 그리고 하이픈으로 입력하십시오. ( 슬러그와 동일 )"
-
-#: template/admin.php:98
-msgid "Forum name"
-msgstr "게시판 이름"
-
-#: template/admin.php:100
-msgid "Please input forum name"
-msgstr "게시판 이름을 입력하십시오."
-
-#: template/admin.php:101
-msgid "Input forum name. It should be less than four words. It is a category name."
-msgstr "게시판 이름을 4 단어 이하로 입력하십시오. ( 카테고리 이름과 동일 )"
-
-#: template/admin.php:105
-msgid "Forum description"
-msgstr "게시판 설명"
-
-#: template/admin.php:107
-msgid "Input forum description. It should be less than 100 words."
-msgstr "게시판 설명을 100 단어 이내로 입력하십시오."
-
-#: template/admin.php:112
-msgid "Parent Forum"
-msgstr "상위 게시판"
-
-#: template/admin.php:114
-msgid "Select Parent Forum"
-msgstr "상위 게시판 선택"
-
-#: template/admin.php:122
-msgid "You can group or categorize forum by selecting Parent Forum"
-msgstr "상위 포럼을 선택하여 게시판 카테고리를 만들 수 있습니다."
-
-#: template/admin.php:127
-msgid "Update Forum"
-msgstr "게시판 업데이트"
-
-#: template/admin.php:129 /template/admin.php:138
-msgid "Create Forum"
-msgstr "게시판 생성"
-
-#: template/admin.php:131 /template/forum-commentEdit-basic.php:51
-#: template/forum-edit-basic.php:94
-msgid "Cancel"
-msgstr "취소"
-
-#: template/forum-commentEdit-basic.php:12
-msgid "Comment Edit"
-msgstr "수정"
-
-#: template/forum-commentEdit-basic.php:46 /template/forum-comments-basic.php:96
-#: template/forum-edit-basic.php:83
-msgid "Choose File"
-msgstr "파일 선택"
-
-#: template/forum-commentEdit-basic.php:50 /template/forum-edit-basic.php:89
-msgid "POST SUBMIT"
-msgstr "글 등록"
-
-#: template/forum-comments-basic.php:43
-msgid "No.:"
-msgstr "번호:"
-
-#: template/forum-comments-basic.php:87
-msgid "Comment Content"
-msgstr "코멘트 내용"
-
-#: template/forum-comments-basic.php:89
-msgid "Please input comment"
-msgstr "코멘트를 입력하십시오."
-
-#: template/forum-comments-basic.php:100
-msgid "Comment Submit"
-msgstr "등록"
-
-#: template/forum-comments-basic.php:105
-msgid "File upload is in progress. Please wait."
-msgstr "파일이 전송중입니다. 기다려 주세요."
-
-#: template/forum-edit-basic.php:48
-msgid "Please input title"
-msgstr "제목을 입력하십시오."
-
-#: template/forum-list-basic.php:25
-#, php-format
-msgid "Page: %1$d / No. of Post: %2$d"
-msgstr "페이지: %1$d / 총 글 수: %2$d"
-
-#: template/forum-list-basic.php:28
-msgid "POST NEW"
-msgstr "새 글 작성"
-
-#: template/forum-list-basic.php:35
-msgid "Title"
-msgstr "제목"
-
-#: template/forum-list-basic.php:37
-msgid "Date"
-msgstr "날짜"
-
-#: template/forum-list-basic.php:38
-msgid "No. of Views"
-msgstr "조회수"
-
-#: template/forum-list-basic.php:38
-msgid "Views"
-msgstr "조회"
-
-#: template/forum-list-basic.php:85
-msgid "PREV"
-msgstr "이전"
-
-#: template/forum-list-basic.php:86
-msgid "NEXT"
-msgstr "다음"
-
 #: template/forum-view-basic.php:39
 #, php-format
 msgid "No. : %s"
-msgstr "번호: %s"
+msgstr ""

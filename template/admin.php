@@ -66,7 +66,7 @@ else {
     <h2><?php _e('K-Forum', 'k-forum')?></h2>
 
     <div>
-        <?php _e('This is K forum.', 'k-forum')?>
+        <?php _e('K-Forum Description', 'k-forum')?>
     </div>
 
     <div class="forum-create">

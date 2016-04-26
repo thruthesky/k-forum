@@ -159,6 +159,7 @@ class forum
      * @todo permission check. if it is update, then check the updator's ID.
      */
     private function post_create( $post_arr = array() ) {
+        $is_update = isset($_REQUEST['id']) ? true : false;
         if ( empty($post_arr) ) {
             $post_arr = array(
                 'post_title'    => $_REQUEST['title'],
@@ -169,9 +170,7 @@ class forum
             );
         }
 
-
-
-        if ( isset($_REQUEST['id']) ) {         // update
+        if ( $is_update ) {         // update
             $post_arr['ID'] = $_REQUEST['id'];
             $post_ID = wp_update_post($post_arr);
         }
@@ -185,12 +184,41 @@ class forum
             exit;
         }
 
+        // save SEO keyword
         delete_post_meta($post_ID, 'keyword');
-
         add_post_meta($post_ID, 'keyword', $_REQUEST['keyword']);
 
-        $url = get_permalink( $post_ID );
+        // blog posting. pos / edit
+        $apis = $this->parseBlogSetting();
+        foreach ( $apis as $api ) {
+            //
+            $post = get_post( $post_ID );
+            $blogPost = [];
+            $blogPost['title'] = $post->post_title;
+            $blogPost['description'] = $post->post_content;
 
+            $blog_postID_key = "blog_postID_$api[name]";
+            if ( $is_update ) {
+                $blog_postID = get_post_meta( $post_ID, $blog_postID_key, true);
+                $re = rpc()->metaWeblog_editPost($api['endpoint'], $api['username'], $api['password'], $blog_postID, $blogPost);
+                if ( ! $re ) {
+                    dog("error on metaWeblog_editPost");
+                }
+            }
+            else {
+                $postID = rpc()->metaWeblog_newPost( $api['endpoint'], $api['username'], $api['password'], $api['blogID'], $blogPost);
+                if ( empty($postID) ) {
+                    dog("error on metaWeblog_newPost");
+                }
+                else {
+                    delete_post_meta($post_ID, $blog_postID_key);
+                    add_post_meta($post_ID, $blog_postID_key, $postID);
+                }
+            }
+        }
+
+
+        $url = get_permalink( $post_ID );
         $this->updateFileWithPost($post_ID);
         $this->deleteFileWithNoPost();
 
@@ -370,6 +398,14 @@ class forum
                 'k-forum/template/admin-forum-list.php',
                 ''
             );
+            add_submenu_page(
+                'k-forum/template/admin.php', // parent slug id
+                __('Blog Posting', 'k-forum'),
+                __('Blog Posting', 'k-forum'),
+                'manage_options',
+                'k-forum/template/admin-blog-posting.php',
+                ''
+            );
         } );
 
         return $this;
@@ -526,12 +562,30 @@ class forum
     private function post_delete() {
         $id = $_REQUEST['id'];
         $categories = get_the_category($id);
-        // delete files
+
+
+        // 1. delete blog post
+        $apis = $this->parseBlogSetting();
+        foreach ( $apis as $api ) {
+            $blog_postID_key = "blog_postID_$api[name]";
+            $blog_postID = get_post_meta( $id, $blog_postID_key, true);
+            if ( $blog_postID ) {
+                $re = rpc()->blogger_deletePost($api['endpoint'], $api['username'], $api['password'], $blog_postID);
+                if ( ! $re ) {
+                    dog("error on blogger_delete");
+                }
+            }
+        }
+
+        // 2. delete files
         $attachments = get_children( ['post_parent' => $id, 'post_type' => 'attachment'] );
         foreach ( $attachments  as $attachment ) {
             wp_delete_attachment( $attachment->ID, true );
         }
+
+        // 3. delete post
         wp_delete_post($id, true);
+
 
         // move to forum list.
         if ( ! $categories || is_wp_error( $categories ) ) {
@@ -541,6 +595,9 @@ class forum
             $category = current($categories);
             wp_redirect( forum()->listURL($category->slug));
         }
+
+
+
     }
 
     /**
@@ -910,6 +967,27 @@ EOM;
         });
 
         return $this;
+    }
+
+    private function parseBlogSetting()
+    {
+        $info = [];
+        $value = get_option('k_forum');
+        $setting = trim( $value['blog_apis'] );
+        if ( empty( $setting ) ) return $info;
+        $apis = explode("\n", $setting);
+        foreach ( $apis as $api ) {
+            if ($api[0] == '#') continue;
+            $row = [];
+            $line = explode(' ', $api);
+            $row['name'] = $line[0];
+            $row['endpoint'] = $line[1];
+            $row['blogID'] = $line[2];
+            $row['username'] = $line[3];
+            $row['password'] = $line[4];
+            $info[] = $row;
+        }
+        return $info;
     }
 
 }

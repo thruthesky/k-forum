@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: K Forum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: Fri Apr 15 2016 17:44:21 GMT+0800 (PHT)\n"
-"POT-Revision-Date: Thu Apr 21 2016 18:06:27 GMT+0900 (Korea Standard Time)\n"
+"POT-Revision-Date: Tue Apr 26 2016 12:30:43 GMT+0900 (Korea Standard Time)\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -41,185 +41,206 @@ msgid "This is K Forum."
 msgstr ""
 
 #. page title. ( web browser title )
-#: /class/forum.php:48 /class/forum.php:306 /class/forum.php:313 /class/forum.php:
-#: 314 /template/admin.php:55
+#: /class/forum.php:57 /class/forum.php:378 /class/forum.php:385 /class/forum.php:
+#: 386 /template/admin.php:66
 msgid "K-Forum"
 msgstr ""
 
-#: /class/forum.php:49 /template/admin.php:58
+#: /class/forum.php:58
 msgid "This is K forum."
 msgstr ""
 
-#: /class/forum.php:56
+#: /class/forum.php:65
 msgid "Welcome"
 msgstr ""
 
-#: /class/forum.php:57
+#: /class/forum.php:66
 msgid "This is Welcome forum"
 msgstr ""
 
-#: /class/forum.php:65
-msgid "Welcome to K forum."
-msgstr ""
-
-#: /class/forum.php:66
-msgid "This is a test post in welcome K forum."
-msgstr ""
-
 #. parent slug id
-#: /class/forum.php:323 /template/admin.php:130
+#: /class/forum.php:395 /template/admin.php:141
 msgid "Forum List"
 msgstr ""
 
-#: /class/forum.php:324
+#: /class/forum.php:396
 msgid "K-Forum List"
 msgstr ""
 
-#: /class/forum.php:641
+#. parent slug id
+#: /class/forum.php:403 /class/forum.php:404
+msgid "Blog Posting"
+msgstr ""
+
+#: /class/forum.php:675
 msgid "Download:"
 msgstr ""
 
-#: /template/admin.php:64
+#: /template/admin-blog-posting.php:16
+msgid "K-Forum Blog Posting"
+msgstr ""
+
+#: /template/admin.php:69
+msgid "K-Forum Description"
+msgstr ""
+
+#: /template/admin.php:75
 msgid "Update a Forum"
 msgstr ""
 
-#: /template/admin.php:66
+#: /template/admin.php:77
 msgid "Create a Forum"
 msgstr ""
 
-#: /template/admin.php:78
+#: /template/admin.php:89
 msgid "Forum ID"
 msgstr ""
 
-#: /template/admin.php:80
+#: /template/admin.php:91
 msgid "Please input forum ID"
 msgstr ""
 
-#: /template/admin.php:81
+#: /template/admin.php:92
 msgid "Input forum ID in lowercase letters, numbers and hypens. It is a slug."
 msgstr ""
 
-#: /template/admin.php:87
+#: /template/admin.php:98
 msgid "Forum name"
 msgstr ""
 
-#: /template/admin.php:89
+#: /template/admin.php:100
 msgid "Please input forum name"
 msgstr ""
 
-#: /template/admin.php:90
+#: /template/admin.php:101
 msgid "Input forum name. It should be less than four words. It is a category name."
 msgstr ""
 
-#: /template/admin.php:94
+#: /template/admin.php:105
 msgid "Forum description"
 msgstr ""
 
-#: /template/admin.php:96
+#: /template/admin.php:107
 msgid "Input forum description. It should be less than 100 words."
 msgstr ""
 
-#: /template/admin.php:101
+#: /template/admin.php:112
 msgid "Parent Forum"
 msgstr ""
 
-#: /template/admin.php:103
+#: /template/admin.php:114
 msgid "Select Parent Forum"
 msgstr ""
 
-#: /template/admin.php:111
+#: /template/admin.php:122
 msgid "You can group or categorize forum by selecting Parent Forum"
 msgstr ""
 
-#: /template/admin.php:116
+#: /template/admin.php:127
 msgid "Update Forum"
 msgstr ""
 
-#: /template/admin.php:118 /template/admin.php:127
+#: /template/admin.php:129 /template/admin.php:138
 msgid "Create Forum"
 msgstr ""
 
-#: /template/admin.php:120 /template/forum-commentEdit-basic.php:51 
-#: /template/forum-edit-basic.php:86
+#: /template/admin.php:131 /template/forum-commentEdit-basic.php:51 
+#: /template/forum-edit-basic.php:94
 msgid "Cancel"
-msgstr ""
-
-#: /template/comments-basic.php:41
-#, php-format
-msgid "%1$s at %2$s"
-msgstr ""
-
-#: /template/comments-basic.php:43
-msgid "No.:"
-msgstr ""
-
-#: /template/comments-basic.php:87
-msgid "Comment Content"
-msgstr ""
-
-#: /template/comments-basic.php:89
-msgid "Please input comment"
-msgstr ""
-
-#: /template/comments-basic.php:96 /template/forum-commentEdit-basic.php:46 
-#: /template/forum-edit-basic.php:81
-msgid "Choose File"
-msgstr ""
-
-#: /template/comments-basic.php:100
-msgid "Comment Submit"
-msgstr ""
-
-#: /template/comments-basic.php:105
-msgid "File upload is in progress. Please wait."
 msgstr ""
 
 #: /template/forum-commentEdit-basic.php:12
 msgid "Comment Edit"
 msgstr ""
 
-#: /template/forum-commentEdit-basic.php:50 /template/forum-edit-basic.php:85
+#: /template/forum-commentEdit-basic.php:46 /template/forum-comments-basic.php:96 
+#: /template/forum-edit-basic.php:83
+msgid "Choose File"
+msgstr ""
+
+#: /template/forum-commentEdit-basic.php:50 /template/forum-edit-basic.php:89
 msgid "POST SUBMIT"
 msgstr ""
 
-#: /template/forum-edit-basic.php:46
+#: /template/forum-comments-basic.php:41
+#, php-format
+msgid "%1$s at %2$s"
+msgstr ""
+
+#: /template/forum-comments-basic.php:43
+msgid "No.:"
+msgstr ""
+
+#: /template/forum-comments-basic.php:87
+msgid "Comment Content"
+msgstr ""
+
+#: /template/forum-comments-basic.php:89
+msgid "Please input comment"
+msgstr ""
+
+#: /template/forum-comments-basic.php:100
+msgid "Comment Submit"
+msgstr ""
+
+#: /template/forum-comments-basic.php:105
+msgid "File upload is in progress. Please wait."
+msgstr ""
+
+#: /template/forum-edit-basic.php:48
 msgid "Please input title"
 msgstr ""
 
-#: /template/forum-list-basic.php:24
+#: /template/forum-edit-basic.php:91
+msgid "Professional Writing"
+msgstr ""
+
+#: /template/forum-edit-basic.php:92
+msgid "End Professional Writing"
+msgstr ""
+
+#: /template/forum-edit-basic.php:128
+msgid "Input title"
+msgstr ""
+
+#: /template/forum-list-basic.php:25
 #, php-format
 msgid "Page: %1$d / No. of Post: %2$d"
 msgstr ""
 
-#: /template/forum-list-basic.php:27
+#: /template/forum-list-basic.php:28
 msgid "POST NEW"
 msgstr ""
 
-#: /template/forum-list-basic.php:34
+#: /template/forum-list-basic.php:35
 msgid "Title"
 msgstr ""
 
-#: /template/forum-list-basic.php:35
+#: /template/forum-list-basic.php:36
 msgid "글쓴이"
 msgstr ""
 
-#: /template/forum-list-basic.php:36
+#: /template/forum-list-basic.php:37
 msgid "Date"
 msgstr ""
 
-#: /template/forum-list-basic.php:37
+#: /template/forum-list-basic.php:38
 msgid "No. of Views"
 msgstr ""
 
-#: /template/forum-list-basic.php:37
+#: /template/forum-list-basic.php:38
 msgid "Views"
 msgstr ""
 
-#: /template/forum-list-basic.php:80
+#: /template/forum-list-basic.php:73
+msgid "There is no post under this forum."
+msgstr ""
+
+#: /template/forum-list-basic.php:85
 msgid "PREV"
 msgstr ""
 
-#: /template/forum-list-basic.php:81
+#: /template/forum-list-basic.php:86
 msgid "NEXT"
 msgstr ""
 

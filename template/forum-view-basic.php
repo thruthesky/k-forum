@@ -15,8 +15,9 @@ the_post();
 
 $category = current(get_the_category());
 
-?>
 
+?>
+<?php include FORUM_PATH . '/template/social-buttons.php';?>
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
 
@@ -34,10 +35,10 @@ $category = current(get_the_category());
             <div class="meta container">
                 <div class="row">
                     <div class="col-xs-12 col-sm-6">
-                    <?php printf(__('By %s', 'k-forum'), get_the_author())?>
-                    /
+                        <?php printf(__('By %s', 'k-forum'), get_the_author())?>
+                        /
                         <?php printf( __('No. : %s', 'k-forum'), get_the_ID()); ?>
-                    Count of Viewers : <?php  echo post()->increaseNoOfView( get_the_ID() )?>
+                        Count of Viewers : <?php  echo post()->increaseNoOfView( get_the_ID() )?>
                     </div>
                     <div class="buttons col-xs-12 col-sm-6">
                         <a class="btn btn-secondary btn-sm" href="<?php echo forum()->editURL( get_the_ID() ) ?>">글 수정</a>

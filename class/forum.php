@@ -187,37 +187,11 @@ class forum
         delete_post_meta($post_ID, 'keyword');
         add_post_meta($post_ID, 'keyword', $_REQUEST['keyword']);
 
+
+
         // blog posting. pos / edit
-        $apis = $this->parseBlogSetting();
+        $this->blogPosting($post_ID, $is_update);
 
-	// klog("apis:"); klog($apis);
-
-        foreach ( $apis as $api ) {
-            //
-            $post = get_post( $post_ID );
-            $blogPost = [];
-            $blogPost['title'] = $post->post_title;
-            $blogPost['description'] = $post->post_content;
-
-            $blog_postID_key = "blog_postID_$api[name]";
-            if ( $is_update ) {
-                $blog_postID = get_post_meta( $post_ID, $blog_postID_key, true);
-                $re = rpc()->metaWeblog_editPost($api['endpoint'], $api['username'], $api['password'], $blog_postID, $blogPost);
-                if ( ! $re ) {
-                    klog("error on metaWeblog_editPost");
-                }
-            }
-            else {
-                $postID = rpc()->metaWeblog_newPost( $api['endpoint'], $api['username'], $api['password'], $api['blogID'], $blogPost);
-                if ( empty($postID) ) {
-                    klog("error on metaWeblog_newPost");
-                }
-                else {
-                    delete_post_meta($post_ID, $blog_postID_key);
-                    add_post_meta($post_ID, $blog_postID_key, $postID);
-                }
-            }
-        }
 
 
         $url = get_permalink( $post_ID );
@@ -991,6 +965,42 @@ EOM;
         $re = rpc()->blogger_getUsersBlog( $_REQUEST['endpoint'], $_REQUEST['username'], $_REQUEST['password'] );
 
         wp_send_json($re);
+    }
+
+    private function blogPosting($post_ID, $is_update)
+    {
+
+        $apis = $this->parseBlogSetting();
+        // klog("apis:"); klog($apis);
+
+        $post = get_post( $post_ID );
+        $blogPost = [];
+        $blogPost['title'] = $post->post_title;
+        $blogPost['description'] = trim($post->post_content);
+        // @note if no content was input, then it just don't blogging.
+        if ( ! empty( $blogPost['description'] ) ) {
+            foreach ( $apis as $api ) {
+                //
+                $blog_postID_key = "blog_postID_$api[name]";
+                if ( $is_update ) {
+                    $blog_postID = get_post_meta( $post_ID, $blog_postID_key, true);
+                    $re = rpc()->metaWeblog_editPost($api['endpoint'], $api['username'], $api['password'], $blog_postID, $blogPost);
+                    if ( ! $re ) {
+                        klog("error on metaWeblog_editPost");
+                    }
+                }
+                else {
+                    $postID = rpc()->metaWeblog_newPost( $api['endpoint'], $api['username'], $api['password'], $api['blogID'], $blogPost);
+                    if ( empty($postID) ) {
+                        klog("error on metaWeblog_newPost");
+                    }
+                    else {
+                        delete_post_meta($post_ID, $blog_postID_key);
+                        add_post_meta($post_ID, $blog_postID_key, $postID);
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -4,7 +4,8 @@ jQuery( function($) {
     $('.begin-pro').click(beginPro);
     $('.end-pro').click(endPro);
 
-    beginPro();
+    var begin = Cookies.get('beginPro');
+    if ( begin == 'Y' ) beginPro();
 
     var $box = $('#post-new');
     var $pro = $('section#pro');
@@ -25,24 +26,30 @@ jQuery( function($) {
     function pro( cls ) {
         return el.p( cls );
     }
+
     function beginPro() {
         timerPro = setTimeout(runPro, intervalRun);
         $('.begin-pro').hide();
         $('.end-pro').show();
+        $('#pro').show();
+        Cookies.set('beginPro', 'Y', {expires: 365, path: ''});
     }
+
     function endPro() {
         timerPro = 0;
         $('.begin-pro').show();
         $('.end-pro').hide();
+        $('#pro').hide();
+        Cookies.set('beginPro', 'N', {expires: 365, path: ''});
     }
+
     function runAgain() {
         if ( timerPro ) setTimeout(runPro, intervalRun);
     }
+
     function runPro() {
-        //console.log( 'run' );
-
+        console.log( 'runPro' );
         checkSEOList();
-
         runAgain();
     }
 
@@ -104,7 +111,7 @@ jQuery( function($) {
         // content
 	//
         var editor;
-        var content;
+        var content; // stripped.
         var $content;
         var contentWords;
         var contentWordsLength;
@@ -225,6 +232,15 @@ jQuery( function($) {
             pro('min-count-keyword-on-content').show().text( min );
             pro('max-count-keyword-on-content').show().text( max );
 
+
+            // check if keyword is on the beginning of content.
+            var pos = content.indexOf( keyword );
+            if ( pos == -1 || pos > 20 ) {
+                pro('input-keyword-on-content-begin').show();
+            }
+
+
+            /*
             var j = contentWords.length;
             var count_keyword_on_content_begin = 0;
             if ( j > 5 ) j = 5;
@@ -232,6 +248,7 @@ jQuery( function($) {
                 if ( s.count( contentWords[i], keyword ) ) count_keyword_on_content_begin ++;
             }
             if ( count_keyword_on_content_begin == 0 ) pro('input-keyword-on-content-begin').show();
+            */
             // console.log(count_keyword_on_content_begin);
         }
 

@@ -105,6 +105,7 @@ class forum
             wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );
             wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
             wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js' );
+            wp_enqueue_script( 'cookie', FORUM_URL . 'js/js.cookie.min.js' );
 
         });
         return $this;
@@ -148,6 +149,24 @@ class forum
         if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
         else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
         exit;
+    }
+
+    public function user_can_blog()
+    {
+
+        $value = get_option('k_forum');
+        if ( ! isset( $value['blog_permission'] ) ) return true;
+
+        $who = $value['blog_permission'];
+
+        if ( $who == 'admin' ) {
+            if (current_user_can('administrator') || is_admin()) {
+                return true;
+            }
+        }
+
+        return false;
+
     }
 
 
@@ -945,7 +964,7 @@ EOM;
         return $this;
     }
 
-    private function parseBlogSetting()
+    public function parseBlogSetting()
     {
         $info = [];
         $value = get_option('k_forum');

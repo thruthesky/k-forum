@@ -15,12 +15,24 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
 <div class="wrap k-forum">
     <h2><?php _e('K-Forum Blog Posting', 'k-forum')?></h2>
 
-    홈페이지 글을 삭제하시면 블로그 글도 같이 삭제가 됩니다.
+    <ul>
+        <li>홈페이지 글을 삭제하시면 블로그 글도 같이 삭제가 됩니다.</li>
+        </ul>
+
+
 
 
     <form method="post" action="options.php">
         <?php settings_fields( 'k_forum' ); ?>
         <?php $value = get_option( 'k_forum')?>
+
+
+        <label for="blog-permission">관리자만 블로그 포스팅 하기</label>
+        <input type="checkbox" id='blog-permission' name="k_forum[blog_permission]" value="admin" <?php if ( isset($value['blog_permission']) && $value['blog_permission'] == 'admin' ) echo 'checked=1'; ?>>
+
+
+
+
         <textarea name="k_forum[blog_header]"><?php echo $value['blog_header']?></textarea>
 
         
@@ -56,7 +68,7 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                             var blog = re[i];
                             console.log(blog);
                             var m = '' +
-                                '<div class="select-blog-id" blogid="'+blog['blogid']+'">' +
+                                '<div class="select-blog-id" blogid="'+blog['blogid']+'" blogname="'+blog['blogName']+'" url="'+blog['url']+'">' +
                                 '   <span>('+blog['blogid']+')</span>' +
                                 '   <span>' + blog['blogName'] + '</span>' +
                                 '</div>' +
@@ -71,7 +83,14 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                 $('body').on('click', '.select-blog-id', function() {
                     var $this = $(this);
                     var blogid = $this.attr('blogid');
-                    $this.parent().find('input').val( blogid );
+                    var blogName = $this.attr('blogname');
+                    var url = $this.attr('url');
+                    console.log(blogid);
+                    console.log(blogName);
+                    console.log(url);
+                    $this.parent().find('input:eq(0)').val( blogid );
+                    $this.parent().find('input:eq(1)').val( blogName );
+                    $this.parent().find('input:eq(2)').val( url );
                 });
             });
         </script>
@@ -83,7 +102,11 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                 <td class="password"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][password]" value="<?php if ( isset($value['blog_apis'][$i]['password']) ) echo $value['blog_apis'][$i]['password']?>"></td>
                 <td class="endpoint"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][endpoint]" value="<?php if ( isset($value['blog_apis'][$i]['endpoint']) ) echo $value['blog_apis'][$i]['endpoint']?>"></td>
                 <td class="load-blog-id"><i class="fa fa-refresh"></i></td>
-                <td class="blogID"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][blogID]" value="<?php if ( isset($value['blog_apis'][$i]['blogID']) ) echo $value['blog_apis'][$i]['blogID']?>"></td>
+                <td class="blogID">
+                    <input type="text" name="k_forum[blog_apis][<?php echo $i?>][blogID]" value="<?php if ( isset($value['blog_apis'][$i]['blogID']) ) echo $value['blog_apis'][$i]['blogID']?>">
+                    <input type="hidden" name="k_forum[blog_apis][<?php echo $i?>][blogName]" value="<?php if ( isset($value['blog_apis'][$i]['blogName']) ) echo $value['blog_apis'][$i]['blogName']?>">
+                    <input type="hidden" name="k_forum[blog_apis][<?php echo $i?>][url]" value="<?php if ( isset($value['blog_apis'][$i]['url']) ) echo $value['blog_apis'][$i]['url']?>">
+                </td>
             </tr>
             <?php } ?>
         </table>

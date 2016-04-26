@@ -101,7 +101,7 @@ else {
             </div>
 
 
-            <section id="pro">
+            <section id="pro" style="display: none;">
                 <div>
                     제목 단어 수 : <span class="count-title-words">0</span>
                     제목의 키워드 수 : <span class="count-keyword-on-title">0</span>
@@ -162,6 +162,35 @@ else {
 
                 </ul>
 
+                <?php
+
+                forum()->user_can_blog();
+
+                $apis = forum()->parseBlogSetting();
+                $n = 0;
+                if ( $apis ) {
+                    ?>
+
+                    <hr>
+                    <div>블로그에 글 복사</div>
+                <?php
+                    echo "<table class='blogs'>";
+                    foreach ( $apis as $api ) {
+                        $n ++;
+                        if ( isset($api['blogName']) && $api['blogName'] ) $name = $api['blogName'];
+                        else $name = $api['name'];
+
+                        echo "    <tr>";
+                        echo "        <td><input type='checkbox' id='blog-id-$n' name='blogs[]' value='$api[name]'></td>";
+                        echo "        <td><label for='blog-id-$n'>$name</label></td>";
+                        echo "        <td>";
+                        if ( isset($api['url']) && $api['url'] ) echo "<a href='$api[url]' target='_blank'>Open blog</a>";
+                        echo "        </td>";
+                        echo "    </tr>";
+                    }
+                    echo "</table>";
+                }
+                ?>
                 <hr>
                 <ul>
                     <li>네이버에 글 자동 등록.</li>

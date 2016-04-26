@@ -8,9 +8,12 @@ K-Forum is short for "Knowledge Forum".
     * Make it from 3.0 to 4.5
 
 * SEO
+    * 블로그를 목록하고 블로그 포스팅 선택 할 수 있도록 한다.
     * OG 태그
 	* http://static.googleusercontent.com/media/www.google.co.kr/ko/kr/intl/ko/webmasters/docs/search-engine-optimization-starter-guide-ko.pdf
 	* https://docs.google.com/document/d/1l5nBwK4ztgml0kUXvy73cmMroDfWifooddutvfk_tCU/edit
+	* 키워드 사용 회수 카운트
+	* A 태그 한개 이상 삽입.
 	
 	
 	

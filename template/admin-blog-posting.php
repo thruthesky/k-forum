@@ -85,7 +85,7 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                 <td class="load-blog-id"><i class="fa fa-refresh"></i></td>
                 <td class="blogID"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][blogID]" value="<?php if ( isset($value['blog_apis'][$i]['blogID']) ) echo $value['blog_apis'][$i]['blogID']?>"></td>
             </tr>
-            <? } ?>
+            <?php } ?>
         </table>
 
         <textarea name="k_forum[blog_footer]"><?php echo $value['blog_footer']?></textarea>

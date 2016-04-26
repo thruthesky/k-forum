@@ -109,7 +109,12 @@ jQuery( function($) {
         var contentWordsLength;
         if ( typeof tinymce != 'undefined' ) {
             editor = tinymce.activeEditor;
-            contentOriginal = editor.getContent();
+            try {
+                contentOriginal = editor.getContent();
+            }
+            catch (e) {
+                contentOriginal = '';
+            }
             content = contentOriginal;
 
             $content = $("<div>" + contentOriginal + "</div>");

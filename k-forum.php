@@ -22,6 +22,7 @@ require_once "class/forum.php";
 require_once "class/post.php";
 require_once "class/rpc.php";
 
+klog('begin');
 
 // forum()->addRoutes(); // work
 

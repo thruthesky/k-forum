@@ -135,12 +135,11 @@ if ( ! function_exists( 'di' ) ) {
     }
 }
 
-if ( ! function_exists( 'dog' ) ) {
 
-    function dog( $message ) {
-        static $count_dog = 0;
-        $count_dog ++;
-        if( WP_DEBUG === true ){
+    function klog( $message ) {
+        static $count_klog = 0;
+        $count_klog ++;
+        if( WP_DEBUG === true && WP_DEBUG_LOG === true ){
             if( is_array( $message ) || is_object( $message ) ){
                 $message = print_r( $message, true );
             }
@@ -148,8 +147,7 @@ if ( ! function_exists( 'dog' ) ) {
 
             }
         }
-        $message = "[$count_dog] $message";
+        $message = "[klog $count_klog] $message";
         error_log( $message );
     }
 
-}

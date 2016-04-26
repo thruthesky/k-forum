@@ -136,6 +136,11 @@ if ( ! function_exists( 'di' ) ) {
 }
 
 
+/**
+ * Adds a line of message into /wp-content/debug.log
+ * @note since error_log() works differently based on the settings, it adds message directly on debug.log
+*
+*/
     function klog( $message ) {
         static $count_klog = 0;
         $count_klog ++;
@@ -147,7 +152,9 @@ if ( ! function_exists( 'di' ) ) {
 
             }
         }
-        $message = "[klog $count_klog] $message";
-        error_log( $message );
+        $message = "[klog $count_klog] $message\n";
+	$file = ABSPATH . 'wp-content/debug.log';
+	file_put_contents($file, $message, FILE_APPEND);
+        //error_log( $message );
     }
 

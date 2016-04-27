@@ -626,6 +626,20 @@ class forum
 
     }
 
+    public function get_files( $post_ID ) {
+        if ( empty( $post_ID ) ) return null;
+        return get_children( ['post_parent' => $post_ID, 'post_type' => 'attachment'] );
+    }
+
+    public function get_first_image ( $post_ID ) {
+        $files = $this->get_files( $post_ID );
+        if ( ! $files || is_wp_error($files) ) return null;
+        foreach ( $files as $file ) {
+            if ( strpos( $file->post_mime_type, 'image' ) !== false ) { // image
+                return $file->guid;
+            }
+        }
+    }
 
     /**
      * Returns HTML markup for display images and attachments.
@@ -638,9 +652,7 @@ class forum
      */
     public function markupEditAttachments( $post_ID ) {
 
-        if ( empty( $post_ID ) ) return null;
-
-        $files = get_children( ['post_parent' => $post_ID, 'post_type' => 'attachment'] );
+        $files = $this->get_files( $post_ID );
         if ( ! $files || is_wp_error($files) ) return null;
 
         $images = $attachments = null;

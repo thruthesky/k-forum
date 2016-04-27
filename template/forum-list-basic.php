@@ -8,8 +8,16 @@ if ( empty($categories) ) {
 else {
     $category = current($categories);
 }
-$category_id = $category->term_id;
-$paged = isset($GLOBALS['wp_query']->query['paged']) ? $GLOBALS['wp_query']->query['paged'] : 1;
+
+if ( empty($category) ) {
+    _e("Forum does not exists.", 'k-forum');
+    get_footer();
+    return;
+
+}
+
+    $category_id = $category->term_id;
+    $paged = isset($GLOBALS['wp_query']->query['paged']) ? $GLOBALS['wp_query']->query['paged'] : 1;
 
 
 ?>

@@ -39,6 +39,9 @@ article .content {
     background-color: #f4f4f4;
 }
 
+article .content img {
+    max-width: 100%;
+}
 
 
 .comment-body .photos .img-thumbnail {

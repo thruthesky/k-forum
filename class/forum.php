@@ -1017,9 +1017,15 @@ EOM;
         $blogs = $_REQUEST['blogs'];
 
         $post = get_post( $post_ID );
+	$desc = trim($post->post_content);
         $blogPost = [];
         $blogPost['title'] = $post->post_title;
-        $blogPost['description'] = trim($post->post_content);
+	$desc = preg_replace("/\[caption[^\]]+\]/", '', $desc);
+	$desc = str_replace("[/caption]", '', $desc);
+	$desc = str_replace("<p>", "<blockquote>", $desc);
+	$desc = str_replace("</p>", "</blockquote>", $desc);
+        $blogPost['description'] = $desc;
+
         // @note if no content was input, then it just don't blogging.
         if ( ! empty( $blogPost['description'] ) ) {
             foreach ( $apis as $api ) {

@@ -143,15 +143,18 @@ if ( ! function_exists( 'di' ) ) {
 */
     function klog( $message ) {
         static $count_klog = 0;
+        if( WP_DEBUG === true && WP_DEBUG_LOG === true ) {
+	}
+	else return;
+
+
         $count_klog ++;
-        if( WP_DEBUG === true && WP_DEBUG_LOG === true ){
             if( is_array( $message ) || is_object( $message ) ){
                 $message = print_r( $message, true );
             }
             else {
 
             }
-        }
         $message = "[klog $count_klog] $message\n";
 	$file = ABSPATH . 'wp-content/debug.log';
 	file_put_contents($file, $message, FILE_APPEND);

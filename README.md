@@ -7,6 +7,11 @@ K-Forum is short for "Knowledge Forum".
 * Version compatibility from 4.3.3 to 4.5
     * Make it from 3.0 to 4.5
 
+* 디자인
+    * 기존의 won-moon hueman 디자인을 많이 따온다.
+        * 특히 광고, 방문자 통계, 필고 배너, 패밀리 사이트 광고를 따 넣는다.
+         
+    
 * SEO
     * 블로그를 목록하고 블로그 포스팅 선택 할 수 있도록 한다.
     * OG 태그

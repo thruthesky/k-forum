@@ -117,6 +117,7 @@ class rpc {
             'description' => new Value($post['description'], "string")
         );
 
+        $struct = $this->struct($struct);
         $client = new Client( $api_endpoint );
         $client->SetSSLVerifypeer(0);
         $request = new Request( 'metaWeblog.newPost',
@@ -148,6 +149,7 @@ class rpc {
             'title' => new Value($post['title'], "string"),
             'description' => new Value($post['description'], "string")
         );
+        $struct = $this->struct($struct);
         $client = new Client( $api_endpoint );
         $client->SetSSLVerifypeer(0);
         $request = new Request( 'metaWeblog.editPost',
@@ -194,17 +196,20 @@ class rpc {
                 new Value( 0 , "boolean"),
             )
         );
-
         $response = $client->send( $request );
-
         if ( $response->faultCode() ) {
             $this->error($response);
         }
         else {
             $boolean = $response->val->me['boolean'];
         }
-
         return $boolean;
+    }
+
+    private function struct($struct)
+    {
+        klog( $struct );
+        return $struct;
     }
 
 } // eo class

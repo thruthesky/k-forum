@@ -60,13 +60,13 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
                         '&password=' + $tr.find('.password').find('input').val() +
                         '&endpoint=' + encodeURIComponent( $tr.find('.endpoint').find('input').val() ) +
                         '';
-                    //console.log(url);
+                    console.log(url);
 
                     $.get(url, function(re) {
-                        //console.log(re.length);
+                        console.log(re.length);
                         for ( var i in re ) {
                             var blog = re[i];
-                            //console.log(blog);
+                            console.log(blog);
                             var m = '' +
                                 '<div class="select-blog-id" blogid="'+blog['blogid']+'" blogname="'+blog['blogName']+'" url="'+blog['url']+'">' +
                                 '   <span>('+blog['blogid']+')</span>' +
@@ -97,10 +97,10 @@ wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome
         <table class="api-settings">
             <?php for ( $i = 0; $i < 10; $i ++ ) { ?>
             <tr valign="top">
-                <td class="name"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][name]" value="<?php if ( isset($value['blog_apis'][$i]['name']) ) echo $value['blog_apis'][$i]['name']?>"></td>
-                <td class="username"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][username]" value="<?php if ( isset($value['blog_apis'][$i]['username']) ) echo $value['blog_apis'][$i]['username']?>"></td>
-                <td class="password"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][password]" value="<?php if ( isset($value['blog_apis'][$i]['password']) ) echo $value['blog_apis'][$i]['password']?>"></td>
-                <td class="endpoint"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][endpoint]" value="<?php if ( isset($value['blog_apis'][$i]['endpoint']) ) echo $value['blog_apis'][$i]['endpoint']?>"></td>
+                <td class="name"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][name]" value="<?php if ( isset($value['blog_apis'][$i]['name']) ) echo $value['blog_apis'][$i]['name']?>" placeholder="Name"></td>
+                <td class="username"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][username]" value="<?php if ( isset($value['blog_apis'][$i]['username']) ) echo $value['blog_apis'][$i]['username']?>" placeholder="Username"></td>
+                <td class="password"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][password]" value="<?php if ( isset($value['blog_apis'][$i]['password']) ) echo $value['blog_apis'][$i]['password']?>" placeholder="Password"></td>
+                <td class="endpoint"><input type="text" name="k_forum[blog_apis][<?php echo $i?>][endpoint]" value="<?php if ( isset($value['blog_apis'][$i]['endpoint']) ) echo $value['blog_apis'][$i]['endpoint']?>" placeholder="End point"></td>
                 <td class="load-blog-id"><i class="fa fa-refresh"></i></td>
                 <td class="blogID">
                     <input type="text" name="k_forum[blog_apis][<?php echo $i?>][blogID]" value="<?php if ( isset($value['blog_apis'][$i]['blogID']) ) echo $value['blog_apis'][$i]['blogID']?>">

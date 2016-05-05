@@ -1033,13 +1033,13 @@ EOM;
         $blogs = $_REQUEST['blogs'];
 
         $post = get_post( $post_ID );
-	$desc = trim($post->post_content);
+        $desc = trim($post->post_content);
+
         $blogPost = [];
         $blogPost['title'] = $post->post_title;
 	$desc = preg_replace("/\[caption[^\]]+\]/", '', $desc);
 	$desc = str_replace("[/caption]", '', $desc);
-	$desc = str_replace("<p>", "<blockquote>", $desc);
-	$desc = str_replace("</p>", "</blockquote>", $desc);
+	$desc = nl2br($desc);
         $blogPost['description'] = $desc;
 
         // @note if no content was input, then it just don't blogging.

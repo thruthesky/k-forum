@@ -94,6 +94,26 @@ We do it just because the user may delete a category mistakenly. If the user wan
 For instance, if a k-forum comment is deleted, it saves into trash just like WordPress comment does.
 
 
+# 설치
+
+Single Site 와 Multi Site 에서 플러그인을 활성화 해야한다.
+
+    add_action( 'template_redirect', function() {
+        if ( ! defined('K_FORUM') ) {
+            echo "Enable k-forum";
+            exit;
+        }
+    });
+
+
+# 게시판 링크
+
+게시판을 관리자 페이지에서 생성하고 난 다음
+
+<a href="<?php home_url()?>/forum/qna">
+<a href="<?php home_url()?>/forum/faq">
+
+와 같이 사용 할 수 있다.
 
 
 # ETC

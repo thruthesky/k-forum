@@ -35,7 +35,10 @@ class forum
 
     /**
      *
-     * Does the default things for the forum activation.
+     *
+     * Does the default works ( creating FORUM_CATEGORY_SLUG, etc ) for the forum activation.
+     *
+     * @Attention This method is only called when the admin or 'multisite admin' accesses 'admin page'.
      *
      * @note it adds routes here. This registers the 'routes' like "/forum/qna"
      *
@@ -43,8 +46,9 @@ class forum
      */
     public function doDefaults() {
 
+        klog("doDefaults()");
 
-        forum()->addRoutes(); // addRoutes on it does the default data insert ( on activation )
+        // forum()->addRoutes(); // addRoutes on it does the default data insert ( on activation )
 
 
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
@@ -275,6 +279,8 @@ class forum
 
     /**
      * Returns forum category.
+     *
+     *
      */
     public function getForumCategory()
     {
@@ -545,12 +551,13 @@ class forum
      */
     private function save_forum_slugs_into_option() {
 
-
         /**
          * @note Remember ( Stores ) slugs of k-forum into option.
          *
          */
         $category = get_category_by_slug( FORUM_CATEGORY_SLUG );
+        if ( empty($category) ) return;
+
         $args = array(
             'child_of'                 => $category->term_id,
             'hide_empty'               => FALSE,

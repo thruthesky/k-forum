@@ -49,6 +49,11 @@ K-Forum is short for "Knowledge Forum".
 		* and other options.
         
 
+# K Forum 테스트 하는 방법
+
+$ curl "http://work.org/wordpress/?test=k-forum"
+
+
 
 
 # Features

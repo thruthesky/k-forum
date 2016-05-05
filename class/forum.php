@@ -419,26 +419,30 @@ class forum
         return $this;
     }
 
+    /**
+     * @deprecated see addRoutes()
+     */
+    public function addRoutes() {
+        $this->addRewrites();
+    }
 
     /**
      * Add rewrite rules.
      *
-     * @Warning This should be called only on activation of plugin.
+     * @Warning This does not flush rules. So, it must be flushed on activation.
      *
      * 아래의 rewrite_rule 를 사용하지 않고도 template_include 를 통해서 template 을 포함 할 수 있다.
      *
      * 하지만 Main Loop 를 사용 할 수 없다.
      *
      * ReWrite 하는 목적은 Main Loop 를 사용 할 수 있도록 하기 위한 것이다.
+     *
+     *
+     * @changed May 5, 2016. method name from 'addRoutes' to 'addRewrites'
+     *
      */
-    public function addRoutes()
+    public function addRewrites()
     {
-
-        // echo "<p>Adding rewrite rules for k-forum.</p>";
-        /**
-         * @note Do not add this code in hook since,
-         * @Warning This code is very expensive. So, must run only when it is necessary.
-         */
             add_rewrite_rule(
                 '^forum/([^\/]+)/?$',
                 'index.php?category_name=$matches[1]',
@@ -455,10 +459,18 @@ class forum
                 'top'
             );
             //add_rewrite_tag('%val%','([^/]*)');
-            flush_rewrite_rules();
-
-
+//            flush_rewrite_rules();
     }
+
+    /**
+     * Flushes the rewrite rules.
+     * @Attention this code must be called only on activation.
+     */
+    public function flushRewrites() {
+        $this->addRewrites();
+        flush_rewrite_rules();
+    }
+
 
     /**
      *
@@ -976,6 +988,17 @@ EOM;
         });
 
         add_action('init', function(){
+
+            $this->addRewrites();
+
+            $rules = $GLOBALS['wp_rewrite']->rewrite_rules();
+            if ( isset($rules['^forum/([^\/]+)/?$']) ) {
+
+            }
+            else {
+                echo "<h1>ERROR: No rewrite rule registered.</h1>";
+            }
+
 
 
             /**

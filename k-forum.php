@@ -24,7 +24,6 @@ require_once "class/rpc.php";
 
 //klog('begin');
 
-// forum()->addRoutes(); // work
 
 forum()
     ->init()
@@ -38,8 +37,8 @@ forum()
 
 register_activation_hook( __FILE__, function() {
 
-    forum()
-        ->doDefaults();
+    forum()->flushRewrites();
+
 });
 
 

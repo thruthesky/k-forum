@@ -4,6 +4,13 @@ K-Forum is short for "Knowledge Forum".
 
 # todo
 
+* 라우팅
+    * /qna 와 같이 1 차 세그먼트만 없앤다. 그러면 라우트를 계속 수정 할 필요가 없다.
+    * 즉, doDefault 를 한번만 호출하는 것이다.
+    * 테마가 변경 될 때, 라우팅 설정이 사라지는지 확인을 한다.
+    * 테마를 프로그램적으로 변경.
+    * 라우팅을 프로그램적으로 확인.
+
 * Version compatibility from 4.3.3 to 4.5
     * Make it from 3.0 to 4.5
 

@@ -37,39 +37,39 @@ class forum
      *
      * Does the default things for the forum activation.
      *
-     * @note it adds routes here. This registers the 'routes' for multisite.
+     * @note it adds routes here. This registers the 'routes' like "/forum/qna"
      *
      * @return $this
      */
     public function doDefaults() {
 
 
-
-        $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
-        if ( $category ) return $this;
-
-
         forum()->addRoutes(); // addRoutes on it does the default data insert ( on activation )
 
-        if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
 
-        $catarr = array(
-            'cat_name' => __('K-Forum', 'k-forum'),
-            'category_description' => __("This is K forum.", 'k-forum'),
-            'category_nicename' => FORUM_CATEGORY_SLUG,
-        );
-        $ID = wp_insert_category( $catarr, true );
-        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+        $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        if ( ! $category ) {
 
-        $catarr = array(
-            'cat_name' => __('Welcome', 'k-forum'),
-            'category_description' => __("This is Welcome forum", 'k-forum'),
-            'category_nicename' => 'welcome-'.date('his'), // @note When or for some reason, when k-forum and its category was deleted, it must create a new slug. ( guess this is because the permalink or route is already registered. )
-            'category_parent' => $ID,
-        );
-        $ID = wp_insert_category( $catarr, true );
-        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
+            if (!function_exists('wp_insert_category')) require_once(ABSPATH . "/wp-admin/includes/taxonomy.php");
+
+            $catarr = array(
+                'cat_name' => __('K-Forum', 'k-forum'),
+                'category_description' => __("This is K forum.", 'k-forum'),
+                'category_nicename' => FORUM_CATEGORY_SLUG,
+            );
+            $ID = wp_insert_category($catarr, true);
+            if (is_wp_error($ID)) wp_die($ID->get_error_message());
+
+            $catarr = array(
+                'cat_name' => __('Welcome', 'k-forum'),
+                'category_description' => __("This is Welcome forum", 'k-forum'),
+                'category_nicename' => 'welcome-' . date('his'), // @note When or for some reason, when k-forum and its category was deleted, it must create a new slug. ( guess this is because the permalink or route is already registered. )
+                'category_parent' => $ID,
+            );
+            $ID = wp_insert_category($catarr, true);
+            if (is_wp_error($ID)) wp_die($ID->get_error_message());
+        }
 
         /**
          *
@@ -87,7 +87,7 @@ class forum
          *
          */
 
-        $this->update_forum_slugs();
+        $this->save_forum_slugs_into_option();
 
         return $this;
     }
@@ -279,6 +279,9 @@ class forum
     public function getForumCategory()
     {
         $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        /**
+         * If there is no 'k-forum' post PostType category, then it do the defaults.
+         */
         if ( empty($cat) ) {
             forum()->doDefaults();
             $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
@@ -420,6 +423,7 @@ class forum
     /**
      * Add rewrite rules.
      *
+     * @Warning This should be called only on activation of plugin.
      *
      * 아래의 rewrite_rule 를 사용하지 않고도 template_include 를 통해서 template 을 포함 할 수 있다.
      *
@@ -513,14 +517,21 @@ class forum
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
 
-        $this->update_forum_slugs();
+        $this->save_forum_slugs_into_option();
 
 
 
         wp_redirect( $this->adminURL() );
     }
 
-    private function update_forum_slugs() {
+
+    /**
+     * Saves slugs of the forum into option for easy use.
+     *
+     * @changed May 5, 2015. method name changed from update_forum_slugs to save_forum_slugs_into_option
+     * @changed May 5, 2016. it does not rewrite_rules for "/qna" or "/freetalk".
+     */
+    private function save_forum_slugs_into_option() {
 
 
         /**
@@ -536,6 +547,10 @@ class forum
         $slugs = [];
         foreach ( $child_categories as $child ) {
             $slugs[] = $child->slug;
+
+            /**
+             *
+             *
             $slug = '^' . $child->slug . '$';
             //di($slug);
             add_rewrite_rule(
@@ -543,6 +558,7 @@ class forum
                 'index.php?category_name='.$child->slug,
                 'top'
             );
+            */
             flush_rewrite_rules();
         }
         update_option('forum-slugs', $slugs);
@@ -940,7 +956,7 @@ EOM;
         if ( empty($slugs) ) {
             // This is an error.
             // This may happen when forum exists, but it was not updated on 'forum-slugs' like old version has no function on updating 'forum-slugs'.
-            $this->update_forum_slugs();
+            $this->save_forum_slugs_into_option();
             $slugs = get_option('forum-slugs');
         }
         return $slugs;

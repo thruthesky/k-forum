@@ -603,6 +603,8 @@ class forum
         $id = $_REQUEST['id'];
         $categories = get_the_category($id);
 
+        $this->checkOwnership($id);
+
 
         // 1. delete blog post
         $apis = $this->parseBlogSetting();
@@ -641,10 +643,16 @@ class forum
     }
 
     /**
-     * @todo permission check
+     *
+     *
+     *
+     *
      */
     private function comment_delete() {
         $comment_ID = $_REQUEST['comment_ID'];
+
+        $this->checkOwnership( $comment_ID, 'comment' );
+
         $comment = get_comment( $comment_ID );
         $post = get_post( $comment->comment_post_ID );
 
@@ -777,16 +785,22 @@ class forum
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
                 return $this->loadTemplate('forum-list-basic.php');
             }
-            //
-            // http://abc.com/forum/xxxx/edit
+            // post edit
+            // http://abc.com/forum/(xxxx)/edit
+            // if (xxxx) is numeric, then it's 'post edit'
+            // else it's 'new post'.
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
+                $s = seg(1);
+                if ( is_numeric($s) ) $this->checkOwnership( $s );
                 return $this->loadTemplate('forum-edit-basic.php');
             }
+            // comment edit
             // http://abc.com/forum/xxxx/commentEdit
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'commentEdit'  ) {
-
+                $this->checkOwnership(seg(1), 'comment');
                 return $this->loadTemplate('forum-commentEdit-basic.php');
             }
+            // view
             // https://abc.com/forum/xxxx/[0-9]+
             else if ( seg(0) == 'forum' && seg(1) != null && is_numeric(seg(2))  ) {
                 return $this->loadTemplate('forum-view-basic.php');
@@ -1099,6 +1113,51 @@ EOM;
                 }
             }
         }
+    }
+
+    /**
+     *
+     * Exits if the user has no right to edit/delete on the $post_id
+     *
+     * @Attention if the logged-in user is admin, then he can do 'edit/delete'
+     *
+     * @param $id
+     * @param string $type
+     *
+     * @return bool
+     */
+    private function checkOwnership( $id, $type='post' )
+    {
+        if ( ! is_user_logged_in() ) wp_die("Please login");
+
+        if ( current_user_can( 'manage_options' ) ) return true;
+
+        $user = wp_get_current_user();
+        $user_id = 0;
+        if ( $user->exists() ) {
+            if ( $type == 'post' ) {
+                $post = get_post( $id );
+                if ( empty($post) ) wp_die("Post does not exists");
+                $user_id = $post->post_author;
+            }
+            else if ( $type == 'comment' ) {
+                $comment = get_comment( $id );
+                if ( empty( $comment ) ) wp_die("Comment does not exists");
+                $user_id = $comment->user_id;
+            }
+            else wp_die( 'Wrong Post Type Check');
+
+            if ( $user->ID == $user_id ) {
+                // ok
+            }
+            else {
+                wp_die("You are not the owner of the $type");
+            }
+        }
+        else {
+            wp_die("User does not exists.");
+        }
+        return true;
     }
 }
 

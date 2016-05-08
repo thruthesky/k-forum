@@ -149,6 +149,7 @@ class forum
             'comment_create', 'comment_delete',
             'file_upload', 'file_delete',
             'blogger_getUsersBlogs',
+            'login',
         ];
         if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
         else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
@@ -1158,6 +1159,17 @@ EOM;
             wp_die("User does not exists.");
         }
         return true;
+    }
+
+    private function login() {
+        $credits = array(
+            'user_login'    => in('user_login'),
+            'user_password' => in('user_pass'),
+            'rememberme'    => in('rememberme')
+        );
+        $re = wp_signon( $credits, false );
+        if ( is_wp_error($re) ) wp_send_json_error($re);
+        else wp_send_json_success();
     }
 }
 

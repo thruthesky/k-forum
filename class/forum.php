@@ -188,12 +188,13 @@ class forum
 
 
     /**
-     * Creates / Updates a post.
+     * Creates a new post or Edits an existing post.
      *
      * @param array $post_arr
      * @todo permission check. if it is update, then check the updator's ID.
      */
     private function post_create( $post_arr = array() ) {
+
         $is_update = isset($_REQUEST['id']) ? true : false;
         if ( empty($post_arr) ) {
             $post_arr = array(
@@ -206,10 +207,12 @@ class forum
         }
 
         if ( $is_update ) {         // update
+            $this->checkOwnership($_REQUEST['id']);
             $post_arr['ID'] = $_REQUEST['id'];
             $post_ID = wp_update_post($post_arr);
         }
-        else {                                  // insert
+        else {                                  // insert ( create a new post )
+            $this->checkLogin();
             // Insert the post into the database
             $post_ID = wp_insert_post( $post_arr );
         }
@@ -792,7 +795,8 @@ class forum
             // else it's 'new post'.
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
                 $s = seg(1);
-                if ( is_numeric($s) ) $this->checkOwnership( $s );
+                if ( is_numeric($s) ) $this->checkOwnership( $s ); // post edit
+                else $this->checkLogin(); // post write
                 return $this->loadTemplate('forum-edit-basic.php');
             }
             // comment edit
@@ -926,16 +930,17 @@ EOM;
     }
 
     /**
-     * Creates / Updates a post.
+     * Creates a new comment or edit a comment.
      *
      *
-     * @todo permission check. if it is update, then check the updator's ID.
+     *
      */
     private function comment_create( ) {
 
-
-        if ( isset( $_REQUEST['comment_ID'] ) ) {
+        //
+        if ( isset( $_REQUEST['comment_ID'] ) ) { // update
             $comment_ID = $_REQUEST['comment_ID'];
+            $this->checkOwnership( $comment_ID, 'comment' );       // check comment owner.
             $comment = get_comment( $comment_ID );
             $post_ID = $comment->comment_post_ID;
             $re = wp_update_comment([
@@ -948,7 +953,8 @@ EOM;
                 // error or content has not changed.
             }
         }
-        else {
+        else { // new
+            $this->checkLogin();
             $post_ID = $_REQUEST['comment_post_ID'];
             $comment_ID = wp_insert_comment([
                 'comment_post_ID' => $post_ID,
@@ -1138,7 +1144,9 @@ EOM;
         if ( $user->exists() ) {
             if ( $type == 'post' ) {
                 $post = get_post( $id );
-                if ( empty($post) ) wp_die("Post does not exists");
+                if ( empty($post) ) { // if post does not exists, it is a new post writing.
+                    wp_die("Post does not exists");
+                }
                 $user_id = $post->post_author;
             }
             else if ( $type == 'comment' ) {
@@ -1170,6 +1178,11 @@ EOM;
         $re = wp_signon( $credits, false );
         if ( is_wp_error($re) ) wp_send_json_error($re);
         else wp_send_json_success();
+    }
+
+    private function checkLogin()
+    {
+        if ( ! is_user_logged_in() ) wp_die("Please login");
     }
 }
 

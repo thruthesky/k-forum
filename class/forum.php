@@ -456,32 +456,7 @@ class forum
      */
     public function addRewrites()
     {
-<<<<<<< HEAD
 
-        // echo "<p>Adding rewrite rules for k-forum.</p>";
-        /**
-         * @note Do not add this code in hook since,
-         * @Warning This code is very expensive. So, must run only when it is necessary.
-         */
-        add_rewrite_rule(
-            '^forum/([^\/]+)/?$',
-            'index.php?category_name=$matches[1]',
-            'top'
-        );
-        add_rewrite_rule(
-            '^forum/([^\/]+)/page/([0-9]+)/?$',
-            'index.php?category_name=$matches[1]&paged=$matches[2]',
-            'top'
-        );
-        add_rewrite_rule(
-            '^forum/([^\/]+)/([0-9]+)?$',
-            'index.php?category_name=$matches[1]&p=$matches[2]',
-            'top'
-        );
-        //add_rewrite_tag('%val%','([^/]*)');
-        flush_rewrite_rules();
-
-=======
             add_rewrite_rule(
                 '^forum/([^\/]+)/?$',
                 'index.php?category_name=$matches[1]',
@@ -500,7 +475,6 @@ class forum
             //add_rewrite_tag('%val%','([^/]*)');
 //            flush_rewrite_rules();
     }
->>>>>>> 4a41ec0c566c97f4282ac7215a38d1f00ac6b678
 
     /**
      * Flushes the rewrite rules.

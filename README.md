@@ -4,7 +4,14 @@ K-Forum is short for "Knowledge Forum".
 
 # todo
 
-* Version compatibility from 4.3.3 to 4.5
+* 큰 문제 발생.
+    * 기존의 post Post Type 을 그대로 사용하는 것은 좋은데,
+    * Routing 과 Main Loop 를 활용하려고 억지로 Rewrite 를 지정하여 Main Loop 를 사용하는데,
+    * /qna 와 같이 1 차 segment 를 사용하지 않고 무조건 /forum/qna 와 같이 2차 segment 를 사용한다.
+    * 그리고 Main Loop 를 억지로 사용하지 않는다.
+    
+
+* Version compatibility from 3.5 to 4.5
     * Make it from 3.0 to 4.5
 
 * 디자인
@@ -14,10 +21,11 @@ K-Forum is short for "Knowledge Forum".
     
 * SEO
     * 블로그를 목록하고 블로그 포스팅 선택 할 수 있도록 한다.
-    * OG 태그
+    * OG 태그 직접 입력.
+        * OG 타이틀 이미지 직접 선택. 업로드.
 	* http://static.googleusercontent.com/media/www.google.co.kr/ko/kr/intl/ko/webmasters/docs/search-engine-optimization-starter-guide-ko.pdf
 	* https://docs.google.com/document/d/1l5nBwK4ztgml0kUXvy73cmMroDfWifooddutvfk_tCU/edit
-	* 키워드 사용 회수 카운트
+	* 키워드 사용 회수 카운트.
 	* A 태그 한개 이상 삽입.
 	
 	

@@ -78,11 +78,11 @@ class forum
          *
          *
         forum()->post_create([
-            'post_title'    => __('Welcome to K forum - name', 'k-forum'),
-            'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
-            'post_status'   => 'publish',
-            'post_author'   => wp_get_current_user()->ID,
-            'post_category' => array( $ID )
+        'post_title'    => __('Welcome to K forum - name', 'k-forum'),
+        'post_content'  => __('This is a test post in welcome K forum.', 'k-forum'),
+        'post_status'   => 'publish',
+        'post_author'   => wp_get_current_user()->ID,
+        'post_category' => array( $ID )
         ]);
          *
          */
@@ -199,6 +199,9 @@ class forum
                 'post_category' => array( $_REQUEST['category_id'] )
             );
         }
+
+        klog( $post_arr );
+
 
         if ( $is_update ) {         // update
             $post_arr['ID'] = $_REQUEST['id'];
@@ -435,23 +438,23 @@ class forum
          * @note Do not add this code in hook since,
          * @Warning This code is very expensive. So, must run only when it is necessary.
          */
-            add_rewrite_rule(
-                '^forum/([^\/]+)/?$',
-                'index.php?category_name=$matches[1]',
-                'top'
-            );
-            add_rewrite_rule(
-                '^forum/([^\/]+)/page/([0-9]+)/?$',
-                'index.php?category_name=$matches[1]&paged=$matches[2]',
-                'top'
-            );
-            add_rewrite_rule(
-                '^forum/([^\/]+)/([0-9]+)?$',
-                'index.php?category_name=$matches[1]&p=$matches[2]',
-                'top'
-            );
-            //add_rewrite_tag('%val%','([^/]*)');
-            flush_rewrite_rules();
+        add_rewrite_rule(
+            '^forum/([^\/]+)/?$',
+            'index.php?category_name=$matches[1]',
+            'top'
+        );
+        add_rewrite_rule(
+            '^forum/([^\/]+)/page/([0-9]+)/?$',
+            'index.php?category_name=$matches[1]&paged=$matches[2]',
+            'top'
+        );
+        add_rewrite_rule(
+            '^forum/([^\/]+)/([0-9]+)?$',
+            'index.php?category_name=$matches[1]&p=$matches[2]',
+            'top'
+        );
+        //add_rewrite_tag('%val%','([^/]*)');
+        flush_rewrite_rules();
 
 
     }
@@ -994,11 +997,11 @@ EOM;
         if ( empty( $setting ) ) return $info;
 
         foreach ( $setting as $api ) {
-		// klog($api);
-		if ( empty($api['name']) || empty($api['endpoint']) || empty($api['username']) ) continue;
+            // klog($api);
+            if ( empty($api['name']) || empty($api['endpoint']) || empty($api['username']) ) continue;
             $info[] = $api;
         }
-	// klog($info);
+        // klog($info);
         return $info;
     }
 
@@ -1021,9 +1024,9 @@ EOM;
 
         $blogPost = [];
         $blogPost['title'] = $post->post_title;
-	$desc = preg_replace("/\[caption[^\]]+\]/", '', $desc);
-	$desc = str_replace("[/caption]", '', $desc);
-	$desc = nl2br($desc);
+        $desc = preg_replace("/\[caption[^\]]+\]/", '', $desc);
+        $desc = str_replace("[/caption]", '', $desc);
+        $desc = nl2br($desc);
         $blogPost['description'] = $desc;
 
         // @note if no content was input, then it just don't blogging.

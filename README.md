@@ -4,6 +4,7 @@ K-Forum is short for "Knowledge Forum".
 
 # todo
 
+
 * 큰 문제 발생.
     * 기존의 post Post Type 을 그대로 사용하는 것은 좋은데,
     * Routing 과 Main Loop 를 활용하려고 억지로 Rewrite 를 지정하여 Main Loop 를 사용하는데,
@@ -11,7 +12,24 @@ K-Forum is short for "Knowledge Forum".
     * 그리고 Main Loop 를 억지로 사용하지 않는다.
     
 
-* Version compatibility from 3.5 to 4.5
+* 웹브라우저 제목에 글 제목이 나오게 할 것.
+
+* 버그
+    * 분명히 글이 사라진다.
+    * 이것은 글 삭제 권한이 필요 없이 아무나 글 삭제를 할 수 있기 때문이 아닐까 생각한다.
+    * 검색 엔진에서 글을 색인을 할 때, delete 링크를 연결하기 때문에 그런 것이 아닐까 생각한다.
+    * May 9, 2016 에 권한 관련 코드를 추가하므로서 수정.
+
+
+* 라우팅
+    * /qna 와 같이 1 차 세그먼트만 없앤다. 그러면 라우트를 계속 수정 할 필요가 없다.
+    * 즉, doDefault 를 한번만 호출하는 것이다.
+    * 테마가 변경 될 때, 라우팅 설정이 사라지는지 확인을 한다.
+    * 테마를 프로그램적으로 변경.
+    * 라우팅을 프로그램적으로 확인.
+
+* Version compatibility from 4.3.3 to 4.5
+
     * Make it from 3.0 to 4.5
 
 * 디자인
@@ -49,6 +67,11 @@ K-Forum is short for "Knowledge Forum".
 		* templating for each forum category.
 		* and other options.
         
+
+# K Forum 테스트 하는 방법
+
+$ curl "http://work.org/wordpress/?test=k-forum"
+
 
 
 
@@ -90,6 +113,26 @@ We do it just because the user may delete a category mistakenly. If the user wan
 For instance, if a k-forum comment is deleted, it saves into trash just like WordPress comment does.
 
 
+# 설치
+
+Single Site 와 Multi Site 에서 플러그인을 활성화 해야한다.
+
+    add_action( 'template_redirect', function() {
+        if ( ! defined('K_FORUM') ) {
+            echo "Enable k-forum";
+            exit;
+        }
+    });
+
+
+# 게시판 링크
+
+게시판을 관리자 페이지에서 생성하고 난 다음
+
+<a href="<?php home_url()?>/forum/qna">
+<a href="<?php home_url()?>/forum/faq">
+
+와 같이 사용 할 수 있다.
 
 
 # ETC

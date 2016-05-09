@@ -35,41 +35,45 @@ class forum
 
     /**
      *
-     * Does the default things for the forum activation.
      *
-     * @note it adds routes here. This registers the 'routes' for multisite.
+     * Does the default works ( creating FORUM_CATEGORY_SLUG, etc ) for the forum activation.
+     *
+     * @Attention This method is only called when the admin or 'multisite admin' accesses 'admin page'.
+     *
+     * @note it adds routes here. This registers the 'routes' like "/forum/qna"
      *
      * @return $this
      */
     public function doDefaults() {
 
+        klog("doDefaults()");
+
+        // forum()->addRoutes(); // addRoutes on it does the default data insert ( on activation )
 
 
         $category = get_category_by_slug(FORUM_CATEGORY_SLUG);
-        if ( $category ) return $this;
+        if ( ! $category ) {
 
 
-        forum()->addRoutes(); // addRoutes on it does the default data insert ( on activation )
+            if (!function_exists('wp_insert_category')) require_once(ABSPATH . "/wp-admin/includes/taxonomy.php");
 
-        if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
+            $catarr = array(
+                'cat_name' => __('K-Forum', 'k-forum'),
+                'category_description' => __("This is K forum.", 'k-forum'),
+                'category_nicename' => FORUM_CATEGORY_SLUG,
+            );
+            $ID = wp_insert_category($catarr, true);
+            if (is_wp_error($ID)) wp_die($ID->get_error_message());
 
-        $catarr = array(
-            'cat_name' => __('K-Forum', 'k-forum'),
-            'category_description' => __("This is K forum.", 'k-forum'),
-            'category_nicename' => FORUM_CATEGORY_SLUG,
-        );
-        $ID = wp_insert_category( $catarr, true );
-        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
-
-        $catarr = array(
-            'cat_name' => __('Welcome', 'k-forum'),
-            'category_description' => __("This is Welcome forum", 'k-forum'),
-            'category_nicename' => 'welcome-'.date('his'), // @note When or for some reason, when k-forum and its category was deleted, it must create a new slug. ( guess this is because the permalink or route is already registered. )
-            'category_parent' => $ID,
-        );
-        $ID = wp_insert_category( $catarr, true );
-        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
-
+            $catarr = array(
+                'cat_name' => __('Welcome', 'k-forum'),
+                'category_description' => __("This is Welcome forum", 'k-forum'),
+                'category_nicename' => 'welcome-' . date('his'), // @note When or for some reason, when k-forum and its category was deleted, it must create a new slug. ( guess this is because the permalink or route is already registered. )
+                'category_parent' => $ID,
+            );
+            $ID = wp_insert_category($catarr, true);
+            if (is_wp_error($ID)) wp_die($ID->get_error_message());
+        }
 
         /**
          *
@@ -87,7 +91,7 @@ class forum
          *
          */
 
-        $this->update_forum_slugs();
+        $this->save_forum_slugs_into_option();
 
         return $this;
     }
@@ -145,6 +149,7 @@ class forum
             'comment_create', 'comment_delete',
             'file_upload', 'file_delete',
             'blogger_getUsersBlogs',
+            'login',
         ];
         if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
         else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
@@ -183,12 +188,13 @@ class forum
 
 
     /**
-     * Creates / Updates a post.
+     * Creates a new post or Edits an existing post.
      *
      * @param array $post_arr
      * @todo permission check. if it is update, then check the updator's ID.
      */
     private function post_create( $post_arr = array() ) {
+
         $is_update = isset($_REQUEST['id']) ? true : false;
         if ( empty($post_arr) ) {
             $post_arr = array(
@@ -204,10 +210,12 @@ class forum
 
 
         if ( $is_update ) {         // update
+            $this->checkOwnership($_REQUEST['id']);
             $post_arr['ID'] = $_REQUEST['id'];
             $post_ID = wp_update_post($post_arr);
         }
-        else {                                  // insert
+        else {                                  // insert ( create a new post )
+            $this->checkLogin();
             // Insert the post into the database
             $post_ID = wp_insert_post( $post_arr );
         }
@@ -278,10 +286,15 @@ class forum
 
     /**
      * Returns forum category.
+     *
+     *
      */
     public function getForumCategory()
     {
         $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
+        /**
+         * If there is no 'k-forum' post PostType category, then it do the defaults.
+         */
         if ( empty($cat) ) {
             forum()->doDefaults();
             $cat = get_category_by_slug(FORUM_CATEGORY_SLUG);
@@ -419,19 +432,31 @@ class forum
         return $this;
     }
 
+    /**
+     * @deprecated see addRoutes()
+     */
+    public function addRoutes() {
+        $this->addRewrites();
+    }
 
     /**
      * Add rewrite rules.
      *
+     * @Warning This does not flush rules. So, it must be flushed on activation.
      *
      * 아래의 rewrite_rule 를 사용하지 않고도 template_include 를 통해서 template 을 포함 할 수 있다.
      *
      * 하지만 Main Loop 를 사용 할 수 없다.
      *
      * ReWrite 하는 목적은 Main Loop 를 사용 할 수 있도록 하기 위한 것이다.
+     *
+     *
+     * @changed May 5, 2016. method name from 'addRoutes' to 'addRewrites'
+     *
      */
-    public function addRoutes()
+    public function addRewrites()
     {
+<<<<<<< HEAD
 
         // echo "<p>Adding rewrite rules for k-forum.</p>";
         /**
@@ -456,8 +481,36 @@ class forum
         //add_rewrite_tag('%val%','([^/]*)');
         flush_rewrite_rules();
 
-
+=======
+            add_rewrite_rule(
+                '^forum/([^\/]+)/?$',
+                'index.php?category_name=$matches[1]',
+                'top'
+            );
+            add_rewrite_rule(
+                '^forum/([^\/]+)/page/([0-9]+)/?$',
+                'index.php?category_name=$matches[1]&paged=$matches[2]',
+                'top'
+            );
+            add_rewrite_rule(
+                '^forum/([^\/]+)/([0-9]+)?$',
+                'index.php?category_name=$matches[1]&p=$matches[2]',
+                'top'
+            );
+            //add_rewrite_tag('%val%','([^/]*)');
+//            flush_rewrite_rules();
     }
+>>>>>>> 4a41ec0c566c97f4282ac7215a38d1f00ac6b678
+
+    /**
+     * Flushes the rewrite rules.
+     * @Attention this code must be called only on activation.
+     */
+    public function flushRewrites() {
+        $this->addRewrites();
+        flush_rewrite_rules();
+    }
+
 
     /**
      *
@@ -516,21 +569,29 @@ class forum
         if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
 
 
-        $this->update_forum_slugs();
+        $this->save_forum_slugs_into_option();
 
 
 
         wp_redirect( $this->adminURL() );
     }
 
-    private function update_forum_slugs() {
 
+    /**
+     * Saves slugs of the forum into option for easy use.
+     *
+     * @changed May 5, 2015. method name changed from update_forum_slugs to save_forum_slugs_into_option
+     * @changed May 5, 2016. it does not rewrite_rules for "/qna" or "/freetalk".
+     */
+    private function save_forum_slugs_into_option() {
 
         /**
          * @note Remember ( Stores ) slugs of k-forum into option.
          *
          */
         $category = get_category_by_slug( FORUM_CATEGORY_SLUG );
+        if ( empty($category) ) return;
+
         $args = array(
             'child_of'                 => $category->term_id,
             'hide_empty'               => FALSE,
@@ -539,6 +600,10 @@ class forum
         $slugs = [];
         foreach ( $child_categories as $child ) {
             $slugs[] = $child->slug;
+
+            /**
+             *
+             *
             $slug = '^' . $child->slug . '$';
             //di($slug);
             add_rewrite_rule(
@@ -546,6 +611,7 @@ class forum
                 'index.php?category_name='.$child->slug,
                 'top'
             );
+            */
             flush_rewrite_rules();
         }
         update_option('forum-slugs', $slugs);
@@ -570,6 +636,8 @@ class forum
     private function post_delete() {
         $id = $_REQUEST['id'];
         $categories = get_the_category($id);
+
+        $this->checkOwnership($id);
 
 
         // 1. delete blog post
@@ -609,10 +677,16 @@ class forum
     }
 
     /**
-     * @todo permission check
+     *
+     *
+     *
+     *
      */
     private function comment_delete() {
         $comment_ID = $_REQUEST['comment_ID'];
+
+        $this->checkOwnership( $comment_ID, 'comment' );
+
         $comment = get_comment( $comment_ID );
         $post = get_post( $comment->comment_post_ID );
 
@@ -745,16 +819,23 @@ class forum
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
                 return $this->loadTemplate('forum-list-basic.php');
             }
-            //
-            // http://abc.com/forum/xxxx/edit
+            // post edit
+            // http://abc.com/forum/(xxxx)/edit
+            // if (xxxx) is numeric, then it's 'post edit'
+            // else it's 'new post'.
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'edit'  ) {
+                $s = seg(1);
+                if ( is_numeric($s) ) $this->checkOwnership( $s ); // post edit
+                else $this->checkLogin(); // post write
                 return $this->loadTemplate('forum-edit-basic.php');
             }
+            // comment edit
             // http://abc.com/forum/xxxx/commentEdit
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'commentEdit'  ) {
-
+                $this->checkOwnership(seg(1), 'comment');
                 return $this->loadTemplate('forum-commentEdit-basic.php');
             }
+            // view
             // https://abc.com/forum/xxxx/[0-9]+
             else if ( seg(0) == 'forum' && seg(1) != null && is_numeric(seg(2))  ) {
                 return $this->loadTemplate('forum-view-basic.php');
@@ -879,16 +960,17 @@ EOM;
     }
 
     /**
-     * Creates / Updates a post.
+     * Creates a new comment or edit a comment.
      *
      *
-     * @todo permission check. if it is update, then check the updator's ID.
+     *
      */
     private function comment_create( ) {
 
-
-        if ( isset( $_REQUEST['comment_ID'] ) ) {
+        //
+        if ( isset( $_REQUEST['comment_ID'] ) ) { // update
             $comment_ID = $_REQUEST['comment_ID'];
+            $this->checkOwnership( $comment_ID, 'comment' );       // check comment owner.
             $comment = get_comment( $comment_ID );
             $post_ID = $comment->comment_post_ID;
             $re = wp_update_comment([
@@ -901,7 +983,8 @@ EOM;
                 // error or content has not changed.
             }
         }
-        else {
+        else { // new
+            $this->checkLogin();
             $post_ID = $_REQUEST['comment_post_ID'];
             $comment_ID = wp_insert_comment([
                 'comment_post_ID' => $post_ID,
@@ -943,7 +1026,7 @@ EOM;
         if ( empty($slugs) ) {
             // This is an error.
             // This may happen when forum exists, but it was not updated on 'forum-slugs' like old version has no function on updating 'forum-slugs'.
-            $this->update_forum_slugs();
+            $this->save_forum_slugs_into_option();
             $slugs = get_option('forum-slugs');
         }
         return $slugs;
@@ -963,6 +1046,17 @@ EOM;
         });
 
         add_action('init', function(){
+
+            $this->addRewrites();
+
+            $rules = $GLOBALS['wp_rewrite']->rewrite_rules();
+            if ( isset($rules['^forum/([^\/]+)/?$']) ) {
+
+            }
+            else {
+                echo "<h1>ERROR: No rewrite rule registered.</h1>";
+            }
+
 
 
             /**
@@ -1056,6 +1150,69 @@ EOM;
                 }
             }
         }
+    }
+
+    /**
+     *
+     * Exits if the user has no right to edit/delete on the $post_id
+     *
+     * @Attention if the logged-in user is admin, then he can do 'edit/delete'
+     *
+     * @param $id
+     * @param string $type
+     *
+     * @return bool
+     */
+    private function checkOwnership( $id, $type='post' )
+    {
+        if ( ! is_user_logged_in() ) wp_die("Please login");
+
+        if ( current_user_can( 'manage_options' ) ) return true;
+
+        $user = wp_get_current_user();
+        $user_id = 0;
+        if ( $user->exists() ) {
+            if ( $type == 'post' ) {
+                $post = get_post( $id );
+                if ( empty($post) ) { // if post does not exists, it is a new post writing.
+                    wp_die("Post does not exists");
+                }
+                $user_id = $post->post_author;
+            }
+            else if ( $type == 'comment' ) {
+                $comment = get_comment( $id );
+                if ( empty( $comment ) ) wp_die("Comment does not exists");
+                $user_id = $comment->user_id;
+            }
+            else wp_die( 'Wrong Post Type Check');
+
+            if ( $user->ID == $user_id ) {
+                // ok
+            }
+            else {
+                wp_die("You are not the owner of the $type");
+            }
+        }
+        else {
+            wp_die("User does not exists.");
+        }
+        return true;
+    }
+
+    private function login() {
+        $credits = array(
+            'user_login'    => in('user_login'),
+            'user_password' => in('user_pass'),
+            'rememberme'    => in('rememberme')
+        );
+        $re = wp_signon( $credits, false );
+        if ( is_wp_error($re) ) wp_send_json_error($re);
+        else wp_send_json_success();
+    }
+
+    private function checkLogin()
+    {
+        if ( ! is_user_logged_in() ) wp_die("Please login");
     }
 }
 

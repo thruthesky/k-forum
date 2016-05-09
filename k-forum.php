@@ -10,6 +10,7 @@
  *
  */
 if ( ! defined('ABSPATH') ) exit;
+define( 'K_FORUM', true);
 define( 'FORUM_FILE_PATH', __FILE__ );
 define( 'FORUM_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FORUM_URL',  plugin_dir_url( __FILE__ ) );
@@ -24,7 +25,6 @@ require_once "class/rpc.php";
 
 //klog('begin');
 
-// forum()->addRoutes(); // work
 
 forum()
     ->init()
@@ -38,12 +38,26 @@ forum()
 
 register_activation_hook( __FILE__, function() {
 
-    forum()
-        ->doDefaults();
+    klog("register_activation_hook()");
+
+    forum()->flushRewrites();
+
 });
 
+register_deactivation_hook( __FILE__, function() {
+
+    klog('register_decativation_hook()');
+
+});
 
 
 add_action( 'admin_init', function() {
     register_setting( 'k_forum', 'k_forum' );
 });
+
+
+
+if ( isset( $_REQUEST['test'] ) && $_REQUEST['test'] == 'k-forum' ) {
+    include 'test.php';
+    exit;
+}

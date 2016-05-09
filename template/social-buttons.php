@@ -37,7 +37,7 @@ $variable = null;
 // Add sharing button at the end of page/page content
 $variable .= '<!-- Crunchify.com social sharing. Get your copy here: http://crunfy.me/1EFBLtA -->';
 $variable .= '<div class="crunchify-social">';
-$variable .= '<a class="crunchify-link crunchify-twitter" href="'. $twitterURL .'" target="_blank">Twitter</a>';
+$variable .= '<a class="crunchify-link crunchify-twitter" href="'. $twitterURL .'" target="_blank"><span class="dashicons dashicons-text"></span> Twitter</a>';
 $variable .= '<a class="crunchify-link crunchify-facebook" href="'.$facebookURL.'" target="_blank">Facebook</a>';
 $variable .= '<a class="crunchify-link crunchify-googleplus" href="'.$googleURL.'" target="_blank">Google+</a>';
 $variable .= '</div>';

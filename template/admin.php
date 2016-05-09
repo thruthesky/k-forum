@@ -10,7 +10,7 @@ wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0
 // @todo Bug : somehow routes is being removed. It re-registers here.
 // Like when the theme changes
 // Like when forum data already exists before installing this plugin. so, it does not do 'doDefault'.
-forum()->addRoutes();
+// forum()->addRoutes();
 
 $cat = forum()->getForumCategory();
 $categories = [];

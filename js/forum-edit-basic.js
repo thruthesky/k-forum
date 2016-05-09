@@ -86,7 +86,7 @@ jQuery( function($) {
         var keywordWords = s.words( keyword );
 
 
-        // code begin
+        // code begin for title
         pro('count-title-words').text( titleWords.length );
 
         // title
@@ -116,13 +116,15 @@ jQuery( function($) {
 
 
         // content
-	//
+        //
         var editor;
-        var content; // stripped.
-        var $content;
+        var content;                // stripped.
+        var $content;               // jQuery object of content.
         var contentWords;
         var contentWordsLength;
         if ( typeof tinymce != 'undefined' ) {
+
+            // get content
             editor = tinymce.activeEditor;
             try {
                 contentOriginal = editor.getContent();
@@ -132,14 +134,17 @@ jQuery( function($) {
             }
             content = contentOriginal;
 
+            // jQuery
             $content = $("<div>" + contentOriginal + "</div>");
             content = s.stripTags( content );
             //console.log('contnet: ' + content)
+
             content = s.trim( content );
             contentWords = s.words( content );
             contentWordsLength = contentWords.length;
             pro('count-content-words').text( contentWords.length );
             //console.log('content.length: ' + content.length );
+
             if ( content.length < 1 ) {
                 pro('input-content').show();
 
@@ -276,6 +281,15 @@ jQuery( function($) {
                 pro('input-keyword-on-image-alt').show();
             }
         }
+
+        // a link check
+        if ( $content.find('a').length ) {
+
+        }
+        else {
+            pro('input-a').show();
+        }
+
 
     }
 });

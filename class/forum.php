@@ -1180,8 +1180,17 @@ EOM;
             'rememberme'    => in('rememberme')
         );
         $re = wp_signon( $credits, false );
-        if ( is_wp_error($re) ) wp_send_json_error($re);
-        else wp_send_json_success();
+        if ( is_wp_error($re) ) {
+            wp_die( $re->get_error_code() );
+        }
+        else {
+            echo "
+                <script>
+                location.href='$_REQUEST[return_uri]';
+                </script>
+            ";
+            exit;
+        }
     }
 
     private function checkLogin()

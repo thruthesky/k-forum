@@ -283,8 +283,13 @@ jQuery( function($) {
         }
 
         // a link check
+        var countA = 0;
         if ( $content.find('a').length ) {
-
+            $content.find('a').each(function() {
+                var $this = $(this);
+                if (s.count( $this.text(), keyword )) countA ++;
+            });
+            if ( countA == 0 ) pro('input-keyword-on-a').show();
         }
         else {
             pro('input-a').show();

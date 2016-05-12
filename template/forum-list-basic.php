@@ -54,7 +54,7 @@ if ( empty($category) ) {
                                 <?php
                                 $content = get_the_title();
                                 if ( strlen( $content ) > 100 ) {
-                                    $content = substr( get_the_title(), 0, strpos(get_the_title(), ' ', 100) );
+                                    $content = mb_strcut( $content, 0, 100 );
                                 }
                                 echo $content;
                                 ?>

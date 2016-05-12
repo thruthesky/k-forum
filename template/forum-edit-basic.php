@@ -156,9 +156,16 @@ else {
                     <li class="input-keyword-on-image-alt tip">이미지 설명(ALT)에 키워드를 포함하십시오.</li>
 
 
+                    <?php /* h1 */ ?>
                     <li class="input-h1 warning">내용에 제목(H1) 태그를 입력하십시오.</li>
                     <li class="input-keyword-on-h1 tip">내용의 제목 태그에 키워드를 입력하십시오.</li>
                     <li class="input-keyword-on-content-begin warning">내용의 첫 부분에 키워드를 입력하십시오.</li>
+
+                    <?php /* a */ ?>
+                    <li class="input-a warning">내용에 링크를 포함하십시오.</li>
+                    <li class="input-keyword-on-a warning">링크에 키워드를 포함하십시오.</li>
+
+
 
                     <?php if ( forum()->user_can_blog() ) { ?>
                         <li class="select-blog warning">블로그를 선택하십시오.</li>

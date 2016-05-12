@@ -106,9 +106,11 @@ class forum
             wp_enqueue_script( 'forum', FORUM_URL . 'js/forum.js' );
             wp_enqueue_script( 'underscorestring', FORUM_URL . 'js/underscore.string.min.js' );
             wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
+
             wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );
             wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
             wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js' );
+
             wp_enqueue_script( 'cookie', FORUM_URL . 'js/js.cookie.min.js' );
 
         });
@@ -682,7 +684,30 @@ class forum
         return get_children( ['post_parent' => $post_ID, 'post_type' => 'attachment'] );
     }
 
+
+    /**
+     * Get the src of first image of the post
+     * @param $post_ID
+     * @return null
+     */
     public function get_first_image ( $post_ID ) {
+        $files = $this->get_files( $post_ID );
+        $files = array_reverse( $files );
+        if ( ! $files || is_wp_error($files) ) return null;
+        foreach ( $files as $file ) {
+            if ( strpos( $file->post_mime_type, 'image' ) !== false ) { // image
+                return $file->guid;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the src of last image of the post
+     * @param $post_ID
+     * @return null
+     */
+    public function get_last_image ( $post_ID ) {
         $files = $this->get_files( $post_ID );
         if ( ! $files || is_wp_error($files) ) return null;
         foreach ( $files as $file ) {
@@ -690,7 +715,9 @@ class forum
                 return $file->guid;
             }
         }
+        return null;
     }
+
 
     /**
      * Returns HTML markup for display images and attachments.

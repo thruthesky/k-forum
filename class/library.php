@@ -116,6 +116,22 @@ class library
     }
 
 
+    /**
+     *
+     * @param $date_string
+     * @return bool|string
+     *
+     * @code
+     *      <?php echo lib()->date_short($recent["post_date"])?>
+     * @endcode
+     */
+    public function date_short($date_string) {
+        $time = strtotime( $date_string );
+        $Ymd = date('Ymd');
+        $post_Ymd = date('Ymd', $time);
+        if ( $Ymd == $post_Ymd ) return date('h:i a', $time);
+        else return date('Y-m-d', $time);
+    }
 
 
 } // EO Library

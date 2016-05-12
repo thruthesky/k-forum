@@ -4,7 +4,6 @@ K-Forum is short for "Knowledge Forum".
 
 # todo
 
-
 * 큰 문제 발생.
     * 기존의 post Post Type 을 그대로 사용하는 것은 좋은데,
     * Routing 과 Main Loop 를 활용하려고 억지로 Rewrite 를 지정하여 Main Loop 를 사용하는데,
@@ -36,7 +35,9 @@ K-Forum is short for "Knowledge Forum".
     * 기존의 won-moon hueman 디자인을 많이 따온다.
         * 특히 광고, 방문자 통계, 필고 배너, 패밀리 사이트 광고를 따 넣는다.
          
-    
+* google api - 블로그 api 버젼 3. 최신 API.
+
+
 * SEO
     * 블로그를 목록하고 블로그 포스팅 선택 할 수 있도록 한다.
     * OG 태그 직접 입력.

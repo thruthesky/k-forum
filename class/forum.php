@@ -1029,6 +1029,7 @@ EOM;
             // This may happen when forum exists, but it was not updated on 'forum-slugs' like old version has no function on updating 'forum-slugs'.
             $this->save_forum_slugs_into_option();
             $slugs = get_option('forum-slugs');
+            if ( empty($slugs) ) $slugs = array(); // 2016-05-18. PHP warning when empty when no forum.
         }
         return $slugs;
     }

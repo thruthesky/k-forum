@@ -25,7 +25,8 @@ else {
     </script>
 
 
-    <section id="post-new" class="forum">
+
+    <main id="post-new" class="forum">
 
         <div class="post-edit-meta">
             <div class="top">
@@ -242,7 +243,7 @@ else {
         </form>
 
 
-    </section>
+    </main>
 
 
 <?php

@@ -820,25 +820,19 @@ class forum
 
 
 
-            // forum list.
-            // http://abc.com/qna
-            //
-            if ( seg(0) && seg(1) == null  && in_array( seg(0), $slugs ) ) {
-                wp_redirect( home_url("forum/" . seg(0) . '/' ) );
-            }
+
+
             // forum list.
             // http://abc.com/forum/qna
-            else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
+            if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
                 return $this->loadTemplate( $this->locateTemplate(seg(1), 'list') );
             }
 
             // forum pagination
             // http://domain.com/forum/qna/5 ==> 5 page.
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
-                return $this->loadTemplate('forum-list-basic.php');
+                return $this->loadTemplate( $this->locateTemplate(seg(1), 'list') );
             }
-
-
 
             // post edit
             // http://abc.com/forum/(xxxx)/edit
@@ -848,13 +842,16 @@ class forum
                 $s = seg(1);
                 if ( is_numeric($s) ) $this->checkOwnership( $s ); // post edit
                 else $this->checkLogin(); // post write
-                return $this->loadTemplate('forum-edit-basic.php');
+
+                return $this->loadTemplate( $this->locateTemplate(seg(1), 'edit') );
+                //return $this->loadTemplate( 'forum-edit-basic.php' );
             }
             // comment edit
             // http://abc.com/forum/xxxx/commentEdit
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'commentEdit'  ) {
                 $this->checkOwnership(seg(1), 'comment');
-                return $this->loadTemplate('forum-commentEdit-basic.php');
+                return $this->loadTemplate( $this->locateTemplate(seg(1), 'commentEdit') );
+                //return $this->loadTemplate('forum-commentEdit-basic.php');
             }
             // view
             // https://abc.com/forum/forum-name/[0-9]+
@@ -935,7 +932,11 @@ EOM;
             if ( $categories ) {
                 $slug = current( $categories )->slug;
                 if ( in_array( $slug, forum()->slugs() ) ) {
-                    $comment_template = locate_template('forum-comments-basic.php');
+
+                    $template = $this->locateTemplate($slug, 'comments');
+                    $comment_template = locate_template( $template );
+                    //$comment_template = locate_template('forum-comments-basic.php');
+
                     if ( empty($comment_template) ) {
                         $comment_template = FORUM_PATH . "template/forum-comments-basic.php";
                     }
@@ -1255,7 +1256,18 @@ EOM;
 
     private function locateTemplate( $category_slug, $page )
     {
-        $category = get_category_by_slug( $category_slug );
+        if ( $page == 'commentEdit' ) {
+            // di( the_title() );
+            $comment = get_comment( $category_slug );
+            $post = get_post( $comment->comment_post_ID );
+
+            $category =current( get_the_category( $post->ID ) );
+
+        }
+        else {
+            if ( is_numeric($category_slug) ) $category = current(get_the_category( $category_slug ));
+            else $category = get_category_by_slug( $category_slug );
+        }
 
         $postfix = get_term_meta($category->cat_ID, 'template', true);
 

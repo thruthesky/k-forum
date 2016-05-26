@@ -75,6 +75,9 @@
 
 # Bug
 
+* The links of images of Media panel in admin page are broken. they are all xbox.
+
+
 * fixed : Adding permission on edit/delete. ( May 9, 2016 )
 
 

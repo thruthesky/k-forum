@@ -6,12 +6,6 @@ wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0
 
 
 
-
-// @todo Bug : somehow routes is being removed. It re-registers here.
-// Like when the theme changes
-// Like when forum data already exists before installing this plugin. so, it does not do 'doDefault'.
-// forum()->addRoutes();
-
 $cat = forum()->getForumCategory();
 $categories = [];
 if ( $cat ) {
@@ -92,7 +86,6 @@ else {
                 <small class="text-muted"><?php _e('Input forum ID in lowercase letters, numbers and hypens. It is a slug.', 'k-forum')?></small>
             </fieldset>
 
-
             <fieldset class="form-group">
                 <label for="ForumName">
                     <?php _e('Forum name', 'k-forum')?>
@@ -111,16 +104,26 @@ else {
             <fieldset class="form-group">
                 <label for="ForumParent"><?php _e('Parent Forum', 'k-forum')?></label>
                 <select name="parent" class="form-control" id="ForumParent">
-                    <option value="<?php echo $parent_category->term_id?>"><?php _e('Select Parent Forum', 'k-forum')?></option>
+                    <option value=""><?php _e('Select Parent Forum', 'k-forum')?></option>
                     <?php
-                    foreach ( $categories as $category ) {
-                        $pads = str_repeat( '&nbsp;&nbsp;', $category->depth );
-                        echo "<option value='{$category->term_id}'>$pads{$category->name}</option>";
+                    foreach ( $categories as $_category ) {
+                        $pads = str_repeat( '----', $_category->depth );
+                        echo "<option value='{$_category->term_id}'>$pads{$_category->name}</option>";
                     }
                     ?>
                 </select>
                 <small class="text-muted"><?php _e('You can group or categorize forum by selecting Parent Forum', 'k-forum')?></small>
             </fieldset>
+
+
+            <fieldset class="form-group">
+                <label for="ForumTemplate"><?php _e('Forum Template', 'k-forum')?></label>
+                <input id='ForumTemplate' class='form-control' type="text" name="template" placeholder="<?php _e('Please input forum template prefix', 'k-forum')?>" value="<?php if ( $category ) echo get_term_meta( $category->term_id, 'template', true) ?>">
+                <small class="text-muted"><?php _e('Input forum template post.', 'k-forum')?></small>
+            </fieldset>
+
+
+
             <br>
 
             <?php if ( $category ) : ?>
@@ -129,6 +132,8 @@ else {
                 <input type="submit" class="btn btn-primary" value="<?php _e('Create Forum', 'k-forum')?>">
             <?php endif; ?>
             <button type="button" class="btn btn-secondary forum-create-cancel-button"><?php _e('Cancel', 'k-forum')?></button>
+
+
 
         </form>
     </div>
@@ -157,7 +162,7 @@ else {
                     <div class="col-xs-4 col-sm-4">
                         <a href="<?php echo forum()->listURL($category->slug)?>" target="_blank">
                             <?php
-                            $pads = str_repeat( '&nbsp;&nbsp;', $category->depth );
+                            $pads = str_repeat( '----', $category->depth );
                             echo $pads;
                             ?>
                             <?php echo $category->name?>

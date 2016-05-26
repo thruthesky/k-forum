@@ -17,9 +17,12 @@ $category = current(get_the_category());
 
 
 ?>
-<?php include FORUM_PATH . '/template/social-buttons.php';?>
+
 <div id="primary" class="content-area forum">
+
     <main id="main" class="site-main" role="main">
+
+        <?php include FORUM_PATH . '/template/social-buttons.php';?>
 
         <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
             <div class="title">

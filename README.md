@@ -1,10 +1,16 @@
 # K-Forum
 
-K-Forum is short for "Knowledge Forum".
+* K-Forum is short for "Knowledge Forum".
+* WordPress Version 4.3.3 and above
+
+# Installation
+
+* K-Forum works only on "Nice URI"
+
 
 # todo
 
-
+    - Support WordPress version 3.5 and above
 
     - K-FORUM 에 키워드를 3개까지 둘 수 있도록 할 것.
 
@@ -18,40 +24,93 @@ K-Forum is short for "Knowledge Forum".
     	300 글자 이내이면 사진 1개, 300글자 이상이면 사진 2개 필수.
 
     - OG 태그와 메타 태그 를 추가 할 것
+    - Add OG Tags
+    - User Google API v3 to communicate with blogger.
+    
 
     - primary 사진 업로드 기능을 추가 할 것. 그래서 글 목록이나 OG 태그 등에 사용 할 것. 단, 글 내용에는 안보임.
     	-- 생략되면 처번째 이미지가 자동으로 대표 사진이 됨.
 
 
 
-* 웹브라우저 제목에 글 제목이 나오게 할 것.
-
-* 버그
-    * 분명히 글이 사라진다.
-    * 이것은 글 삭제 권한이 필요 없이 아무나 글 삭제를 할 수 있기 때문이 아닐까 생각한다.
-    * 검색 엔진에서 글을 색인을 할 때, delete 링크를 연결하기 때문에 그런 것이 아닐까 생각한다.
-    * May 9, 2016 에 권한 관련 코드를 추가하므로서 수정.
+    - 웹브라우저 제목에 글 제목이 나오게 할 것.
+    
+    - Add philgo banners on template
 
 
-* 라우팅
-    * /qna 와 같이 1 차 세그먼트만 없앤다. 그러면 라우트를 계속 수정 할 필요가 없다.
-    * 즉, doDefault 를 한번만 호출하는 것이다.
-    * 테마가 변경 될 때, 라우팅 설정이 사라지는지 확인을 한다.
-    * 테마를 프로그램적으로 변경.
-    * 라우팅을 프로그램적으로 확인.
+# Overview
 
-* Version compatibility from 4.3.3 to 4.5
+* k-forum manages its post and category data exactly the way how WordPress does.
 
-    * Make it from 3.0 to 4.5
+    * Which means you can manage k-forum data without k-forum plugin
+    
+    simply because all the k-forum data is stored in the sample place of WordPress post/category/meta table
+     
+    and be managed by WordPress default Post/Category menu.
+     
 
-* 디자인
-    * 기존의 won-moon hueman 디자인을 많이 따온다.
-        * 특히 광고, 방문자 통계, 필고 배너, 패밀리 사이트 광고를 따 넣는다.
-         
-* google api - 블로그 api 버젼 3. 최신 API.
+* The way how k-forum work is the way how WordPress work.
+
+    * When you write a post under a k-forum category which is a child of another k-forum category,
+    
+    the post will be shown not only its category but also is shown under its parent category.
+    
+    And this is how WordPres works.
+    
+# Post
+
+* Post relation to forum
+
+    * There are "Category A" and "Category B" and "Category B" is under " Category A"
+    
+    * You write a post - "No. 1" under "Category B".
+    
+    * "No. 1" will be listed under "Category B" and "Category A".
+    
+    * When you view "No. 1" under "Category A" list, the category of "No. 1" is "Category B" not "Category A".
+    
 
 
-* SEO
+
+
+# Bug
+
+* fixed : Adding permission on edit/delete. ( May 9, 2016 )
+
+
+# Routing
+
+    * "/forum/forum-name" for list
+    * "/forum/forum-name/edit" for new post
+    * "/forum/post-number/edit" for editing a post
+    * "/forum/forum-name/post-number" for reading ( view ) a post
+
+
+# Template
+
+    * All templates can be overridden by creating same file name under theme folder.
+    
+    * Each forum can have a different style of design by setting template postfix on admin page.
+    
+
+
+If you put postfix as 'abc' on ABC forum and you want to see a post of the forum.
+
+	"theme/name/forum-view-abc.php" file will be used if it exists.
+
+	"theme/name/forum-view-basic.php" file will be used if the file above does not exists.
+
+	"plugin/k-forum/template/forum-view-basic.php" file will be used if none of the above file exists. 
+
+
+
+
+
+
+
+
+
+# SEO
     * 블로그를 목록하고 블로그 포스팅 선택 할 수 있도록 한다.
     * OG 태그 직접 입력.
         * OG 타이틀 이미지 직접 선택. 업로드.

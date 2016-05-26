@@ -119,6 +119,8 @@ class forum
 
     private function loadTemplate($file)
     {
+
+
         $new_template = locate_template( array( $file ) );
         if ( '' != $new_template ) {
             return $new_template ;
@@ -531,11 +533,10 @@ class forum
 
         if ( ! function_exists('wp_insert_category') ) require_once (ABSPATH . "/wp-admin/includes/taxonomy.php");
 
-        if ( isset( $_REQUEST['parent'] ) ) {
+        if ( isset( $_REQUEST['parent'] ) && $_REQUEST['parent'] ) {
             $parent = $_REQUEST['parent'];
         }
         else $parent = get_category_by_slug( FORUM_CATEGORY_SLUG )->term_id;
-
 
         $catarr = array(
             'cat_name' => $_REQUEST['name'],
@@ -546,14 +547,16 @@ class forum
 
         if ( isset($_REQUEST['category_id']) ) $catarr['cat_ID'] = $_REQUEST['category_id'];
 
-        $ID = wp_insert_category( $catarr, true );
+        $term_ID = wp_insert_category( $catarr, true );
 
-        if ( is_wp_error( $ID ) ) wp_die($ID->get_error_message());
+        if ( is_wp_error( $term_ID ) ) wp_die($term_ID->get_error_message());
 
 
         $this->save_forum_slugs_into_option();
 
 
+        delete_term_meta( $term_ID, 'template' );
+        add_term_meta( $term_ID, 'template', $_REQUEST['template'], true );
 
         wp_redirect( $this->adminURL() );
     }
@@ -789,6 +792,7 @@ class forum
     {
 
 
+
         /**
          *
          * Add routes for friendly URL.
@@ -804,10 +808,14 @@ class forum
 
 
 
+
+
+
             /**
              * @note
              */
             $slugs = forum()->slugs();
+
 
 
 
@@ -821,11 +829,17 @@ class forum
             // forum list.
             // http://abc.com/forum/qna
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == null  ) {
-                return $this->loadTemplate('forum-list-basic.php');
+                return $this->loadTemplate( $this->locateTemplate(seg(1), 'list') );
             }
+
+            // forum pagination
+            // http://domain.com/forum/qna/5 ==> 5 page.
             else if ( seg(0) == 'forum' && seg(1) != null && seg(2) == 'page' ) {
                 return $this->loadTemplate('forum-list-basic.php');
             }
+
+
+
             // post edit
             // http://abc.com/forum/(xxxx)/edit
             // if (xxxx) is numeric, then it's 'post edit'
@@ -843,23 +857,25 @@ class forum
                 return $this->loadTemplate('forum-commentEdit-basic.php');
             }
             // view
-            // https://abc.com/forum/xxxx/[0-9]+
+            // https://abc.com/forum/forum-name/[0-9]+
             else if ( seg(0) == 'forum' && seg(1) != null && is_numeric(seg(2))  ) {
-                return $this->loadTemplate('forum-view-basic.php');
+                return $this->loadTemplate( $this->locateTemplate(seg(1), 'view') );
             }
             // Matches if the post is under forum category.
             else if ( is_single() ) {
                 klog("add_filter() : is_single()");
                 $id = get_the_ID();
                 if ( $id ) {
-                    $category = get_the_category( $id );
-                    if ( $category ) {
-                        $category_id = current( $category )->term_id;
+                    $categories = get_the_category( $id );
+                    if ( $categories ) {
+                        $category = current( $categories );
+                        $category_id = $category->term_id;
                         klog("category_id: $category_id");
                         $ex = explode('/', get_category_parents($category_id, false, '/', true));
                         klog("category slug of the category id: $ex[0]");
                         if ( $ex[0] == FORUM_CATEGORY_SLUG ) {
-                            return $this->loadTemplate('forum-view-basic.php');
+                            //return $this->loadTemplate('forum-view-basic.php');
+                            return $this->loadTemplate( $this->locateTemplate( $category->slug, 'view' ) );
                         }
                     }
                 }
@@ -1235,6 +1251,19 @@ EOM;
     private function checkLogin()
     {
         if ( ! is_user_logged_in() ) wp_die("Please login");
+    }
+
+    private function locateTemplate( $category_slug, $page )
+    {
+        $category = get_category_by_slug( $category_slug );
+
+        $postfix = get_term_meta($category->cat_ID, 'template', true);
+
+        $template = "forum-{$page}-$postfix.php";
+        $custom_template = get_stylesheet_directory() . DIRECTORY_SEPARATOR . $template;
+
+        if ( file_exists($custom_template) ) return $template;
+        else return "forum-{$page}-basic.php";
     }
 }
 

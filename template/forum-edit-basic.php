@@ -61,7 +61,7 @@ else {
                 $settings = array(
                     'textarea_name' => 'content',
                     'media_buttons' => false,
-                    'textarea_rows' => 4,
+                    'textarea_rows' => 24,
                     'quicktags' => false
                 );
                 wp_editor( $content, $editor_id, $settings );

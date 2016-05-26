@@ -145,16 +145,22 @@ class forum
      */
     private function submit()
     {
-        $do_list = [
-            'forum_create', 'forum_delete',
-            'post_create', 'post_delete',
-            'comment_create', 'comment_delete',
-            'file_upload', 'file_delete',
-            'blogger_getUsersBlogs',
-            'login',
-        ];
-        if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
-        else echo "<h2>You cannot call the method - $_REQUEST[do] because the method is not listed on 'do-list'.</h2>";
+        if ( ! isset($_REQUEST['do']) || empty($_REQUEST['do']) ) {
+            echo "<h2>method name is empty</h2>";
+        }
+        else {
+            $do_list = [
+                'forum_create', 'forum_delete',
+                'post_create', 'post_delete',
+                'comment_create', 'comment_delete',
+                'file_upload', 'file_delete',
+                'blogger_getUsersBlogs',
+                'login',
+            ];
+            if ( in_array( $_REQUEST['do'], $do_list ) ) $this->$_REQUEST['do']();
+            else echo "<h2>You cannot call the method - '$_REQUEST[do]' because the method is not listed on 'do-list'.</h2>";
+
+        }
         exit;
     }
 
@@ -1201,6 +1207,10 @@ EOM;
         return true;
     }
 
+
+    /**
+     *
+     */
     private function login() {
         $credits = array(
             'user_login'    => in('user_login'),
@@ -1212,9 +1222,10 @@ EOM;
             wp_die( $re->get_error_code() );
         }
         else {
+            $url = isset($_REQUEST['return_uri']) ? $_REQUEST['return_uri'] : home_url();
             echo "
                 <script>
-                location.href='$_REQUEST[return_uri]';
+                location.href='$url';
                 </script>
             ";
             exit;

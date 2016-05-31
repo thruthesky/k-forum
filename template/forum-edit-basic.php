@@ -2,18 +2,10 @@
 get_header();
 wp_enqueue_style( 'forum-edit-basic', FORUM_URL . 'css/forum-edit-basic.css' );
 wp_enqueue_script( 'forum-edit-basic', FORUM_URL . 'js/forum-edit-basic.js' );
-$cat_desc = null;
-if ( is_numeric(seg(1) ) ) {
-    $post = get_post(seg(1));
-    $category = current(get_the_category( $post->ID ));
-    $category_id = $category->term_id;
-    $cat_desc = $category->description;
-}
-else {
-    $post = null;
-    $category = get_category_by_slug( seg(1) );
-    $category_id = $category->term_id;
-}
+
+$category = forum()->getCategory( seg(1) );
+$category_id = $category->term_id;
+$post = forum()->getPost( seg(1) );
 
 ?>
 
@@ -31,7 +23,7 @@ else {
         <div class="post-edit-meta">
             <div class="top">
                 <h1 class="forum-title"><?php echo $category->name?></h1>
-                <div class="forum-description"><?php echo $cat_desc?></div>
+                <div class="forum-description"><?php echo $category->description?></div>
             </div>
         </div>
 

@@ -196,6 +196,38 @@ class forum
         return false;
     }
 
+    /**
+     *
+     * Returns category of a post or category name
+     *
+     * @param $post_id_or_category_name
+     * @return mixed|object
+     *
+     */
+    public function getCategory( $post_id_or_category_name )
+    {
+        if ( is_numeric( $post_id_or_category_name ) ) {
+            $post = get_post(seg(1));
+            $category = current(get_the_category( $post->ID ));
+        }
+        else {
+            $category = get_category_by_slug( $post_id_or_category_name );
+        }
+        return $category;
+    }
+
+    /**
+     * Returns post
+     *
+     * @param $no
+     * @return array|null|WP_Post
+     */
+    public function getPost( $no )
+    {
+        if ( is_numeric( $no ) ) return  get_post( $no );
+        return null;
+    }
+
 
     /**
      * Creates a new post or Edits an existing post.
@@ -206,10 +238,19 @@ class forum
     private function post_create( $post_arr = array() ) {
 
         $is_update = isset($_REQUEST['id']) ? true : false;
+
+
+        // vars
+        $content = isset($_REQUEST['content']) ? $_REQUEST['content'] : '';
+        $title = isset($_REQUEST['title']) ? $_REQUEST['title'] : '';
+        $keyword = isset($_REQUEST['keyword']) ? $_REQUEST['keyword'] : '';
+
+        unset( $_REQUEST['title'], $_REQUEST['content'], $_REQUEST['keyword'] );
+
         if ( empty($post_arr) ) {
             $post_arr = array(
-                'post_title'    => $_REQUEST['title'],
-                'post_content'  => $_REQUEST['content'],
+                'post_title'    => $title,
+                'post_content'  => $content,
                 'post_status'   => 'publish',
                 'post_author'   => wp_get_current_user()->ID,
                 'post_category' => array( $_REQUEST['category_id'] )
@@ -217,7 +258,6 @@ class forum
         }
 
         klog( $post_arr );
-
 
         if ( $is_update ) {         // update
             $this->checkOwnership($_REQUEST['id']);
@@ -234,11 +274,24 @@ class forum
             echo $post_ID->get_error_message();
             exit;
         }
+        else if ( $post_ID  == 0 ) {
+            echo "<h1>Post may be empty.</h1>";
+            exit;
+        }
+
+        klog("post insert success: post ID: $post_ID");
 
         // save SEO keyword
         delete_post_meta($post_ID, 'keyword');
-        add_post_meta($post_ID, 'keyword', $_REQUEST['keyword']);
+        add_post_meta($post_ID, 'keyword', $keyword);
 
+        /**
+         * Save extra data
+         * @note saves any data that was sent by web browser.
+         * @warning Saving any data can cause a serious problem.
+         */
+        $meta = $this->getPostMeta($_REQUEST);
+        $this->savePostMeta($post_ID, $meta);
 
         // blog posting. pos / edit
         $this->blogPosting($post_ID );
@@ -247,6 +300,8 @@ class forum
         $url = get_permalink( $post_ID );
         $this->updateFileWithPost($post_ID);
         $this->deleteFileWithNoPost();
+
+        klog("post ID: $post_ID, permalink: (url) : $url");
 
         wp_redirect( $url ); // redirect to view the newly created post.
     }
@@ -729,7 +784,7 @@ class forum
 
 
     /**
-     * Returns HTML markup for display images and attachments.
+     * Returns HTML markup for display images and attachments for edition.
      *
      * Use this method to display images and attachments.
      *
@@ -1132,10 +1187,14 @@ EOM;
 
     private function blogPosting( $post_ID )
     {
+        klog("blogPosting()");
         $apis = $this->parseBlogSetting();
-        // klog("apis:"); klog($apis);
+        //klog("apis:"); klog($apis);
 
-        if ( ! isset($_REQUEST['blogs']) ) return;
+        if ( ! isset($_REQUEST['blogs']) ) {
+            klog("No blogs to post");
+            return;
+        }
         $blogs = $_REQUEST['blogs'];
 
         $post = get_post( $post_ID );
@@ -1276,6 +1335,32 @@ EOM;
 
         if ( file_exists($custom_template) ) return $template;
         else return "forum-{$page}-basic.php";
+    }
+
+    /**
+     * Returns an array of meta data after un-setting all the post fields.
+     * @param $_req
+     * @return mixed
+     */
+    private function getPostMeta( $_req )
+    {
+        $m = $_req;
+        unset( $m['ID'], $m['post_author'], $m['post_date'], $m['post_date_gmt'], $m['post_title'], $m['post_content'] );
+        unset( $m['post_excerpt'], $m['post_status'], $m['post_comment_status'], $m['ping_status'], $m['post_password'] );
+        unset( $m['post_name'], $m['to_ping'], $m['pinged'], $m['post_modified'], $m['post_modified_gmt'] );
+        unset( $m['post_content_filtered'], $m['post_parent'], $m['guid'], $m['menu_order'], $m['post_type']);
+        unset( $m['post_mime_type'], $m['comment_count']);
+        return $m;
+    }
+
+    private function savePostMeta($post_ID, $meta)
+    {
+        klog( 'savePostMeta: ' );
+        klog( $meta );
+        foreach( $meta as $k => $v ) {
+            add_post_meta( $post_ID, $k, $v, true);
+        }
+        klog("Okay. Meta saved...");
     }
 }
 

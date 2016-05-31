@@ -118,11 +118,9 @@ else {
 
             <fieldset class="form-group">
                 <label for="ForumTemplate"><?php _e('Forum Template', 'k-forum')?></label>
-                <input id='ForumTemplate' class='form-control' type="text" name="template" placeholder="<?php _e('Please input forum template prefix', 'k-forum')?>" value="<?php if ( $category ) echo get_term_meta( $category->term_id, 'template', true) ?>">
+                <input id='ForumTemplate' class='form-control' type="text" name="template" placeholder="<?php _e('Please input forum template postfix', 'k-forum')?>" value="<?php if ( $category ) echo get_term_meta( $category->term_id, 'template', true) ?>">
                 <small class="text-muted"><?php _e('Input forum template post.', 'k-forum')?></small>
             </fieldset>
-
-
 
             <br>
 
@@ -132,8 +130,6 @@ else {
                 <input type="submit" class="btn btn-primary" value="<?php _e('Create Forum', 'k-forum')?>">
             <?php endif; ?>
             <button type="button" class="btn btn-secondary forum-create-cancel-button"><?php _e('Cancel', 'k-forum')?></button>
-
-
 
         </form>
     </div>

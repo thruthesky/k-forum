@@ -10,6 +10,8 @@
 
 # todo
 
+    - font awesome 이 캐시를 할 때 문제된다.
+    
     - Support WordPress version 3.5 and above
 
     - K-FORUM 에 키워드를 3개까지 둘 수 있도록 할 것.
@@ -36,6 +38,7 @@
     - 웹브라우저 제목에 글 제목이 나오게 할 것.
     
     - Add philgo banners on template
+
 
 
 # Overview

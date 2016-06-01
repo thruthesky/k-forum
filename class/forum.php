@@ -105,7 +105,7 @@ class forum
             wp_enqueue_style( 'forum-basic', FORUM_URL . 'css/forum-basic.css' );
             wp_enqueue_script( 'forum', FORUM_URL . 'js/forum.js' );
             wp_enqueue_script( 'underscorestring', FORUM_URL . 'js/underscore.string.min.js' );
-            wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
+            // wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
 
             wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );
             wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
@@ -1321,12 +1321,14 @@ EOM;
             $post = get_post( $comment->comment_post_ID );
 
             $category =current( get_the_category( $post->ID ) );
-
         }
         else {
             if ( is_numeric($category_slug) ) $category = current(get_the_category( $category_slug ));
             else $category = get_category_by_slug( $category_slug );
         }
+
+
+        if ( ! $category ) return "forum-{$page}-basic.php"; // if the category does not exists or on error, it just return default template.
 
         $postfix = get_term_meta($category->cat_ID, 'template', true);
 

@@ -109,9 +109,11 @@ if ( $comment->comment_parent ) $parent_comment = get_comment($comment->comment_
         </script>
         <div class="reply-placeholder"></div>
         <script>
-            jQuery( function( $ ) {
-                var t = _.template($('#comment-form-template').html());
-                $('.reply-placeholder').html(t({ parent : 0 }));
+            window.addEventListener( 'load', function() {
+                jQuery( function( $ ) {
+                    var t = _.template($('#comment-form-template').html());
+                    $('.reply-placeholder').html(t({ parent : 0 }));
+                });
             });
         </script>
 

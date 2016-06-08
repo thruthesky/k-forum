@@ -105,11 +105,12 @@ class forum
             wp_enqueue_style( 'forum-basic', FORUM_URL . 'css/forum-basic.css' );
             wp_enqueue_script( 'forum', FORUM_URL . 'js/forum.js' );
             wp_enqueue_script( 'underscorestring', FORUM_URL . 'js/underscore.string.min.js' );
-            // wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
 
-            wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css' );
-            wp_enqueue_script( 'tether', FORUM_URL . 'js/tether.min.js' );
-            wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js', array(), false, true );
+            wp_enqueue_style( 'font-awesome', FORUM_URL . 'css/font-awesome/css/font-awesome.min.css' );
+            wp_enqueue_style( 'bootstrap', td() . '/css/bootstrap/css/bootstrap.min.css' );
+            wp_enqueue_script( 'tether', td() . '/css/bootstrap/js/tether.min.js' );
+            wp_enqueue_script( 'bootstrap', td() . '/css/bootstrap/js/bootstrap.min.js', array(), false, true );
+
 
             wp_enqueue_script( 'cookie', FORUM_URL . 'js/js.cookie.min.js' );
 

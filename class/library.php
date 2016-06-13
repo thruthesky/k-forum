@@ -142,8 +142,13 @@ class library
 function lib() {
     return new library();
 }
-function seg($n) {
-    return lib()->segment($n);
+
+
+
+if ( ! function_exists('seg') ) {
+    function seg($n) {
+        return lib()->segment($n);
+    }
 }
 
 if ( ! function_exists( 'di' ) ) {

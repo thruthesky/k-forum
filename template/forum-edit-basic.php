@@ -78,7 +78,6 @@ $post = forum()->getPost( seg(1) );
                 </div>
                 <div class="right">
 
-
                     <label for="post-submit-button"><input id="post-submit-button" class="btn btn-primary btn-sm" type="submit" value="<?php _e('POST SUBMIT', 'k-forum')?>"></label>
 
                     <label class="begin-pro"><button class="btn btn-secondary btn-sm" type="button"><?php _e('Professional Writing', 'k-forum')?></button></label>

@@ -751,9 +751,18 @@ class forum
 
 
     /**
-     * Get the src of first image of the post
+     *
+     *
+     * Get the src of first image of the post.
+     *
+     *
      * @param $post_ID
      * @return null
+     *
+     * @code
+     *      <img src="<?php echo forum()->get_first_image( get_the_ID() )?>">
+     * @endcode
+     *
      */
     public function get_first_image ( $post_ID ) {
         $files = $this->get_files( $post_ID );
